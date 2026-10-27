@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Rota de coleta</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/rota.css">
+</head>
+<body class="p-rota" data-page="home" data-flow-step="coleta">
+
+<div class="app">
+  <div class="nav">
+    <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h1>Sua rota de coleta</h1><p>Rota otimizada · Coleta do enxoval usado</p></div>
+  </div>
+
+  <section class="view active" id="viewLoading">
+    <div class="spinner"></div>
+    <h1 id="loadTitle">Recalculando a rota de coleta</h1>
+    <p id="loadSub">Incluímos a coleta extra e estamos montando a ordem mais curta até os clientes.</p>
+  </section>
+
+  <section class="view" id="viewRoute">
+    <div class="content">
+      <div class="summary">
+        <div class="sm"><b id="smStops">—</b><small>Coletas</small></div>
+        <div class="sm"><b id="smDist">—</b><small>Distância</small></div>
+        <div class="sm"><b id="smTime">—</b><small>Tempo est.</small></div>
+      </div>
+      <a class="maps-btn" id="mapsBtn" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Abrir rota no Google Maps
+      </a>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+</div>
+
+<div class="footer" id="footer">
+  <button class="foot-btn" id="startBtn">Iniciar coletas <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const HUB='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M3 21h18M9 21v-6h6v6"/></svg>';
+  const INBOX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
+  const PIN='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+  // endereços padrão dos clientes (protótipo)
+  const ADDR={
+    'Hospital Albert Einstein':'Av. Brasil, 850 · Centro',
+    'Materno Infantil':'Av. T-9, 1200 · Setor Bueno',
+    'Hospital São Marcos':'Rua 84, 420 · Setor Sul',
+    'SJ Hotel':'Av. Anhanguera, 77 · Centro',
+  };
+  // a coleta parte do ÚLTIMO cliente de entrega (o motorista já está lá), não da GAO
+  const ULTIMA_ENTREGA='Hospital Albert Einstein';
+
+  // coletas fixas da rota (clientes do dia)
+  const base=[
+    {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:ADDR['Hospital São Marcos']},
+    {type:'c', kind:'Coleta', name:'SJ Hotel', addr:ADDR['SJ Hotel']},
+  ];
+  // coletas extras registradas na fase de entrega (localStorage) — ganham a tag "Extra"
+  let extras=[];
+  try{ extras=(window.GAO&&GAO.load&&GAO.load('gao_extras'))||[]; }catch(e){ extras=[]; }
+  const extraStops=extras.map(x=>({type:'c', kind:'Coleta extra', name:x.client, addr:ADDR[x.client]||'Endereço cadastrado do cliente'}));
+  const coletas=base.concat(extraStops);
+
+  const stops=[{type:'start', kind:'Partida', name:ULTIMA_ENTREGA, addr:ADDR[ULTIMA_ENTREGA]}]
+    .concat(coletas)
+    .concat([{type:'hub', kind:'Retorno', name:'GAO Lavanderia', addr:'Devolução no centro de distribuição'}]);
+
+  const timeline=document.getElementById('timeline');
+  timeline.innerHTML=stops.map(s=>{
+    const ic = s.type==='c' ? INBOX : (s.type==='start' ? PIN : HUB);
+    const nodeCls = s.type==='c' ? 'c' : '';
+    const kindCls = s.type==='c' ? 'c' : 'h';
+    return `<div class="tl-item">
+      <div class="tl-rail"><div class="tl-node ${nodeCls}">${ic}</div></div>
+      <div class="tl-body">
+        <div class="tl-kind ${kindCls}">${s.kind}</div>
+        <div class="tl-name">${s.name}</div>
+        <div class="tl-addr">${s.addr}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // resumo
+  document.getElementById('smStops').textContent=coletas.length;
+  const km=(coletas.length*4+3);
+  document.getElementById('smDist').textContent=km+' km';
+  const mins=coletas.length*18+10, h=Math.floor(mins/60), m=mins%60;
+  document.getElementById('smTime').textContent=(h?h+'h':'')+String(m).padStart(h?2:1,'0')+(h?'':' min');
+
+  const dest=stops.map(s=>encodeURIComponent(s.name+' Goiânia'));
+  document.getElementById('mapsBtn').href='https://www.google.com/maps/dir/'+dest.join('/');
+
+  // sem coleta extra → não precisa da animação pesada; com extra → recalcula de verdade
+  const viewLoading=document.getElementById('viewLoading'), viewRoute=document.getElementById('viewRoute'), footer=document.getElementById('footer');
+  const hasExtra=extras.length>0;
+  if(!hasExtra){
+    document.getElementById('loadTitle').textContent='Montando sua rota de coleta';
+    document.getElementById('loadSub').textContent='Ordenando as coletas pela rota mais curta até os clientes.';
+  }
+  function reveal(){
+    viewLoading.classList.remove('active');
+    viewRoute.classList.add('active');
+    footer.classList.add('show');
+    window.scrollTo({top:0});
+  }
+  setTimeout(reveal, hasExtra?1800:500);
+
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='entrega.html';});
+  document.getElementById('startBtn').addEventListener('click',()=>{
+    if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='coletas';GAO.setTrip(t);}
+    window.location.href='coleta.html';
+  });
+</script>
+</body>
+</html>

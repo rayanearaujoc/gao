@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Coletas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/carregar.css">
+<link rel="stylesheet" href="static/css/entrega.css">
+<link rel="stylesheet" href="static/css/coleta.css">
+</head>
+<body class="p-coleta" data-page="home" data-flow-step="coleta">
+
+<div class="app">
+  <div class="nav">
+    <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h1>Coletas</h1><p>Recolha o enxoval usado na ordem da rota</p></div>
+  </div>
+  <div class="content">
+    <div class="geo"><span class="geo-lbl">Simular GPS:</span><button class="geo-chip in" id="geoChip"></button></div>
+    <div id="orders"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="go-btn" id="goBtn" disabled>Concluir coletas e retornar à GAO <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<!-- CONFIRMAR COLETA -->
+<div class="sheet-wrap" id="confirmWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg></div>
+      <button class="sheet-x" id="closeConfirm" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="confirmForm">
+      <h2>Confirmar coleta</h2>
+      <p class="sub" id="confirmSub">—</p>
+
+      <p class="f-label">Quantidade coletada</p>
+      <p class="qty-hint" id="reqHint" hidden></p>
+      <div class="stepper"><button id="stepMinus" aria-label="Menos">−</button><b id="qtyVal">0</b><button id="stepPlus" aria-label="Mais">+</button></div>
+
+      <p class="f-label">Quem entregou a coleta? <span class="req">*</span></p>
+      <select class="sel-field" id="setorSelect">
+        <option value="">Selecione o setor</option>
+        <option value="portaria">Portaria</option>
+        <option value="recepcao">Recepção</option>
+        <option value="enfermagem">Enfermagem</option>
+        <option value="rouparia">Rouparia</option>
+        <option value="almox">Almoxarifado</option>
+        <option value="outro">Outro</option>
+      </select>
+
+      <div class="photo-row">
+        <p class="f-label" style="margin-top:0">Foto da coleta <span class="req-tag">(obrigatória)</span></p>
+        <input type="file" accept="image/*" multiple id="photoInput" hidden>
+        <div class="photo-grid" id="photoGrid"></div>
+        <button type="button" class="photo-big" id="photoBig"><span class="ph-ic"><i data-lucide="camera"></i></span><span class="pt">Tirar ou adicionar foto</span><span class="ps">registre o enxoval sendo recolhido</span></button>
+        <button type="button" class="photo-add" id="photoMore" hidden><i data-lucide="plus"></i> Adicionar outra foto</button>
+      </div>
+
+      <button class="cta" id="confirmBtn" disabled>Confirmar coleta <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
+    </div>
+    <div id="confirmSuccess" hidden>
+      <div class="success"><div class="ring"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>Coleta confirmada</h3><p id="succLine">—</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- viagem concluída (placeholder do próximo passo) -->
+<div class="sheet-wrap" id="okWrap">
+  <div class="sheet" style="text-align:center">
+    <div class="ring" style="width:64px;height:64px;border-radius:50%;background:var(--ok-bg);color:var(--ok-ink);display:grid;place-items:center;margin:6px auto 14px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h3 style="margin:0 0 6px;font-size:18px;font-weight:600">Viagem concluída</h3>
+    <p style="margin:0 0 18px;font-size:13px;color:var(--muted)">Entregas e coletas finalizadas. O resumo da viagem entra aqui — a gente constrói em seguida.</p>
+    <button id="okBtn" style="width:100%;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;padding:15px;cursor:pointer">Voltar ao início</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="toastMsg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const CHKW='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const INBOX='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
+
+  // entregas feitas hoje (p/ a coleta extra comparar com a entrega do dia)
+  const TODAY_DELIVERY={'Materno Infantil':7,'Hospital Albert Einstein':4};
+  // coletas do dia — vindas do Gal Cliente: requested = qtd aproximada que o cliente pediu;
+  // lastDelivery = quanto a GAO entregou da última vez a esse cliente.
+  const base=[
+    {name:"Hospital São Marcos", id:"#4120", lastDelivery:8, requested:9},
+    {name:"SJ Hotel", id:"#2277", lastDelivery:5, requested:6},
+  ];
+  // coletas extras registradas na entrega — já vêm com a quantidade informada lá
+  let extras=[];
+  try{ extras=(window.GAO&&GAO.load&&GAO.load('gao_extras'))||[]; }catch(e){ extras=[]; }
+  const extraData=extras.map(x=>({name:x.client, id:x.id, lastDelivery:(x.client in TODAY_DELIVERY?TODAY_DELIVERY[x.client]:null), extraQty:x.gaiolas||1, isExtra:true}));
+  const data=base.concat(extraData);
+
+  let orders=[];
+  const ordersEl=document.getElementById('orders');
+  const goBtn=document.getElementById('goBtn');
+
+  function build(){
+    orders=data.map(o=>({...o, done:false, qty:(o.isExtra?(o.extraQty||1):0), setor:'', photos:[]}));
+    ordersEl.innerHTML=orders.map((o,i)=>orderHTML(o,i)).join('');
+    orders.forEach((o,i)=>{
+      ordersEl.querySelector(`[data-confirmopen="${i}"]`).addEventListener('click',()=>{ if(geoBlocked())return; openConfirm(i); });
+      ordersEl.querySelector(`[data-revise="${i}"]`).addEventListener('click',()=>openConfirm(i));
+    });
+    syncAll();
+  }
+  function orderHTML(o,i){
+    const extraTag = o.lastDelivery==null ? '<span class="chip pend" style="margin-left:6px">Extra</span>' : '';
+    return `
+    <div class="order" data-order="${i}">
+      <div class="order-head">
+        <div class="badge">${INBOX}</div>
+        <div class="t"><h3>${o.name}</h3><div><span class="chip" data-chip="${i}"></span>${extraTag}</div></div>
+        <span class="order-id">${o.id}</span>
+      </div>
+      <div class="order-pad">
+        <button class="btn primary" data-confirmopen="${i}">Confirmar coleta ${CHKW}</button>
+        <button class="btn-revise" data-revise="${i}" hidden>Revisar coleta</button>
+      </div>
+    </div>`;
+  }
+  function syncAll(){
+    orders.forEach((o,i)=>{
+      const el=ordersEl.querySelector(`[data-order="${i}"]`);
+      el.classList.toggle('done',o.done);
+      const chip=el.querySelector(`[data-chip="${i}"]`);
+      chip.className='chip '+(o.done?'load':'pend');
+      chip.innerHTML=o.done?`${CHKW} Coletado`:'Pendente';
+      el.querySelector(`[data-confirmopen="${i}"]`).hidden=o.done;
+      el.querySelector(`[data-revise="${i}"]`).hidden=!o.done;
+    });
+    const allDone=orders.length>0 && orders.every(o=>o.done);
+    goBtn.disabled=!allDone; goBtn.classList.toggle('ready',allDone);
+  }
+
+  /* ---------- CONFIRMAR COLETA ---------- */
+  const confirmWrap=document.getElementById('confirmWrap'), setorSelect=document.getElementById('setorSelect');
+  const photoInput=document.getElementById('photoInput'),photoGrid=document.getElementById('photoGrid'),photoBig=document.getElementById('photoBig'),photoMore=document.getElementById('photoMore');
+  const reqHint=document.getElementById('reqHint');
+  let confirmIdx=0, photos=[];
+  const MAXQTY=40;
+  function scrollInSheet(el){ if(el) try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
+
+  function openConfirm(i){
+    confirmIdx=i; const o=orders[i];
+    setorSelect.value=o.setor||'';
+    photos=[...(o.photos||[])];
+    document.getElementById('confirmSub').textContent=`${o.name} · ${o.id}`;
+    if(!o.isExtra && o.requested){ reqHint.hidden=false; reqHint.textContent=`Cliente pediu aproximadamente ${o.requested} ${o.requested>1?'gaiolas':'gaiola'}.`; }
+    else reqHint.hidden=true;
+    document.getElementById('confirmForm').hidden=false; document.getElementById('confirmSuccess').hidden=true;
+    renderPhotos(); renderConfirm(); confirmWrap.classList.add('open');
+  }
+  function renderConfirm(){
+    const o=orders[confirmIdx];
+    document.getElementById('qtyVal').textContent=o.qty;
+    document.getElementById('stepMinus').disabled=o.qty<=0;
+    document.getElementById('stepPlus').disabled=o.qty>=MAXQTY;
+    document.getElementById('confirmBtn').disabled=!(setorSelect.value && photos.length>=1);
+  }
+  function renderPhotos(){
+    photoGrid.innerHTML=photos.map((src,i)=>`<div class="pthumb"><img src="${src}" alt="Foto ${i+1}"><button class="prm" data-rm="${i}" aria-label="Remover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`).join('');
+    photoGrid.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{photos.splice(+b.dataset.rm,1);renderPhotos();}));
+    photoBig.hidden=photos.length>0; photoMore.hidden=photos.length===0;
+    renderConfirm();
+  }
+  photoBig.addEventListener('click',()=>photoInput.click());
+  photoMore.addEventListener('click',()=>photoInput.click());
+  photoInput.addEventListener('change',e=>{
+    const files=[...e.target.files]; let left=files.length;
+    files.forEach(f=>{const r=new FileReader();r.onload=()=>{photos.push(r.result);if(--left===0){renderPhotos();scrollInSheet(document.getElementById('confirmBtn'));}};r.readAsDataURL(f);});
+    photoInput.value='';
+  });
+  document.getElementById('stepMinus').addEventListener('click',()=>{const o=orders[confirmIdx];if(o.qty>0){o.qty--;renderConfirm();}});
+  document.getElementById('stepPlus').addEventListener('click',()=>{const o=orders[confirmIdx];if(o.qty<MAXQTY){o.qty++;renderConfirm();}});
+  setorSelect.addEventListener('change',()=>{ renderConfirm(); scrollInSheet(document.querySelector('#confirmForm .photo-row')); });
+  document.getElementById('closeConfirm').addEventListener('click',()=>confirmWrap.classList.remove('open'));
+  confirmWrap.addEventListener('click',e=>{if(e.target===confirmWrap)confirmWrap.classList.remove('open');});
+  document.getElementById('confirmBtn').addEventListener('click',()=>{
+    const o=orders[confirmIdx];
+    o.done=true; o.setor=setorSelect.value; o.photos=[...photos];
+    (function(){ try{
+      var setorLabel = setorSelect.value ? setorSelect.options[setorSelect.selectedIndex].text : '';
+      var d=new Date(), hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      var entry={name:o.name, qty:o.qty, setor:setorLabel, hora:hora, foto:null};
+      function persist(){ try{ var list=(window.GAO&&GAO.load&&GAO.load('gao_coletas'))||[]; var ix=list.findIndex(function(x){return x.name===entry.name;}); if(ix>=0)list[ix]=entry; else list.push(entry); GAO.save&&GAO.save('gao_coletas',list); }catch(e){} }
+      var f=o.photos&&o.photos[0];
+      if(f && window.GAO && GAO.shrink){ GAO.shrink(f,480,function(s){ entry.foto=s; persist(); }); }
+      else { entry.foto=f||null; persist(); }
+    }catch(e){} })();
+    document.getElementById('confirmForm').hidden=true; document.getElementById('confirmSuccess').hidden=false;
+    document.getElementById('succLine').textContent=`${o.qty} ${o.qty>1?'gaiolas':'gaiola'} coletada${o.qty>1?'s':''}`;
+    if(navigator.vibrate)navigator.vibrate([40,60,120]);
+    setTimeout(()=>{
+      confirmWrap.classList.remove('open');
+      const next=orders.findIndex(x=>!x.done);
+      syncAll();
+      const t=ordersEl.querySelector(`[data-order="${next!==-1?next:confirmIdx}"]`);
+      if(t)t.scrollIntoView({behavior:'smooth',block:'center'});
+    },1500);
+  });
+
+  /* ---------- GPS simulado + geofence (raio de 2 km) ---------- */
+  const geoChip=document.getElementById('geoChip'), toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
+  let atClient=true, toastTimer=null;
+  function renderGeo(){ geoChip.className='geo-chip '+(atClient?'in':'out'); geoChip.innerHTML='<span class="dot"></span>'+(atClient?'No cliente':'Fora do raio'); }
+  geoChip.addEventListener('click',()=>{ atClient=!atClient; renderGeo(); });
+  renderGeo();
+  function showToast(msg){ toastMsg.textContent=msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
+  function geoBlocked(){ if(!atClient){ showToast('Você precisa estar a até 2 km do cliente para registrar a coleta.'); return true; } return false; }
+
+  /* ---------- footer / navegação ---------- */
+  const okWrap=document.getElementById('okWrap');
+  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='checkout';GAO.setTrip(t);} window.location.href='checkout.html'; } });
+  document.getElementById('okBtn').addEventListener('click',()=>{ if(window.GAO&&GAO.clearTrip)GAO.clearTrip(); try{GAO.remove&&GAO.remove('gao_extras');}catch(e){} window.location.href='index.html'; });
+  okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='coleta-rota.html';});
+  build();
+</script>
+</body>
+</html>

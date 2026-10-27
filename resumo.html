@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Resumo da viagem</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/resumo.css">
+</head>
+<body class="p-resumo" data-page="home">
+
+<div class="app">
+  <div class="content">
+    <div class="acc-banner" id="accBanner" hidden></div>
+
+    <div class="hero">
+      <div class="lottie" id="lottie"></div>
+      <h1 id="heroTitle">Rota finalizada!</h1>
+      <p class="sub" id="heroSub">Bom trabalho, Ronaldo</p>
+    </div>
+
+    <div class="stats">
+      <div class="st"><b id="stClientes">4</b><small>CLIENTES</small></div>
+      <div class="st"><b id="stGaiolas">22</b><small>GAIOLAS</small></div>
+      <div class="st"><b>551 km</b><small>RODADOS</small></div>
+    </div>
+
+    <div class="r-sec">
+      <div class="r-sec-h"><h2>Dados da viagem</h2></div>
+      <div class="co">
+        <div class="co-row"><span class="k">Início da viagem</span><span class="v">22 de outubro às 06:00 hrs</span></div>
+        <div class="co-row"><span class="k">Motorista</span><span class="v">Ronaldo Araújo</span></div>
+        <div class="co-row"><span class="k">Veículo</span><span class="v">GAO-2847 · Iveco Daily</span></div>
+        <div class="co-row"><span class="k">Rota</span><span class="v">Rota Hospitalar</span></div>
+      </div>
+    </div>
+
+    <div class="r-sec">
+      <div class="r-sec-h"><h2>Entregas</h2><span id="entCount">2 clientes</span></div>
+      <div class="rows" id="entregas"></div>
+    </div>
+
+    <div class="r-sec">
+      <div class="r-sec-h"><h2>Coletas</h2><span id="colCount">2 clientes</span></div>
+      <div class="rows" id="coletas"></div>
+    </div>
+
+    <div class="r-sec">
+      <div class="r-sec-h"><h2 id="veiculoTitle">Veículo</h2></div>
+      <div class="co" id="veiculoCard">
+        <div class="co-row"><span class="k">Quilômetros rodados</span><span class="v">551 km</span></div>
+        <div class="co-row"><span class="k">Higienização</span><span class="v">Terminal (completa)</span></div>
+        <div class="co-row"><span class="k">Itens higienizados</span><span class="co-tags"><span class="co-tag">Teto</span><span class="co-tag">Parede</span><span class="co-tag">Chão</span><span class="co-tag">Cabine</span></span></div>
+        <div id="veiculoOcc"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="foot-btn" id="homeBtn">Voltar ao início <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+<script src="static/js/done.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const PKG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>';
+  const INBOX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
+  const CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+  const USER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+  const CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  const ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+  const IMG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>';
+  const OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const LAYERS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg>';
+
+  const GAIOLA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="1.5"/><path d="M4 9h16M4 14.5h16"/></svg>';
+
+  // DEMO (quando a tela abre sem ter rodado o fluxo). Se houver dados salvos, o resumo usa os reais.
+  var DEMO_ENTREGAS=[
+    {c:0, name:'Materno Infantil', q:7, setor:'Recepção', hora:'07:12', ocorrencias:[
+      {tipo:'leitura-carregamento', motivo:'Etiqueta ilegível', gaiolas:1},
+      {tipo:'leitura-entrega', motivo:'Outro', gaiolas:1, comentario:'QR code rasgado; li o número da gaiola manualmente'},
+      {tipo:'qtd-carregamento', motivo:'Não coube no veículo', gaiolas:3},
+      {tipo:'qtd-entrega', motivo:'Recusada pelo cliente', gaiolas:2}
+    ]},
+    {c:1, name:'Hospital Albert Einstein', q:4, setor:'Rouparia', hora:'08:40', ocorrencias:[]},
+  ];
+  var DEMO_COLETAS=[
+    {c:2, name:'Hospital São Marcos', q:6, setor:'Rouparia',   hora:'10:05', ocorrencias:[]},
+    {c:3, name:'SJ Hotel',            q:5, setor:'Governança', hora:'10:52', ocorrencias:[]},
+  ];
+
+  function photoTile(src){ return src ? '<span class="thumb"><img src="'+src+'" alt="Foto"></span>' : '<span class="thumb">'+IMG+'</span>'; }
+  function thumbs(n, src){ var t=''; for(var i=0;i<n;i++) t+=photoTile(src); return '<div class="thumbs">'+t+'</div>'; }
+
+  var OCC_TIPOS={
+    'leitura-carregamento':{titulo:'Leitura da gaiola no carregamento', count:'afetada'},
+    'leitura-entrega':     {titulo:'Leitura da gaiola na entrega',      count:'afetada'},
+    'qtd-carregamento':    {titulo:'Confirmação de carregamento',       count:'nao-carregada'},
+    'qtd-entrega':         {titulo:'Confirmação de entrega',            count:'nao-entregue'},
+    'avaria-veiculo':      {titulo:'Avaria no veículo'}
+  };
+  function countLabel(kind,n){
+    var p=n>1;
+    if(kind==='afetada')       return p?'gaiolas afetadas':'gaiola afetada';
+    if(kind==='nao-carregada') return p?'não carregadas':'não carregada';
+    if(kind==='nao-entregue')  return p?'não entregues':'não entregue';
+    return '';
+  }
+  function occItemHTML(o){
+    var t = OCC_TIPOS[o.tipo] || {titulo:(o.tipo||'Ocorrência')};
+    var line='';
+    if(o.tipo==='avaria-veiculo'){
+      line = o.momento ? '<div class="oi-line">'+o.momento+'</div>' : '';
+    } else {
+      var reason = o.motivo ? '<span class="oi-reason">'+o.motivo+'</span>' : '';
+      var count = (o.gaiolas && t.count) ? '<span class="oi-count">'+o.gaiolas+' '+countLabel(t.count,o.gaiolas)+'</span>' : '';
+      line = (reason||count) ? '<div class="oi-line">'+reason+count+'</div>' : '';
+    }
+    var note = o.comentario ? '<div class="oi-note">'+o.comentario+'</div>' : '';
+    var foto = o.foto ? '<div class="oi-foto">'+thumbs(1)+'</div>' : '';
+    return '<div class="occ-item"><b class="oi-title">'+t.titulo+'</b>'+line+note+foto+'</div>';
+  }
+  function occBlock(arr, label){
+    if(!arr || !arr.length) return '';
+    return '<div class="stop-occ"><p class="stop-occ-h">'+(label||'Ocorrências')+'</p>'
+      + arr.map(occItemHTML).join('')+'</div>';
+  }
+
+  function stopHTML(o, kind){
+    if(o.failed){
+      var noun = kind==='coleta' ? 'Coleta' : 'Entrega';
+      var vb = kind==='coleta' ? 'coletada' : 'entregue';
+      var cnt = o.total ? ' · '+o.total+' não '+vb+(o.total>1?'s':'') : '';
+      return '<div class="stop is-fail">'
+        + '<div class="stop-top"><b class="stop-name">'+o.name+'</b><div class="row-chk fail">'+ALERT+'</div></div>'
+        + '<div class="stop-det">'
+        +   '<span class="dt dt-full">'+GAIOLA+' '+noun+' não realizada'+cnt+'</span>'
+        +   (o.failReason ? '<span class="dt">'+ALERT+' '+o.failReason+'</span>' : '')
+        +   (o.failText ? '<span class="dt dt-full">"'+o.failText+'"</span>' : '')
+        +   (o.hora ? '<span class="dt">'+CLOCK+' '+o.hora+'</span>' : '')
+        + '</div>'
+        + '</div>';
+    }
+    var verb = kind==='coleta'?'coletadas':'entregues';
+    var who = kind==='coleta'?'Entregue por':'Recebido na';
+    var un = o.q>1?'gaiolas':'gaiola';
+    return '<div class="stop">'
+      + '<div class="stop-top"><b class="stop-name">'+o.name+'</b><div class="row-chk">'+CHK+'</div></div>'
+      + '<div class="stop-det">'
+      +   '<span class="dt dt-full">'+GAIOLA+' '+o.q+' '+un+' '+verb+'</span>'
+      +   '<span class="dt">'+USER+' '+who+' '+o.setor+'</span>'
+      +   '<span class="dt">'+CLOCK+' '+o.hora+'</span>'
+      + '</div>'
+      + '<div class="stop-bar">'+thumbs(1,o.foto)+'<button class="stop-rep" data-c="'+o.c+'">Ver relatório '+CHEV+'</button></div>'
+      + occBlock(o.ocorrencias)
+      + '</div>';
+  }
+
+  // --- usa os dados reais do fluxo quando existirem; senão, o demo ---
+  function sload(k){ try{ return (window.GAO&&GAO.load)?GAO.load(k):null; }catch(e){ return null; } }
+  var sEnt=sload('gao_entregas'), sCol=sload('gao_coletas');
+  var dynamic = Array.isArray(sEnt) && sEnt.length>0;
+
+  // ocorrências do carregamento (do gao_cargo), casadas por nome do cliente
+  function cargoOccFor(name){
+    var occ=[];
+    try{
+      var cargo=sload('gao_cargo'); if(!Array.isArray(cargo)) return occ;
+      var c=null; for(var k=0;k<cargo.length;k++){ if(cargo[k] && cargo[k].name===name){ c=cargo[k]; break; } }
+      if(!c) return occ;
+      var cages=c.cages||[];
+      var prob=cages.filter(function(x){return x.status==='problema';}).length;
+      if(prob>0) occ.push({tipo:'leitura-carregamento', gaiolas:prob});
+      var loadable=cages.filter(function(x){return x.status!=='removida';}).length;
+      var diff=loadable-(c.loadedQty!=null?c.loadedQty:loadable);
+      if(diff>0){ var o={tipo:'qtd-carregamento', gaiolas:diff};
+        var RL={'nao-localizada':'Não localizada','nao-coube':'Não coube no veículo','outro':'Outro'};
+        if(c.reason==='outro'){ o.motivo='Outro'; if(c.reasonText)o.comentario=c.reasonText; } else { o.motivo=RL[c.reason]||''; }
+        occ.push(o);
+      }
+    }catch(e){}
+    return occ;
+  }
+  function entFromSaved(e,i){
+    if(e.failed){ return {c:i, name:e.name, failed:true, total:e.total||0, failReason:e.failReason||'', failText:e.failText||'', hora:e.hora||'', q:0, ocorrencias:[]}; }
+    var occ = cargoOccFor(e.name);
+    if(Array.isArray(e.ocorrencias)){ occ = occ.concat(e.ocorrencias); }
+    else {
+      var diff=(e.total!=null&&e.qty!=null)?(e.total-e.qty):0;
+      if(diff>0){ var o={tipo:'qtd-entrega', gaiolas:diff}; if(e.reason==='Outro'){o.motivo='Outro';if(e.reasonText)o.comentario=e.reasonText;}else{o.motivo=e.reason||'';} occ.push(o); }
+    }
+    return {c:i, name:e.name, q:(e.qty||0), setor:e.setor||'—', hora:e.hora||'', foto:e.foto||null, ocorrencias:occ};
+  }
+
+  var entregas, coletas, veiculoOcc;
+  if(dynamic){
+    entregas = sEnt.map(entFromSaved);
+    var base = entregas.length;
+    coletas = (Array.isArray(sCol)?sCol:[]).map(function(e,i){
+      return {c:base+i, name:e.name, q:(e.qty||0), setor:e.setor||'—', hora:e.hora||'', foto:e.foto||null, ocorrencias:[]};
+    });
+    var ck=sload('gao_checkin'); veiculoOcc=[];
+    if(ck && ck.avaria==='sim') veiculoOcc.push({tipo:'avaria-veiculo', momento:'No check-in', comentario:ck.desc||''});
+  } else {
+    entregas = DEMO_ENTREGAS; coletas = DEMO_COLETAS;
+    veiculoOcc = [{tipo:'avaria-veiculo', momento:'No check-in', comentario:'Arranhão na lateral direita do baú', foto:true}];
+  }
+
+  // viagem encerrada por acidente: coletas planejadas viram não realizadas, e o card do veículo vira o acidente
+  var acid = dynamic ? sload('gao_acidente') : null;
+  if(acid){
+    var doneCol = coletas.map(function(x){return x.name;});
+    ['Hospital São Marcos','SJ Hotel'].forEach(function(nm,ix){ if(doneCol.indexOf(nm)<0) coletas.push({c:900+ix, name:nm, failed:true, failReason:'Viagem encerrada por acidente', total:0, hora:'', q:0, ocorrencias:[]}); });
+    veiculoOcc=[];
+  }
+
+  document.getElementById('entregas').innerHTML=entregas.map(function(o){return stopHTML(o,'entrega');}).join('');
+  document.getElementById('coletas').innerHTML=coletas.map(function(o){return stopHTML(o,'coleta');}).join('');
+  document.getElementById('veiculoOcc').innerHTML=occBlock(veiculoOcc,'Ocorrências do veículo');
+  (function vehOccBorder(){
+    var vc=document.getElementById('veiculoCard'), vo=document.getElementById('veiculoOcc');
+    if(!vc||!vo) return;
+    var rows=vc.querySelectorAll('.co-row'), last=rows[rows.length-1];
+    if(last) last.style.borderBottom = vo.innerHTML.trim() ? '1px solid var(--line)' : 'none';
+  })();
+
+  (function updateStats(){ try{
+    var all=entregas.concat(coletas), gai=0;
+    all.forEach(function(o){ gai+=(o.q||0); });
+    document.getElementById('stClientes').textContent=all.length;
+    document.getElementById('stGaiolas').textContent=gai;
+    document.getElementById('entCount').textContent=entregas.length+(entregas.length===1?' cliente':' clientes');
+    document.getElementById('colCount').textContent=coletas.length+(coletas.length===1?' cliente':' clientes');
+  }catch(e){} })();
+
+  if(acid){
+    var _b=document.getElementById('accBanner'); _b.hidden=false;
+    _b.innerHTML=ALERT+'<span>Viagem encerrada por acidente. As paradas restantes não foram realizadas.</span>';
+    document.getElementById('heroTitle').textContent='Viagem encerrada';
+    document.getElementById('heroSub').textContent='Registramos o acidente. Cuide-se, Ronaldo.';
+    var _lot=document.getElementById('lottie'); if(_lot) _lot.innerHTML='<div class="acc-ic">'+ALERT+'</div>';
+    document.getElementById('veiculoTitle').textContent='Acidente';
+    var _card=document.getElementById('veiculoCard');
+    _card.innerHTML='<div class="co-row"><span class="k">O que aconteceu</span><span class="v" style="text-align:right;max-width:62%">'+(acid.desc||'—')+'</span></div>'
+      + '<div class="co-row"><span class="k">Quilometragem</span><span class="v">'+(acid.km||'—')+'</span></div>'
+      + (acid.hora?'<div class="co-row"><span class="k">Horário</span><span class="v">'+acid.hora+'</span></div>':'');
+    var _fts=(acid.fotos&&acid.fotos.length)?acid.fotos:(acid.foto?[acid.foto]:[]);
+    if(_fts.length){ var _fd=document.createElement('div'); _fd.style.margin='2px 0 12px'; _fd.innerHTML='<div class="thumbs">'+_fts.map(photoTile).join('')+'</div>'; _card.appendChild(_fd); }
+  }
+
+  // abrir relatório do cliente
+  document.querySelectorAll('.stop-rep').forEach(function(b){
+    b.addEventListener('click',function(){ window.location.href='relatorio.html?c='+b.getAttribute('data-c'); });
+  });
+
+  function playLottie(){
+    if(window.lottie && window.DONE_ANIM){
+      try{ lottie.loadAnimation({ container:document.getElementById('lottie'), renderer:'svg', loop:true, autoplay:true, animationData:window.DONE_ANIM }); }catch(e){}
+    } else { setTimeout(playLottie,120); }
+  }
+  if(!acid) playLottie();
+  if(window.lucide) lucide.createIcons();
+
+  // aberto pelo histórico = só "Voltar" pra tabela; no fim da viagem = "Voltar ao início" (finaliza)
+  var homeBtn=document.getElementById('homeBtn');
+  var fromHist=/[?&]from=historico/.test(location.search);
+  if(fromHist){
+    var _ft=document.querySelector('.footer'); if(_ft) _ft.style.display='none';
+    document.body.setAttribute('data-top-back','historico.html');
+  } else {
+    homeBtn.addEventListener('click',function(){
+      var trip=(window.GAO&&GAO.getTrip)?GAO.getTrip():null;
+      var route=trip?trip.route:0;
+      if(window.GAO){
+        GAO.save&&GAO.save('gao_done',{route:route,at:Date.now()});
+        GAO.clearTrip&&GAO.clearTrip();
+        try{ GAO.remove('gao_cargo'); GAO.remove('gao_extras'); GAO.remove('gao_checkin'); GAO.remove('gao_acidente'); }catch(e){}
+      }
+      window.location.href='index.html';
+    });
+  }
+</script>
+</body>
+</html>

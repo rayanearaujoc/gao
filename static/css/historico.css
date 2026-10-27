@@ -1,0 +1,102 @@
+/* ===== Exclusivo: Histórico de viagens (historico.html) ===== */
+
+.h-head{margin:0 2px 14px}
+.h-head h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.h-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+
+/* bloco de filtros: fica ABAIXO do título, logo após o subtítulo */
+.fil-wrap{margin-bottom:22px}
+
+/* ===== Filtros: período + status (dropdowns) + datas personalizadas ===== */
+.filters{margin:0;display:flex;gap:12px;flex-wrap:wrap}
+.fil-field,.date-field{flex:1;min-width:150px}
+.fil-field label,.date-field label{display:block;font-size:11.5px;font-weight:600;color:#334155;margin:0 0 6px}
+.fil-field select,.date-field input{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:13.5px;background:var(--card);color:var(--fg);font-family:inherit}
+.fil-field select{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;background-repeat:no-repeat;background-position:right 12px center;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>')}
+.fil-field select:focus,.date-field input:focus{border-color:color-mix(in srgb,var(--primary) 45%,var(--line))}
+/* limpar filtros: ABAIXO do componente de filtros, só quando há filtro ativo */
+.fil-clear-row{margin:12px 2px 0;text-align:left}
+/* desktop: filtros compactos e alinhados à direita (lado oposto do título) */
+@media(min-width:700px){
+  .fil-field,.date-field{flex:0 0 auto;min-width:0}
+  .fil-field select,.date-field input{width:auto}
+  .fil-field select{min-width:170px}
+}
+.fil-clear{border:none;background:none;color:var(--read);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 0}
+.fil-clear:hover{text-decoration:underline}
+
+/* ===== Cards de resumo: aproveitamento (gradiente) + brancos com ícone ===== */
+.sum-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:18px;margin-bottom:24px;align-items:stretch;max-width:780px}
+.sc{position:relative;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column}
+.sc-ic{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:8px;background:var(--info-bg);color:var(--read);display:grid;place-items:center}
+.sc-ic svg{width:14px;height:14px}
+.sc small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;padding-right:38px}
+.sc b{display:block;font-size:22px;font-weight:700;margin-top:auto;padding-top:8px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+/* cards brancos (viagens/km): sem subtítulo, então centraliza o conteúdo verticalmente */
+.sc:not(.aprov){justify-content:center}
+.sc:not(.aprov) b{margin-top:0;padding-top:10px}
+.sc.aprov{background:linear-gradient(135deg,var(--primary),var(--read));color:#fff;box-shadow:var(--shadow)}
+.sc.aprov .sc-ic{background:rgba(255,255,255,.18);color:#fff}
+.sc.aprov small{color:rgba(255,255,255,.78)}
+.sc.aprov b{font-size:28px;margin-top:10px;padding-top:0}
+.sc.aprov .sub{font-size:11.5px;color:rgba(255,255,255,.85);margin-top:7px;font-weight:500}
+@media(max-width:640px){
+  .sum-grid{grid-template-columns:1fr 1fr}
+  .sc.aprov{grid-column:1 / -1}
+  .sc b{margin-top:10px}
+}
+
+/* ===== Tabela ===== */
+.tbl-wrap{background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden}
+.tbl-scroll{overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
+.tbl-scroll::-webkit-scrollbar{width:0;height:0;display:none}
+@media(min-width:620px){ .tbl-scroll{max-height:68vh} }
+table.htbl{width:100%;border-collapse:collapse;font-size:13px;min-width:580px}
+.htbl thead th{text-align:left;font-size:12px;font-weight:600;letter-spacing:0;color:#0C1D4E;padding:13px 16px;border-bottom:1px solid var(--line);white-space:nowrap;background:#E2E8F0;position:sticky;top:0;z-index:2}
+.htbl thead th.r{text-align:right}
+.htbl tbody td{padding:15px 16px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--fg)}
+.htbl tbody tr:last-child td{border-bottom:none}
+.htbl tbody tr.clickable{cursor:pointer}
+.htbl tbody tr.clickable:hover{background:var(--row)}
+.htbl td.data{color:var(--fg);font-weight:400;font-variant-numeric:tabular-nums}
+.htbl td.rota b{font-weight:400}
+.htbl td.num{font-variant-numeric:tabular-nums;text-align:right}
+.htbl td.off{color:var(--ph)}
+
+/* ===== Coluna de ações (padrão de tabela do design system): ver / excluir ===== */
+.htbl th.acts,.htbl td.acts{text-align:right;width:1%;white-space:nowrap}
+.act-eye{border:none;background:none;color:var(--read);cursor:pointer;padding:7px;border-radius:9px;display:inline-grid;place-items:center;transition:background .12s}
+.act-eye:hover{background:var(--info-bg)}
+.act-eye svg{width:18px;height:18px;display:block}
+.acts .off{color:var(--ph)}
+
+.hpill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:20px;padding:4px 10px;white-space:nowrap}
+.hpill.ok{background:var(--ok-bg);color:var(--ok-ink)}
+.hpill.bad{background:var(--bad-bg);color:var(--bad)}
+
+/* ===== Tabela responsiva: no mobile cada linha vira um card ===== */
+@media(max-width:620px){
+  table.htbl{min-width:0}
+  .htbl thead{display:none}
+  .htbl tbody,.htbl tr,.htbl td{display:block;width:auto}
+  .htbl tbody tr{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .htbl tbody tr:last-child{border-bottom:none}
+  .htbl td{border:none;padding:5px 0;display:flex;align-items:center;justify-content:space-between;gap:14px;white-space:normal;text-align:right}
+  .htbl td::before{content:attr(data-label);font-size:12px;font-weight:600;color:#334155;letter-spacing:0;text-align:left}
+  .htbl td.num{text-align:right}
+  .htbl td.acts{width:auto;white-space:normal;border-bottom:none}
+  .htbl td.acts .act-eye{margin:-7px -7px -7px 0}
+  .tbl-scroll{overflow-x:visible}
+}
+
+/* estado vazio */
+.empty{text-align:center;color:var(--muted);padding:44px 20px}
+.empty .ei{width:52px;height:52px;border-radius:14px;background:var(--row);display:grid;place-items:center;margin:0 auto 14px;color:var(--ph)}
+.empty h4{margin:0 0 5px;font-size:15px;font-weight:600;color:var(--fg)}
+.empty p{margin:0;font-size:13px}
+
+/* ≥900px a topbar branca aparece: título vai pra ela e sai do conteúdo */
+@media(min-width:900px){
+  .p-historico .topbar{display:none}
+  .p-historico .h-head{display:none}
+}

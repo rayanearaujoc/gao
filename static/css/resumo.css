@@ -1,0 +1,76 @@
+/* ===== Exclusivo: Resumo da viagem (resumo.html) — o grande final =====
+   Reaproveita app.css (tokens, shell, footer). Aqui só o que é da tela. */
+.p-resumo .content{padding-top:8px}
+
+.acc-banner{display:flex;align-items:center;gap:10px;background:var(--bad-bg);border-radius:12px;padding:13px 14px;color:#7f1d1d;font-size:12.5px;font-weight:500;line-height:1.45;margin:4px 0 2px}
+.acc-banner svg{flex:none;width:18px;height:18px;color:var(--bad)}
+.acc-ic{width:96px;height:96px;border-radius:50%;background:var(--bad-bg);color:var(--bad);display:grid;place-items:center;margin:0 auto}
+.acc-ic svg{width:40px;height:40px}
+
+.resumo-back{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:9px 13px;font-size:13px;font-weight:600;cursor:pointer;margin:2px 0 6px}
+.resumo-back svg{width:16px;height:16px;color:var(--muted)}
+
+.hero{text-align:center;padding:14px 10px 8px}
+.lottie{width:220px;height:220px;margin:0 auto}
+.hero h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.hero .sub{margin:7px 0 0;font-size:14px;color:var(--muted);font-weight:500}
+
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0 6px}
+.st{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px 8px;text-align:center}
+.st b{display:block;font-size:19px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.st small{display:block;margin-top:6px;font-size:10.5px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+
+.r-sec{margin-top:24px}
+.r-sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 13px}
+.r-sec-h h2{margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.r-sec-h span{font-size:12px;color:var(--muted);font-weight:500}
+.rows{display:flex;flex-direction:column;gap:22px}
+
+/* ===== Parada (entrega/coleta): título + gaiolas/setor/hora + foto ===== */
+.stop{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+.stop-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stop-name{font-size:15px;font-weight:600;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-chk{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center}
+.row-chk svg{width:13px;height:13px;stroke-width:3}
+.row-chk.fail{background:var(--bad-bg);color:var(--bad)}
+.row-chk.fail svg{width:14px;height:14px;stroke-width:2.2}
+
+.stop-det{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:11px}
+.stop-det .dt{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500}
+.stop-det .dt svg{width:15px;height:15px;flex:none;color:var(--muted)}
+.stop-det .dt-full{flex-basis:100%}
+.stop-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding-top:13px;border-top:1px solid var(--line)}
+.stop-rep{display:flex;align-items:center;gap:5px;border:none;background:none;color:var(--read);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 2px}
+.stop-rep svg{width:15px;height:15px}
+
+/* ===== Miniatura de foto (placeholder visual) ===== */
+.thumbs{display:flex;gap:7px}
+.thumb{width:60px;height:60px;border-radius:11px;overflow:hidden;flex:none;
+  background:linear-gradient(135deg,#eef2f7,#dde5ef);display:grid;place-items:center;color:#9fb0c7}
+.thumb svg{width:22px;height:22px}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ===== Ocorrências — lista enxuta: título + (motivo · contagem), com divisórias finas ===== */
+.stop-occ{margin-top:20px}
+.stop-occ-h{margin:0 0 10px;font-size:14px;font-weight:600;color:var(--fg);letter-spacing:-.01em}
+.occ-item{padding:12px 0}
+.occ-item:first-of-type{padding-top:2px}
+.occ-item + .occ-item{border-top:1px solid var(--line)}
+.oi-title{display:block;font-size:12.5px;font-weight:600;color:#334155;letter-spacing:-.01em}
+.oi-line{margin-top:3px;display:flex;flex-wrap:wrap;gap:3px 14px;font-size:12px;color:var(--muted)}
+.oi-count{color:var(--muted)}
+.oi-note{margin-top:10px;background:var(--row);border-radius:9px;padding:11px 12px;font-size:12.5px;color:var(--muted);line-height:1.45}
+.oi-foto{margin-top:11px}
+/* ocorrência do veículo mora DENTRO do card branco: estende até as bordas e usa a borda da última linha como divisória */
+#veiculoOcc:empty{display:none}
+#veiculoOcc .stop-occ{margin:0 -16px;padding:15px 16px 12px}
+#veiculoOcc .occ-item:first-of-type{padding-top:2px}
+
+/* ===== Cards de dados (viagem / check-out) ===== */
+.co{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:4px 16px}
+.co-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.co-row:last-of-type{border-bottom:none}
+.co-row .k{font-size:12.5px;color:var(--muted);font-weight:500}
+.co-row .v{font-size:13.5px;font-weight:500;font-variant-numeric:tabular-nums;text-align:right}
+.co-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+.co-tag{font-size:11px;font-weight:600;color:var(--read);background:var(--info-bg);border-radius:20px;padding:4px 10px}

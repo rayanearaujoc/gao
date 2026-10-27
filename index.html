@@ -1,0 +1,283 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Rotas do motorista</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/home.css">
+</head>
+<body class="p-home" data-page="home" data-top-greet="Ronaldo">
+
+<div class="app">
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="viewHome">
+    <div class="topbar">
+      <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
+      <div class="avatar" data-gao-user>RA</div>
+    </div>
+    <div class="content">
+      <div class="hello">
+        <div>
+          <div class="hi"><img class="wave" src="static/img/wave.svg" width="24" height="24" alt=""> Olá,</div>
+          <h2>Ronaldo</h2>
+        </div>
+        <div class="datechip jsdate" id="dateChip">—</div>
+      </div>
+      <div class="section-row"><h3>Suas rotas de hoje</h3><div class="sr-right"><span>2 disponíveis</span><div class="datechip jsdate sr-date">—</div></div></div>
+      <div id="routes"></div>
+    </div>
+  </section>
+
+  <!-- ============ INÍCIO DE ROTA ============ -->
+  <section class="view" id="viewStart">
+    <div class="nav">
+      <button class="back" data-back="viewHome" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div><h1>Vamos iniciar a rota</h1><p>Confirme o veículo da viagem</p></div>
+    </div>
+    <div class="content">
+      <div class="two">
+        <div class="field"><label>Motorista</label><div class="box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg> Ronaldo Araújo</div></div>
+        <div class="field"><label>Horário de início</label><div class="box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg> <span id="startTime">12:43</span></div></div>
+      </div>
+      <p class="lbl-strong">Seu veículo</p>
+      <div class="vehicle">
+        <div class="vehicle-top">
+          <div class="vehicle-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg></div>
+          <div><h4>GAO-2847</h4><div class="mo">Iveco Daily</div></div>
+        </div>
+        <div class="vehicle-grid">
+          <div><b>19</b><small>Gaiolas de capacidade</small></div>
+          <div><b>Caminhão</b><small>Tipo de veículo</small></div>
+        </div>
+      </div>
+      <p class="help-note">Não encontrou o veículo ou ele está com algum problema?<br>Por enquanto, fale com o <a href="#">gestor de logística</a> antes de seguir.</p>
+    </div>
+  </section>
+
+  <!-- ============ CHECK-IN ============ -->
+  <section class="view" id="viewCheckin">
+    <div class="nav">
+      <button class="back" data-back="viewStart" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div><h1>Registre as condições</h1><p>Faça o registro antes de consultar as rotas</p></div>
+    </div>
+    <div class="gao-flow" id="ckFlow"></div>
+    <div class="content">
+      <div class="sec">
+        <div class="sec-head"><div class="sec-num">1</div><div><h4>Quilometragem inicial</h4><p>Digite o valor exibido no painel e fotografe o odômetro</p></div></div>
+        <p class="in-label">Quilometragem atual <span class="req">*</span></p>
+        <input class="txt" id="kmInput" placeholder="Ex: 105.056" inputmode="numeric">
+        <div class="field-gap"><p class="in-label">Foto do odômetro <span class="req-tag">(obrigatória)</span></p>
+          <div class="slot-mount" data-key="odometro"></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><div class="sec-num">2</div><div><h4>Tem avaria no veículo?</h4><p>Informe qualquer dano, mesmo que já seja conhecido</p></div></div>
+        <div class="seg" id="avariaSeg"><button data-av="nao">Não</button><button data-av="sim">Sim</button></div>
+        <div id="avariaExtra" hidden>
+          <p class="in-label field-gap">Descreva a avaria <span class="req">*</span></p>
+          <textarea class="f-area" id="avariaDesc" placeholder="Em poucas palavras, qual tipo de avaria encontrou"></textarea>
+          <div class="field-gap"><p class="in-label">Adicione fotos da avaria <span class="req-tag">(obrigatória)</span></p>
+            <div class="slot-mount" data-key="avaria"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><div class="sec-num">3</div><div><h4>Fotos do veículo</h4><p>Registre todos os ângulos para documentar a saída</p></div></div>
+        <p class="sub-label" style="margin-top:0">Cabine</p>
+        <p class="in-label field-gap" style="margin-top:9px">Foto da cabine <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="cabine"></div>
+        <p class="sub-label">Baú</p>
+        <p class="in-label field-gap" style="margin-top:9px">Traseira <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="traseira"></div>
+        <p class="in-label field-gap">Lado esquerdo <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="esq"></div>
+        <p class="in-label field-gap">Lado direito <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="dir"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="footer" id="footer">
+  <button class="foot-btn" id="footBtn">—</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const ARROW='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+  const TRUCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>';
+  const CAM='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+
+  const routes=[
+    {name:"Rota Hospitalar", comandas:2, entregas:2, coletas:3, gaiolas:11},
+    {name:"Rota Rio Verde", comandas:2, entregas:1, coletas:0, gaiolas:7},
+  ];
+  let pendingRoute=null;
+  const routesEl=document.getElementById('routes');
+  function trip(){ return (window.GAO&&GAO.getTrip)?GAO.getTrip():null; }
+  function doneRoute(){ return (window.GAO&&GAO.load)?GAO.load('gao_done'):null; }
+  function timeStr(ts){ try{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}catch(e){return '';} }
+  const CHECK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  function renderRoutes(){
+    const t=trip(), done=doneRoute();
+    const isDoneI=(i)=>!!(done && done.route===i);
+    const order=routes.map((_,i)=>i).sort((a,b)=>(isDoneI(a)?1:0)-(isDoneI(b)?1:0));  // concluídas vão pro fim
+    routesEl.innerHTML=order.map(i=>{
+      const r=routes[i];
+      const isDone = isDoneI(i);
+      const active = t && t.route===i;
+      const stats=`<div class="route-stats">
+          <div class="rstat"><b>${r.entregas}</b><small>Entregas</small></div>
+          <div class="rstat"><b>${r.coletas}</b><small>Coletas</small></div>
+          <div class="rstat"><b>${r.gaiolas}</b><small>gaiolas</small></div>
+        </div>`;
+      if(isDone){
+        return `
+      <div class="route is-done">
+        <div class="route-top"><div class="route-ic done">${CHECK}</div><div><h4>${r.name}</h4><div class="cm">Concluída${done.at?' · '+timeStr(done.at):''}</div></div></div>
+        ${stats}
+        <button class="route-btn ghost" data-resumo="${i}">Ver resumo ${ARROW}</button>
+      </div>`;
+      }
+      return `
+      <div class="route">
+        <div class="route-top"><div class="route-ic">${TRUCK}</div><div><h4>${r.name}</h4><div class="cm">${r.comandas} comandas${active?' · em andamento':''}</div></div></div>
+        ${stats}
+        <button class="route-btn" data-route="${i}">${active?'Continuar viagem':'Iniciar rota'} ${ARROW}</button>
+      </div>`;
+    }).join('');
+    routesEl.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>{
+      const i=+b.dataset.route, t=trip();
+      if(t && t.route===i){ const P={carregar:'carregar.html',rota:'rota.html',entrega:'entrega.html',coletas:'coleta-rota.html',checkout:'checkout.html',resumo:'resumo.html',acidente:'acidente.html'}; window.location.href = P[t.step]||'carregar.html'; }
+      else { pendingRoute=i; showView('viewStart'); }
+    }));
+    routesEl.querySelectorAll('[data-resumo]').forEach(b=>b.addEventListener('click',()=>{ window.location.href='resumo.html'; }));
+  }
+  renderRoutes();
+  if(window.GAO&&GAO.renderFlow) GAO.renderFlow(document.getElementById('ckFlow'),'checkin');
+
+  const dias=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const now=new Date();
+  const diaNome=dias[now.getDay()].charAt(0).toUpperCase()+dias[now.getDay()].slice(1);
+  var _dateHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4" stroke-linecap="round"/></svg> ${diaNome}, ${now.getDate()} de ${meses[now.getMonth()]}`;
+  document.querySelectorAll('.jsdate').forEach(function(e){ e.innerHTML=_dateHTML; });
+  document.getElementById('startTime').textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+  const footer=document.getElementById('footer'), footBtn=document.getElementById('footBtn');
+  let current='viewHome';
+  function showView(name){
+    current=name;
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===name));
+    window.scrollTo({top:0,behavior:'instant'});
+    if(name==='viewStart'){
+      footer.classList.add('show'); footBtn.disabled=false; footBtn.classList.remove('off');
+      footBtn.innerHTML='Confirmar e iniciar check-in '+ARROW;
+      footBtn.onclick=()=>showView('viewCheckin');
+    } else if(name==='viewCheckin'){
+      footer.classList.add('show'); footBtn.disabled=false;
+      footBtn.innerHTML='Concluir check-in '+ARROW;
+      footBtn.onclick=attemptConclude;
+      if(window.GAO&&GAO.renderFlow) GAO.renderFlow(document.getElementById('ckFlow'),'checkin');
+      checkValid();
+    } else {
+      footer.classList.remove('show');
+    }
+  }
+  document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.back)));
+
+  const slots={};
+  function mountSlot(el){
+    const key=el.dataset.key;
+    el.innerHTML=`<div class="pslot">
+      <input type="file" accept="image/*" hidden>
+      <button type="button" class="pslot-empty"><div class="cam-ic"><i data-lucide="camera"></i></div><div class="pt">Tirar ou adicionar fotos</div><div class="ps">Adicione uma foto como comprovante</div></button>
+      <div class="pslot-filled" hidden><img alt="Foto"><button type="button" class="pslot-replace"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Substituir</button></div>
+    </div>`;
+    const input=el.querySelector('input'), empty=el.querySelector('.pslot-empty'), filled=el.querySelector('.pslot-filled'), img=el.querySelector('img');
+    const open=()=>input.click();
+    empty.addEventListener('click',open);
+    el.querySelector('.pslot-replace').addEventListener('click',open);
+    input.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{img.src=r.result;slots[key]=r.result;empty.hidden=true;filled.hidden=false;el.classList.remove('err');if(el.previousElementSibling)el.previousElementSibling.classList.remove('err');checkValid();};r.readAsDataURL(f);input.value='';});
+  }
+  document.querySelectorAll('.slot-mount').forEach(mountSlot);
+  if(window.lucide&&lucide.createIcons)lucide.createIcons();
+
+  const CK_KEY='gao_checkin';
+  let avaria=null, ckDone=false;
+  const avariaExtra=document.getElementById('avariaExtra'), avariaDesc=document.getElementById('avariaDesc');
+  function saveCk(){ if(window.GAO&&GAO.save) GAO.save(CK_KEY,{km:document.getElementById('kmInput').value,avaria:avaria,desc:avariaDesc.value,done:ckDone}); }
+  document.querySelectorAll('#avariaSeg button').forEach(b=>b.addEventListener('click',()=>{
+    avaria=b.dataset.av;
+    document.querySelectorAll('#avariaSeg button').forEach(x=>x.classList.toggle('sel',x===b));
+    avariaExtra.hidden = avaria!=='sim';
+    document.getElementById('avariaSeg').classList.remove('err');
+    checkValid(); saveCk();
+  }));
+  avariaDesc.addEventListener('input',()=>{avariaDesc.classList.remove('err');avariaDesc.previousElementSibling.classList.remove('err');checkValid();saveCk();});
+  document.getElementById('kmInput').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.');this.classList.remove('err');this.previousElementSibling.classList.remove('err');checkValid();saveCk();});
+
+  function checkValid(){
+    if(current!=='viewCheckin') return;
+    const photos = ckDone || (slots.odometro && slots.cabine && slots.traseira && slots.esq && slots.dir);
+    let ok = document.getElementById('kmInput').value.trim() && avaria!==null && photos;
+    if(avaria==='sim') ok = ok && avariaDesc.value.trim() && (ckDone || slots.avaria);
+    footBtn.classList.toggle('off',!ok);
+  }
+
+  const kmInputEl=document.getElementById('kmInput');
+  const avariaSegEl=document.getElementById('avariaSeg');
+  const slotEls={}; document.querySelectorAll('.slot-mount').forEach(el=>slotEls[el.dataset.key]=el);
+  function clearErrors(){document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));}
+  function collectMissing(){
+    const m=[];
+    if(!kmInputEl.value.trim()) m.push({l:kmInputEl.previousElementSibling,f:kmInputEl});
+    if(!ckDone && !slots.odometro) m.push({l:slotEls.odometro.previousElementSibling,f:slotEls.odometro});
+    if(avaria===null) m.push({l:null,f:avariaSegEl});
+    if(avaria==='sim'){
+      if(!avariaDesc.value.trim()) m.push({l:avariaDesc.previousElementSibling,f:avariaDesc});
+      if(!ckDone && !slots.avaria) m.push({l:slotEls.avaria.previousElementSibling,f:slotEls.avaria});
+    }
+    if(!ckDone) ['cabine','traseira','esq','dir'].forEach(k=>{ if(!slots[k]) m.push({l:slotEls[k].previousElementSibling,f:slotEls[k]}); });
+    return m;
+  }
+  function attemptConclude(){
+    const m=collectMissing();
+    if(m.length===0){
+      const route = pendingRoute==null ? (((window.GAO&&GAO.getTrip&&GAO.getTrip())||{}).route||0) : pendingRoute;
+      const prev = window.GAO&&GAO.getTrip&&GAO.getTrip();
+      if(!prev || prev.route!==route){ if(window.GAO&&GAO.remove)GAO.remove('gao_cargo'); }  // viagem nova = carregamento zerado
+      if(window.GAO&&GAO.remove){GAO.remove('gao_extras');GAO.remove('gao_entregas');GAO.remove('gao_coletas');GAO.remove('gao_acidente');}  // coletas extras e resultados pertencem a esta viagem: começa zerado
+      ckDone=true; saveCk();
+      if(window.GAO&&GAO.setTrip)GAO.setTrip({route:route,step:'carregar'});
+      window.location.href='carregar.html'; return;
+    }
+    clearErrors();
+    m.forEach(x=>{ if(x.l)x.l.classList.add('err'); if(x.f)x.f.classList.add('err'); });
+    (m[0].f||m[0].l).scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  // restaura o check-in salvo; se vier do "voltar", abre direto nele
+  (function restoreCheckin(){
+    const saved=(window.GAO&&GAO.load)?GAO.load(CK_KEY):null;
+    if(saved){
+      if(saved.km) kmInputEl.value=saved.km;
+      if(saved.avaria){
+        const b=document.querySelector('#avariaSeg button[data-av="'+saved.avaria+'"]');
+        if(b){ avaria=saved.avaria; document.querySelectorAll('#avariaSeg button').forEach(x=>x.classList.toggle('sel',x===b)); avariaExtra.hidden=avaria!=='sim'; }
+        if(saved.desc) avariaDesc.value=saved.desc;
+      }
+      ckDone=!!saved.done;
+    }
+    if(location.hash==='#checkin') showView('viewCheckin');
+  })();
+
+</script>
+</body>
+</html>
+
+</body></html>

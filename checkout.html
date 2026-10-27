@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Check-out do caminhão</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/home.css">
+<link rel="stylesheet" href="static/css/carregar.css">
+<link rel="stylesheet" href="static/css/entrega.css">
+<link rel="stylesheet" href="static/css/checkout.css">
+</head>
+<body class="p-checkout" data-page="home" data-flow-step="checkout">
+
+<div class="app">
+  <div class="nav">
+    <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h1>Check-out do caminhão</h1><p>Feche a viagem no retorno à GAO</p></div>
+  </div>
+
+  <div class="content">
+    <div class="geo"><span class="geo-lbl">Simular GPS:</span><button class="geo-chip in" id="geoChip"></button></div>
+
+    <!-- 1. Quilometragem -->
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">1</div><div><h4>Quilometragem final</h4><p>Digite o valor do painel e fotografe o odômetro</p></div></div>
+      <p class="in-label">Quilometragem final <span class="req">*</span></p>
+      <input class="txt" id="kmInput" placeholder="Ex: 150.946" inputmode="numeric">
+      <div class="field-gap"><p class="in-label">Foto do odômetro <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="odometro" data-ps="valor do hodômetro"></div>
+      </div>
+    </div>
+
+    <!-- 2. Consumo -->
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">2</div><div><h4>Média de consumo</h4><p>Registre a média e fotografe o painel</p></div></div>
+      <p class="in-label">Média alcançada (km/l) <span class="req">*</span></p>
+      <input class="txt" id="consumoInput" placeholder="Ex: 5,0" inputmode="decimal">
+      <div class="field-gap"><p class="in-label">Foto do painel de consumo <span class="req-tag">(obrigatória)</span></p>
+        <div class="slot-mount" data-key="painel" data-ps="média exibida no painel"></div>
+      </div>
+    </div>
+
+    <!-- 3. Higienização -->
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">3</div><div><h4>Higienização do veículo</h4><p>Obrigatória após transportar o enxoval usado</p></div></div>
+      <p class="in-label">Itens higienizados <span class="req">*</span></p>
+      <div class="htags" id="htags">
+        <button class="htag" data-h="teto"><span class="hc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Teto</button>
+        <button class="htag" data-h="parede"><span class="hc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Parede</button>
+        <button class="htag" data-h="chao"><span class="hc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Chão</button>
+        <button class="htag" data-h="cabine"><span class="hc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Cabine</button>
+      </div>
+      <div class="field-gap"><p class="in-label">Fotos da higienização <span class="req-tag">(obrigatória)</span></p>
+        <input type="file" accept="image/*" multiple id="hzInput" hidden>
+        <div class="photo-grid" id="hzGrid"></div>
+        <button type="button" class="photo-big" id="hzBig"><span class="ph-ic"><i data-lucide="camera"></i></span><span class="pt">Tirar ou adicionar fotos</span><span class="ps">registre o veículo sendo higienizado</span></button>
+        <button type="button" class="photo-add" id="hzMore" hidden><i data-lucide="plus"></i> Adicionar outra foto</button>
+      </div>
+    </div>
+
+    <!-- 4. Avaria -->
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">4</div><div><h4>Avaria no veículo?</h4><p>Informe qualquer dano ocorrido na viagem</p></div></div>
+      <div class="seg" id="avSeg"><button data-av="nao">Não</button><button data-av="sim">Sim</button></div>
+      <div id="avExtra" hidden>
+        <p class="in-label field-gap">Descreva a avaria <span class="req">*</span></p>
+        <textarea class="f-area" id="avDesc" placeholder="Em poucas palavras, qual dano ocorreu"></textarea>
+        <div class="field-gap"><p class="in-label">Foto da avaria <span class="req-tag">(obrigatória)</span></p>
+          <div class="slot-mount" data-key="avaria" data-ps="o dano no veículo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="go-btn" id="goBtn">Finalizar rota <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span id="toastMsg"></span></div>
+
+<div class="sheet-wrap" id="okWrap">
+  <div class="sheet">
+    <div class="ring" style="width:72px;height:72px;border-radius:50%;background:var(--ok-bg);color:var(--ok-ink);display:grid;place-items:center;margin:4px auto 15px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h3 style="margin:0 0 6px;font-size:18px;font-weight:600">Rota finalizada</h3>
+    <p style="margin:0 0 18px;font-size:13px;color:var(--muted)">Viagem fechada e higienização registrada. O resumo do dia entra aqui — a gente constrói em seguida.</p>
+    <button id="okBtn" style="width:100%;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;padding:15px;cursor:pointer">Voltar ao início</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const slots={};
+  const tipo='terminal';
+  let avaria=null, hzPhotos=[];
+
+  /* ---------- fotos (slot único) ---------- */
+  function mountSlot(el){
+    const key=el.dataset.key, ps=el.dataset.ps||'uma foto como comprovante';
+    el.innerHTML=`<div class="pslot">
+      <input type="file" accept="image/*" hidden>
+      <button type="button" class="pslot-empty"><div class="cam-ic"><i data-lucide="camera"></i></div><div class="pt">Tirar ou adicionar foto</div><div class="ps">Adicione ${ps}</div></button>
+      <div class="pslot-filled" hidden><img alt="Foto"><button type="button" class="pslot-replace"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Substituir</button></div>
+    </div>`;
+    const input=el.querySelector('input'), empty=el.querySelector('.pslot-empty'), filled=el.querySelector('.pslot-filled'), img=el.querySelector('img');
+    const open=()=>{ if(geoBlocked())return; input.click(); };
+    empty.addEventListener('click',open);
+    el.querySelector('.pslot-replace').addEventListener('click',open);
+    input.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{img.src=r.result;slots[key]=r.result;empty.hidden=true;filled.hidden=false;el.classList.remove('err');const lb=el.previousElementSibling;if(lb)lb.classList.remove('err');checkValid();};r.readAsDataURL(f);input.value='';});
+  }
+  document.querySelectorAll('.slot-mount').forEach(mountSlot);
+
+  /* ---------- fotos da higienização (grade) ---------- */
+  const hzInput=document.getElementById('hzInput'),hzGrid=document.getElementById('hzGrid'),hzBig=document.getElementById('hzBig'),hzMore=document.getElementById('hzMore');
+  function renderHz(){
+    hzGrid.innerHTML=hzPhotos.map((src,i)=>`<div class="pthumb"><img src="${src}" alt="Foto ${i+1}"><button class="prm" data-rm="${i}" aria-label="Remover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`).join('');
+    hzGrid.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{hzPhotos.splice(+b.dataset.rm,1);renderHz();checkValid();}));
+    hzBig.hidden=hzPhotos.length>0; hzMore.hidden=hzPhotos.length===0;
+  }
+  hzBig.addEventListener('click',()=>{ if(geoBlocked())return; hzInput.click(); });
+  hzMore.addEventListener('click',()=>{ if(geoBlocked())return; hzInput.click(); });
+  hzInput.addEventListener('change',e=>{
+    const files=[...e.target.files]; let left=files.length;
+    files.forEach(f=>{const r=new FileReader();r.onload=()=>{hzPhotos.push(r.result);if(--left===0){renderHz();checkValid();hzBig.classList.remove('err');const hl=hzBig.parentElement.querySelector('.in-label');if(hl)hl.classList.remove('err');}};r.readAsDataURL(f);});
+    hzInput.value='';
+  });
+
+  /* ---------- KM ---------- */
+  const kmInput=document.getElementById('kmInput');
+  function parseKm(v){ return parseInt((v||'').replace(/\D/g,''),10); }
+  kmInput.addEventListener('input',()=>{ kmInput.value=kmInput.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); kmInput.classList.remove('err'); const lb=kmInput.previousElementSibling; if(lb)lb.classList.remove('err'); checkValid(); });
+
+  /* ---------- itens higienizados ---------- */
+  document.querySelectorAll('#htags .htag').forEach(b=>b.addEventListener('click',()=>{ b.classList.toggle('sel'); const ht=document.getElementById('htags'); ht.classList.remove('err'); if(ht.previousElementSibling)ht.previousElementSibling.classList.remove('err'); checkValid(); }));
+  function itensSelecionados(){ return [...document.querySelectorAll('#htags .htag.sel')].map(b=>b.dataset.h); }
+
+  /* ---------- consumo ---------- */
+  const consumoInput=document.getElementById('consumoInput');
+  consumoInput.addEventListener('input',()=>{ consumoInput.classList.remove('err'); const lb=consumoInput.previousElementSibling; if(lb)lb.classList.remove('err'); checkValid(); });
+
+  /* ---------- avaria ---------- */
+  const avExtra=document.getElementById('avExtra'), avDesc=document.getElementById('avDesc');
+  document.querySelectorAll('#avSeg button').forEach(b=>b.addEventListener('click',()=>{
+    avaria=b.dataset.av;
+    document.querySelectorAll('#avSeg button').forEach(x=>x.classList.toggle('sel',x===b));
+    avExtra.hidden = avaria!=='sim';
+    document.getElementById('avSeg').classList.remove('err');
+    checkValid();
+  }));
+  avDesc.addEventListener('input',()=>{ avDesc.classList.remove('err'); const lb=avDesc.previousElementSibling; if(lb)lb.classList.remove('err'); checkValid(); });
+
+  /* ---------- GPS / geofence ---------- */
+  const geoChip=document.getElementById('geoChip'), toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
+  let atGao=true, toastTimer=null;
+  function renderGeo(){ geoChip.className='geo-chip '+(atGao?'in':'out'); geoChip.innerHTML='<span class="dot"></span>'+(atGao?'No pátio da GAO':'Fora da GAO'); }
+  geoChip.addEventListener('click',()=>{ atGao=!atGao; renderGeo(); checkValid(); });
+  renderGeo();
+  function showToast(msg){ toastMsg.textContent=msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
+  function geoBlocked(){ if(!atGao){ showToast('Você precisa estar no pátio da GAO para registrar o check-out.'); return true; } return false; }
+
+  /* ---------- validação ---------- */
+  const goBtn=document.getElementById('goBtn');
+  function valid(){
+    const kmOk = (()=>{ const f=parseKm(kmInput.value); return !isNaN(f) && f>0; })();
+    const consumoOk = consumoInput.value.trim() && slots.painel;
+    const higOk = itensSelecionados().length>=1 && hzPhotos.length>=1;
+    const avOk = avaria==='nao' || (avaria==='sim' && avDesc.value.trim() && slots.avaria);
+    return atGao && kmOk && slots.odometro && consumoOk && higOk && avOk;
+  }
+  function checkValid(){ goBtn.classList.toggle('ready', valid()); }
+
+  function clearErrors(){ document.querySelectorAll('.err').forEach(e=>e.classList.remove('err')); }
+  function collectMissing(){
+    const m=[];
+    const kmOk=(()=>{const f=parseKm(kmInput.value);return !isNaN(f)&&f>0;})();
+    if(!kmOk) m.push({l:kmInput.previousElementSibling, f:kmInput});
+    const od=document.querySelector('[data-key="odometro"]');
+    if(!slots.odometro) m.push({l:od.previousElementSibling, f:od});
+    if(!consumoInput.value.trim()) m.push({l:consumoInput.previousElementSibling, f:consumoInput});
+    const pn=document.querySelector('[data-key="painel"]');
+    if(!slots.painel) m.push({l:pn.previousElementSibling, f:pn});
+    const ht=document.getElementById('htags');
+    if(itensSelecionados().length<1) m.push({l:ht.previousElementSibling, f:ht});
+    if(hzPhotos.length<1){ const hb=document.getElementById('hzBig'); m.push({l:hb.parentElement.querySelector('.in-label'), f:hb}); }
+    if(avaria===null) m.push({l:null, f:document.getElementById('avSeg')});
+    if(avaria==='sim'){
+      if(!avDesc.value.trim()) m.push({l:avDesc.previousElementSibling, f:avDesc});
+      const av=document.querySelector('[data-key="avaria"]');
+      if(!slots.avaria) m.push({l:av.previousElementSibling, f:av});
+    }
+    return m;
+  }
+
+  /* ---------- navegação ---------- */
+  const okWrap=document.getElementById('okWrap');
+  function attemptFinalize(){
+    if(!atGao){ showToast('Você precisa estar no pátio da GAO para finalizar.'); return; }
+    const m=collectMissing();
+    if(m.length===0){
+      if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='resumo';GAO.setTrip(t);}
+      window.location.href='resumo.html'; return;
+    }
+    clearErrors();
+    m.forEach(x=>{ if(x.l)x.l.classList.add('err'); if(x.f)x.f.classList.add('err'); });
+    (m[0].f||m[0].l).scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  goBtn.addEventListener('click',attemptFinalize);
+  document.getElementById('okBtn').addEventListener('click',()=>{
+    if(window.GAO&&GAO.clearTrip)GAO.clearTrip();
+    try{ GAO.remove&&GAO.remove('gao_extras'); GAO.remove&&GAO.remove('gao_cargo'); }catch(e){}
+    window.location.href='index.html';
+  });
+  okWrap.addEventListener('click',e=>{ if(e.target===okWrap) okWrap.classList.remove('open'); });
+  document.getElementById('backBtn').addEventListener('click',()=>{ window.location.href='coleta.html'; });
+
+  if(window.lucide) lucide.createIcons();
+  checkValid();
+</script>
+</body>
+</html>

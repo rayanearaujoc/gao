@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Registrar acidente</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/carregar.css">
+<link rel="stylesheet" href="static/css/home.css">
+</head>
+<body class="p-acidente" data-page="home">
+
+<div class="app">
+  <div class="nav">
+    <div><h1>Registrar acidente</h1><p>Encerramos a viagem. Cuide-se primeiro.</p></div>
+  </div>
+
+  <div class="content">
+    <div class="acc-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <p>Sentimos muito que isso tenha acontecido. As entregas e coletas que faltavam foram marcadas como não realizadas. Registre o ocorrido para fecharmos a viagem.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">1</div><div><h4>O que aconteceu?</h4><p>Descreva o acidente em poucas palavras</p></div></div>
+      <p class="in-label">Descrição <span class="req">*</span></p>
+      <textarea class="f-area" id="descInput" placeholder="Ex: colisão na traseira ao frear no cruzamento"></textarea>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">2</div><div><h4>Quilometragem atual</h4><p>Valor do painel no momento do acidente</p></div></div>
+      <p class="in-label">Quilometragem <span class="req">*</span></p>
+      <input class="txt" id="kmInput" placeholder="Ex: 120.500" inputmode="numeric">
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-num">3</div><div><h4>Fotos do ocorrido</h4><p>Registre o veículo e o local do acidente</p></div></div>
+      <p class="in-label">Fotos <span class="req-tag">(obrigatória)</span></p>
+      <input type="file" accept="image/*" multiple id="photoInput" hidden>
+      <div class="photo-grid" id="photoGrid"></div>
+      <button type="button" class="photo-big" id="photoBig"><span class="ph-ic"><i data-lucide="camera"></i></span><span class="pt">Tirar ou adicionar fotos</span><span class="ps">registre o veículo ou o local</span></button>
+      <button type="button" class="photo-add" id="photoMore" hidden><i data-lucide="plus"></i> Adicionar outra foto</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer show">
+  <button class="foot-btn off" id="finBtn">Finalizar e ir ao resumo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  var descInput=document.getElementById('descInput'), kmInput=document.getElementById('kmInput'), finBtn=document.getElementById('finBtn');
+  var photoInput=document.getElementById('photoInput'), photoGrid=document.getElementById('photoGrid'), photoBig=document.getElementById('photoBig'), photoMore=document.getElementById('photoMore');
+  var photos=[];
+
+  function renderPhotos(){
+    photoGrid.innerHTML=photos.map(function(src,i){ return '<div class="pthumb"><img src="'+src+'" alt="Foto '+(i+1)+'"><button class="prm" data-rm="'+i+'" aria-label="Remover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>'; }).join('');
+    photoGrid.querySelectorAll('[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ photos.splice(+b.dataset.rm,1); renderPhotos(); check(); }); });
+    photoBig.hidden=photos.length>0; photoMore.hidden=photos.length===0;
+    if(photos.length){ var s=document.querySelector('.sec .in-label'); }
+  }
+  photoBig.addEventListener('click',function(){ photoInput.click(); });
+  photoMore.addEventListener('click',function(){ photoInput.click(); });
+  photoInput.addEventListener('change',function(e){
+    var files=[].slice.call(e.target.files); var left=files.length;
+    files.forEach(function(f){ var r=new FileReader(); r.onload=function(){ photos.push(r.result); if(--left===0){ renderPhotos(); check(); var lb=photoBig.parentElement.querySelector('.in-label'); if(lb)lb.classList.remove('err'); photoBig.classList.remove('err'); } }; r.readAsDataURL(f); });
+    photoInput.value='';
+  });
+
+  kmInput.addEventListener('input',function(){ this.value=this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); this.classList.remove('err'); var lb=this.previousElementSibling; if(lb)lb.classList.remove('err'); check(); });
+  descInput.addEventListener('input',function(){ this.classList.remove('err'); var lb=this.previousElementSibling; if(lb)lb.classList.remove('err'); check(); });
+
+  function valid(){ return descInput.value.trim() && kmInput.value.trim() && photos.length>=1; }
+  function check(){ finBtn.classList.toggle('off', !valid()); }
+  check();
+  if(window.lucide) lucide.createIcons();
+
+  finBtn.addEventListener('click',function(){
+    if(!valid()){
+      document.querySelectorAll('.err').forEach(function(e){e.classList.remove('err');});
+      var first=null;
+      if(!descInput.value.trim()){ descInput.classList.add('err'); descInput.previousElementSibling.classList.add('err'); first=first||descInput; }
+      if(!kmInput.value.trim()){ kmInput.classList.add('err'); kmInput.previousElementSibling.classList.add('err'); first=first||kmInput; }
+      if(photos.length<1){ photoBig.classList.add('err'); var lb=photoBig.parentElement.querySelector('.in-label'); if(lb)lb.classList.add('err'); first=first||photoBig; }
+      if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    var out=[], n=photos.length, done=0;
+    function save(fotos){
+      try{ if(window.GAO&&GAO.save){ var d=new Date(), hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); GAO.save('gao_acidente',{desc:descInput.value.trim(), km:kmInput.value.trim(), fotos:fotos, foto:fotos[0]||null, hora:hora}); } }catch(e){}
+      try{ if(window.GAO&&GAO.setTrip){ var t=(GAO.getTrip&&GAO.getTrip())||{route:0}; t.step='resumo'; GAO.setTrip(t); } }catch(e){}
+      window.location.href='resumo.html';
+    }
+    photos.forEach(function(p,ix){
+      if(window.GAO&&GAO.shrink){ GAO.shrink(p,480,function(s){ out[ix]=s; if(++done===n) save(out); }); }
+      else { out[ix]=p; if(++done===n) save(out); }
+    });
+  });
+</script>
+</body>
+</html>

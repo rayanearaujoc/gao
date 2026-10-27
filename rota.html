@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Rota do dia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/rota.css">
+</head>
+<body class="p-rota" data-page="home" data-flow-step="rota">
+
+<div class="app">
+  <div class="nav">
+    <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h1>Sua rota de hoje</h1><p>Rota otimizada · Rota Hospitalar</p></div>
+  </div>
+
+  <section class="view active" id="viewLoading">
+    <div class="spinner"></div>
+    <h1>Calculando a melhor rota</h1>
+    <p>Estamos montando a rota mais curta com base nas paradas e nas localizações dos clientes.</p>
+  </section>
+
+  <section class="view" id="viewRoute">
+    <div class="content">
+      <div class="summary">
+        <div class="sm"><b>4</b><small>Paradas</small></div>
+        <div class="sm"><b>18 km</b><small>Distância</small></div>
+        <div class="sm"><b>1h10</b><small>Tempo est.</small></div>
+      </div>
+      <a class="maps-btn" id="mapsBtn" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Abrir rota no Google Maps
+      </a>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+</div>
+
+<div class="footer" id="footer">
+  <button class="foot-btn" id="startBtn">Iniciar entregas <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<div class="sheet-wrap" id="okWrap">
+  <div class="sheet">
+    <div class="ring"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg></div>
+    <h3>Próxima etapa: entregas</h3>
+    <p>A tela de confirmar as entregas entra aqui — vamos construir ela em seguida.</p>
+    <button id="okBtn">Entendi</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const HUB='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M3 21h18M9 21v-6h6v6"/></svg>';
+  const BOX='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>';
+  const INBOX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
+  const TRUCK='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>';
+
+  const stops=[
+    {type:'hub', kind:'Partida', name:'GAO Lavanderia', addr:'Saída do centro de distribuição'},
+    {type:'e', kind:'Entrega', name:'Materno Infantil', addr:'Av. T-9, 1200 · Setor Bueno'},
+    {type:'e', kind:'Entrega', name:'Hospital Albert Einstein', addr:'Av. Brasil, 850 · Centro'},
+    {phase:'Entregas concluídas. Agora começam as coletas.'},
+    {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:'Rua 84, 420 · Setor Sul'},
+    {type:'c', kind:'Coleta', name:'SJ Hotel', addr:'Av. Anhanguera, 77 · Centro'},
+    {type:'hub', kind:'Retorno', name:'GAO Lavanderia', addr:'Devolução no centro de distribuição'},
+  ];
+  const timeline=document.getElementById('timeline');
+  timeline.innerHTML=stops.map(s=>{
+    if(s.phase) return `<div class="tl-phase">${TRUCK} ${s.phase}</div>`;
+    const ic = s.type==='hub' ? HUB : (s.type==='e' ? BOX : INBOX);
+    const kindCls = s.type==='hub'?'h':s.type;
+    return `<div class="tl-item">
+      <div class="tl-rail"><div class="tl-node ${s.type}">${ic}</div></div>
+      <div class="tl-body">
+        <div class="tl-kind ${kindCls}">${s.kind}</div>
+        <div class="tl-name">${s.name}</div>
+        <div class="tl-addr">${s.addr}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const dest=stops.filter(s=>!s.phase).map(s=>encodeURIComponent(s.name+' Goiânia'));
+  document.getElementById('mapsBtn').href='https://www.google.com/maps/dir/'+dest.join('/');
+
+  const viewLoading=document.getElementById('viewLoading'), viewRoute=document.getElementById('viewRoute'), footer=document.getElementById('footer');
+  setTimeout(()=>{
+    viewLoading.classList.remove('active');
+    viewRoute.classList.add('active');
+    footer.classList.add('show');
+    window.scrollTo({top:0});
+  }, 1800);
+
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='carregar.html';});
+  const okWrap=document.getElementById('okWrap');
+  document.getElementById('startBtn').addEventListener('click',()=>{ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='entrega';GAO.setTrip(t);} window.location.href='entrega.html'; });
+  document.getElementById('okBtn').addEventListener('click',()=>okWrap.classList.remove('open'));
+  okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
+</script>
+</body>
+</html>

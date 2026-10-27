@@ -1,0 +1,16 @@
+/* ===== Exclusivo: Coleta (coleta.html) =====
+   Reaproveita app.css + carregar.css (order, stepper, sel-field, foto, sheet)
+   + entrega.css (geo, toast). Aqui só o que é novo da coleta. */
+.p-coleta .content{display:flex;flex-direction:column;gap:18px}
+
+/* aviso do topo: coleta do enxoval usado */
+.c-note{display:flex;gap:10px;align-items:flex-start;background:var(--info-bg);border-radius:12px;padding:12px 13px;color:var(--info-ink)}
+.c-note svg{color:var(--primary);flex:none;margin-top:1px;width:18px;height:18px;opacity:.9}
+.c-note p{margin:0;font-size:12.5px;line-height:1.45;font-weight:500}
+
+/* referência do pedido (o aproximado que o cliente pediu no Gal Cliente) */
+.qty-hint{font-size:11.5px;color:var(--muted);margin:-8px 2px 12px}
+
+/* aviso de saldo — só aparece quando coletou MENOS que a última entrega */
+.saldo-note{background:var(--info-bg);color:var(--info-ink);border-radius:11px;padding:11px 13px;font-size:12.5px;line-height:1.5;font-weight:500;margin-top:12px}
+.saldo-note b{font-weight:700}

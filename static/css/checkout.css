@@ -1,0 +1,17 @@
+/* ===== Exclusivo: Check-out do caminhão (checkout.html) =====
+   Reaproveita app.css + home.css (sec/in-label/input/seg/pslot) +
+   carregar.css (photo-grid) + entrega.css (geo/toast). Aqui só o novo. */
+.p-checkout .content{display:flex;flex-direction:column;gap:0}
+
+/* itens higienizados (múltipla escolha) */
+.htags{display:flex;flex-wrap:wrap;gap:9px}
+.htag{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--card);border-radius:20px;padding:9px 15px;font-size:13px;font-weight:600;color:var(--fg);cursor:pointer}
+.htag .hc{display:none;color:var(--read)}
+.htag .hc svg{width:15px;height:15px;stroke-width:3}
+.htag.sel{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,transparent);color:var(--read)}
+.htag.sel .hc{display:inline-flex}
+.htags.err .htag{border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.photo-big.err{border-color:var(--bad)}
+
+/* sheet de sucesso centralizado */
+.p-checkout .sheet{text-align:center}

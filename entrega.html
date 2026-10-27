@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Entregas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/carregar.css">
+<link rel="stylesheet" href="static/css/entrega.css">
+</head>
+<body class="p-entrega" data-page="home" data-flow-step="entregas">
+
+<div class="app">
+  <div class="nav">
+    <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h1>Entregas</h1><p>Entregue o enxoval limpo na ordem da rota</p></div>
+  </div>
+  <div class="content">
+    <div class="e-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <p>Só entregas agora. As coletas de enxoval usado vêm depois, pra não misturar com o enxoval limpo.</p>
+    </div>
+    <div class="geo"><span class="geo-lbl">Simular GPS:</span><button class="geo-chip in" id="geoChip"></button></div>
+    <div id="orders"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="go-btn" id="goBtn" disabled>Concluir entregas <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<!-- SCAN -->
+<div class="sheet-wrap" id="sheetWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" stroke-linecap="round"/></svg></div>
+      <button class="sheet-x" id="closeScan" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <h2>Ler código da gaiola</h2>
+    <p class="sub" id="sheetSub">—</p>
+    <div class="sheet-prog"><span class="count" id="sheetCount">0 de 4 lidas</span><div class="bar" id="sheetBar"><i></i></div></div>
+    <div class="cam" id="cam">
+      <div class="sim-tests">
+        <button data-state="wrong">Outra comanda</button>
+        <button data-state="invalid">Código inválido</button>
+        <button data-state="fail">Falha na leitura</button>
+        <button data-state="dup">Já lida</button>
+      </div>
+      <div class="reticle"><span></span><span></span><span></span><span></span></div>
+      <div class="laser"></div><div class="hint">Aponte para a etiqueta</div>
+      <div class="feedback" id="feedback"><div class="fb-ring"></div><div class="fb-title"></div><div class="fb-sub"></div></div>
+    </div>
+    <button class="sim" id="simBtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Simular leitura correta</button>
+    <div class="manual"><div class="lbl">Ou digite o código da etiqueta</div><div class="row"><input id="manualInput" placeholder="Ex: 0111111" inputmode="numeric"><button id="manualBtn">Confirmar</button></div></div>
+  </div>
+</div>
+
+<!-- PROBLEMA COM A LEITURA -->
+<div class="sheet-wrap" id="reportWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico bad"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+      <button class="sheet-x" id="closeReport" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="reportForm">
+      <h2>Reportar um problema</h2>
+      <p class="sub">Problema com uma gaiola ou com a entrega</p>
+      <p class="f-label">Qual o motivo? <span class="req">*</span></p>
+      <select class="sel-field" id="reportSelect">
+        <option value="">Selecione o motivo</option>
+        <optgroup label="Problema na leitura">
+          <option value="codigo">Código de barras não funciona</option>
+          <option value="ilegivel">Etiqueta ilegível</option>
+          <option value="faltando">Etiqueta faltando</option>
+          <option value="outro">Outro problema de leitura</option>
+        </optgroup>
+        <optgroup label="Não consegui entregar">
+          <option value="ausente">Cliente ausente</option>
+          <option value="recusada">Entrega recusada pelo cliente</option>
+          <option value="sem-acesso">Endereço sem acesso / fechado</option>
+          <option value="acidente">Acidente com o caminhão</option>
+        </optgroup>
+      </select>
+      <textarea class="f-area" id="reportOther" placeholder="Em poucas palavras, descreva o problema" hidden></textarea>
+      <p class="report-note" id="reportNote" hidden></p>
+      <div id="reportQtyBlock" hidden>
+        <p class="f-label">Quantas gaiolas afetadas?</p>
+        <div class="stepper"><button id="rpMinus" aria-label="Menos">−</button><b id="rpVal">0</b><button id="rpPlus" aria-label="Mais">+</button></div>
+      </div>
+      <button class="cta" id="reportBtn" disabled>Registrar problema</button>
+    </div>
+    <div id="reportSuccess" hidden>
+      <div class="success"><div class="ring"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3 id="reportSuccTitle">Problema registrado</h3><p id="reportSuccMsg">Anotado.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMAR ENTREGA -->
+<div class="sheet-wrap" id="confirmWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <button class="sheet-x" id="closeConfirm" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="confirmForm">
+      <h2>Confirmar entrega</h2>
+      <p class="sub" id="confirmSub">—</p>
+
+      <p class="f-label">Quantidade entregue</p>
+      <div class="stepper"><button id="stepMinus" aria-label="Menos">−</button><b id="qtyVal">4</b><button id="stepPlus" aria-label="Mais">+</button></div>
+
+      <div id="reasonBlock" hidden>
+        <div class="gestor-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div><b>Conte o que aconteceu</b><p>Você está entregando menos gaiolas do que foram carregadas. Registre o motivo da diferença.</p></div>
+        </div>
+        <p class="f-label" id="reasonLabel">Por que 1 gaiola não foi entregue? <span class="req">*</span></p>
+        <select class="sel-field" id="confirmSelect">
+          <option value="">Selecione o motivo</option>
+          <option value="nao-localizada">Não localizada no caminhão</option>
+          <option value="avaria">Gaiola com avaria</option>
+          <option value="recusada">Recusada pelo cliente</option>
+          <option value="outro">Outro</option>
+        </select>
+        <textarea class="f-area" id="confirmOther" placeholder="Em poucas palavras, descreva o que aconteceu" hidden></textarea>
+      </div>
+
+      <p class="f-label">Quem recebeu? <span class="req">*</span></p>
+      <select class="sel-field" id="recebeuSelect">
+        <option value="">Selecione</option>
+        <option value="portaria">Portaria</option>
+        <option value="recepcao">Recepção</option>
+        <option value="enfermagem">Enfermagem</option>
+        <option value="almox">Almoxarifado</option>
+        <option value="outro">Outro</option>
+      </select>
+      <div id="nomeBlock" hidden>
+        <p class="f-label">Nome da pessoa que recebeu <span class="req">*</span></p>
+        <input class="e-input" id="recebeuNome" placeholder="Digite o nome de quem recebeu">
+      </div>
+
+      <div class="photo-row">
+        <p class="f-label" style="margin-top:0">Foto da entrega <span class="req-tag">(obrigatória)</span></p>
+        <input type="file" accept="image/*" multiple id="photoInput" hidden>
+        <div class="photo-grid" id="photoGrid"></div>
+        <button type="button" class="photo-big" id="photoBig"><span class="ph-ic"><i data-lucide="camera"></i></span><span class="pt">Tirar ou adicionar foto</span><span class="ps">registre o enxoval sendo entregue</span></button>
+        <button type="button" class="photo-add" id="photoMore" hidden><i data-lucide="plus"></i> Adicionar outra foto</button>
+      </div>
+
+      <p class="f-label">Assinatura de quem recebeu <span style="color:var(--muted);font-weight:500">(opcional)</span></p>
+      <div class="sign" id="sign"><canvas id="sigCanvas"></canvas><span class="sign-ph">Assine aqui</span><button type="button" class="sign-clear" id="sigClear">Limpar</button></div>
+
+      <button type="button" class="link-report" id="confirmColeta" style="margin:16px 0 0">Cliente possui uma coleta?</button>
+      <button class="cta" id="confirmBtn" disabled>Confirmar entrega <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
+    </div>
+    <div id="confirmSuccess" hidden>
+      <div class="success"><div class="ring"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>Entrega confirmada</h3><p id="succLine">—</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- COLETA EXTRA -->
+<div class="sheet-wrap" id="coletaWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg></div>
+      <button class="sheet-x" id="closeColeta" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="coletaForm">
+      <h2>Coleta extra</h2>
+      <p class="sub" id="coletaSub">—</p>
+      <p class="note-info"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Coleta fora do sistema. Vamos adicionar às coletas da rota e recalcular o trajeto.</p>
+      <p class="f-label">Quantas gaiolas, aproximadamente?</p>
+      <div class="stepper"><button id="colMinus" aria-label="Menos">−</button><b id="colVal">1</b><button id="colPlus" aria-label="Mais">+</button></div>
+      <button type="button" class="col-delete" id="coletaDelete" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg> Excluir coleta extra</button>
+      <button class="cta" id="coletaBtn">Registrar coleta</button>
+    </div>
+    <div id="coletaSuccess" hidden>
+      <div class="success"><div class="ring"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>Coleta extra adicionada</h3><p>Ela entra nas coletas da viagem.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- próxima etapa: coletas -->
+<div class="sheet-wrap" id="okWrap">
+  <div class="sheet" style="text-align:center">
+    <div class="ring" style="width:64px;height:64px;border-radius:50%;background:var(--info-bg);color:var(--primary);display:grid;place-items:center;margin:6px auto 14px"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 2.5v5M9 5l3 3 3-3"/></svg></div>
+    <h3 style="margin:0 0 6px;font-size:18px;font-weight:600">Entregas concluídas</h3>
+    <p style="margin:0 0 18px;font-size:13px;color:var(--muted)">Agora começam as coletas do enxoval usado — a gente constrói essa tela em seguida.</p>
+    <button id="okBtn" style="width:100%;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;padding:15px;cursor:pointer">Entendi</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="toastMsg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+  const CHK13='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const X13='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  const CUBE='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>';
+  const CHEV='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  const BARCODE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" stroke-linecap="round"/></svg>';
+  const CHKW='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const NOMES={portaria:'João Pereira',recepcao:'Maria Souza',enfermagem:'Ana Lima',almox:'Carlos Dias',outro:''};
+
+  const data=[
+    {name:"Materno Infantil", id:"#0987", n:7},
+    {name:"Hospital Albert Einstein", id:"#7643", n:4},
+  ];
+  let orders=[], activeIdx=0, busy=false;
+  const ordersEl=document.getElementById('orders');
+  const goBtn=document.getElementById('goBtn');
+  const pend=o=>o.cages.filter(c=>c.status==='pendente');
+  const resolved=o=>pend(o).length===0;
+
+  function build(){
+    orders=data.map((o,i)=>({...o, listOpen:i===0, delivered:false, deliveredQty:null, reason:null, reasonText:'', recebeu:'', nome:'', photos:[], _col:false,
+      failed:false, failReason:null, failSel:null, failText:'', _failcol:false, leitura:[],
+      cages:Array.from({length:o.n},()=>({status:'pendente'}))}));
+    activeIdx=0;
+    ordersEl.innerHTML=orders.map((o,i)=>orderHTML(o,i)).join('');
+    orders.forEach((o,i)=>{
+      ordersEl.querySelector(`[data-listhead="${i}"]`).addEventListener('click',()=>{o.listOpen=!o.listOpen;syncAll();});
+      ordersEl.querySelector(`[data-scan="${i}"]`).addEventListener('click',()=>openScan(i));
+      ordersEl.querySelector(`[data-report="${i}"]`).addEventListener('click',()=>openReport(i));
+      ordersEl.querySelector(`[data-confirmopen="${i}"]`).addEventListener('click',()=>{ if(geoBlocked())return; openConfirm(i); });
+      ordersEl.querySelector(`[data-revise="${i}"]`).addEventListener('click',()=>openConfirm(i));
+      ordersEl.querySelector(`[data-coleta="${i}"]`).addEventListener('click',()=>openColeta(i));
+      ordersEl.querySelector(`[data-undofail="${i}"]`).addEventListener('click',()=>undoFail(i));
+    });
+    syncAll();
+  }
+  function orderHTML(o,i){
+    const rows=o.cages.map((c,j)=>`<div class="cage" data-cage="${i}-${j}"><span class="cname">Gaiola <b>${String(j+1).padStart(2,'0')}</b></span><span class="cstatus" data-cst="${i}-${j}"></span></div>`).join('');
+    return `
+    <div class="order" data-order="${i}">
+      <div class="order-head">
+        <div class="badge">${CUBE}</div>
+        <div class="t"><h3>${o.name}</h3><div><span class="chip" data-chip="${i}"></span></div></div>
+        <span class="order-id">${o.id}</span>
+      </div>
+      <div class="order-pad">
+        <div class="list-head" data-listhead="${i}"><span class="lh-l" data-lhl="${i}">Gaiolas desta entrega</span><span class="lh-chev">${CHEV}</span></div>
+        <div class="cages-wrap"><div class="cages-inner"><div class="cages">${rows}</div></div></div>
+        <button class="btn read" data-scan="${i}">Ler código ${BARCODE}</button>
+        <button class="link-report" data-report="${i}">Reportar um problema</button>
+        <button class="btn primary" data-confirmopen="${i}" hidden>Confirmar entrega ${CHKW}</button>
+        <button class="btn-revise" data-revise="${i}" hidden>Revisar entrega</button>
+        <button class="link-report" data-coleta="${i}" hidden>Cliente possui uma coleta?</button>
+        <div class="reported-note" data-analise="${i}" hidden>
+          <span class="rn-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg> <b data-analbl="${i}">Não entregue</b></span>
+          <button class="undo-report" data-undofail="${i}">Desfazer</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  function syncAll(){
+    orders.forEach((o,i)=>{
+      const el=ordersEl.querySelector(`[data-order="${i}"]`);
+      const done=resolved(o), conf=o.delivered, failed=o.failed;
+      if(failed && !o._failcol){o.listOpen=false;o._failcol=true;}
+      else if(done && !o._col){o.listOpen=false;o._col=true;}
+      el.classList.toggle('list-open',o.listOpen);
+      el.classList.toggle('done',conf||failed);
+      el.classList.toggle('is-fail',failed);
+      el.querySelector(`[data-lhl="${i}"]`).textContent=done?'Gaiolas lidas':'Gaiolas desta entrega';
+      const chip=el.querySelector(`[data-chip="${i}"]`);
+      if(failed){ chip.className='chip nao'; chip.innerHTML='Não entregue'; }
+      else { chip.className='chip '+(conf?'load':'pend'); chip.innerHTML=conf?`${CHKW} Entregue`:'Pendente'; }
+      el.querySelector(`[data-scan="${i}"]`).hidden=done||failed;
+      el.querySelector(`[data-report="${i}"]`).hidden=done||failed;
+      el.querySelector(`[data-confirmopen="${i}"]`).hidden=!(done&&!conf)||failed;
+      el.querySelector(`[data-revise="${i}"]`).hidden=!conf||failed;
+      const an=el.querySelector(`[data-analise="${i}"]`); if(an)an.hidden=!failed;
+      if(failed){ const lbl=el.querySelector(`[data-analbl="${i}"]`); if(lbl) lbl.textContent=o.failReason||'Não entregue'; }
+      o.cages.forEach((c,j)=>{
+        const st=el.querySelector(`[data-cst="${i}-${j}"]`), cg=el.querySelector(`[data-cage="${i}-${j}"]`);
+        cg.classList.remove('is-read','is-problema');
+        if(c.status==='lida'){st.className='cstatus read';st.innerHTML=CHK13;cg.classList.add('is-read');}
+        else if(c.status==='problema'){st.className='cstatus problema';st.innerHTML=X13;cg.classList.add('is-problema');}
+        else{st.className='cstatus';st.innerHTML='';}
+      });
+      const cl=el.querySelector(`[data-coleta="${i}"]`);
+      cl.hidden=!done||failed;
+      if(o.extraColeta){ cl.textContent=`Coleta adicionada · ${o.extraColeta} ${o.extraColeta>1?'gaiolas':'gaiola'}`; cl.classList.add('has'); }
+      else { cl.textContent='Cliente possui uma coleta?'; cl.classList.remove('has'); }
+    });
+    const allDone=orders.every(o=>o.delivered || o.failed);
+    goBtn.disabled=!allDone; goBtn.classList.toggle('ready',allDone);
+  }
+
+  /* ---------- SCAN ---------- */
+  const sheetWrap=document.getElementById('sheetWrap'),sheetSub=document.getElementById('sheetSub'),sheetCount=document.getElementById('sheetCount'),sheetBar=document.getElementById('sheetBar'),simBtn=document.getElementById('simBtn'),feedback=document.getElementById('feedback');
+  let fbTimer=null;
+  const FB_ICON={
+    ok:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M9 12l2 2 4-4"/></svg>',
+    wrong:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    invalid:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    fail:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>',
+    dup:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4.5 4.5L17 7"/><path d="M11 14.5L13 16.5 22 7"/></svg>',
+  };
+  function showFeedback(state,d={}){
+    clearTimeout(fbTimer); let title='',sub='';
+    if(state==='ok'){title=d.client;sub=`Gaiola ${d.num} · entregar a este cliente`;}
+    else if(state==='wrong'){title='Gaiola de outra comanda';sub=`${d.id} · ${d.name}`;}
+    else if(state==='invalid'){title='Código não reconhecido';sub='Não pertence a nenhuma entrega';}
+    else if(state==='fail'){title='Não foi possível ler';sub='Aproxime a etiqueta ou digite o código';}
+    else if(state==='dup'){title='Gaiola já lida';sub='Passe para a próxima etiqueta';}
+    feedback.querySelector('.fb-ring').innerHTML=FB_ICON[state];
+    feedback.querySelector('.fb-title').textContent=title;
+    feedback.querySelector('.fb-sub').textContent=sub;
+    feedback.className='feedback show '+state;
+    const vib={ok:50,wrong:[30,40,30],invalid:[60,50,60],fail:[20,30,20],dup:40}[state];
+    if(navigator.vibrate&&vib)navigator.vibrate(vib);
+    fbTimer=setTimeout(()=>feedback.classList.remove('show'), state==='ok'?1100:(state==='dup'?1100:1900));
+  }
+  function openScan(i){
+    if(geoBlocked())return;
+    activeIdx=i; const o=orders[i];
+    if(!o.listOpen){o.listOpen=true;syncAll();}
+    sheetSub.textContent=`${o.name} · ${o.id}`;
+    document.querySelector('.cam .hint').textContent='Aponte para a etiqueta';
+    feedback.classList.remove('show'); simBtn.disabled=false;
+    simBtn.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Simular leitura correta';
+    syncScan(); sheetWrap.classList.add('open');
+  }
+  function syncScan(){
+    const o=orders[activeIdx],total=o.cages.length,lidas=o.cages.filter(c=>c.status==='lida').length,scanned=o.cages.filter(c=>c.status!=='pendente').length;
+    sheetBar.querySelector('i').style.width=(scanned/total*100)+'%';
+    sheetCount.textContent=`${lidas} de ${total} lidas`;
+    const full=pend(o).length===0; sheetCount.classList.toggle('full',full); sheetBar.classList.toggle('full',full);
+  }
+  function readNext(){
+    if(busy) return;
+    const o=orders[activeIdx], c=pend(o)[0]; if(!c) return;
+    c.status='lida'; const idx=o.cages.indexOf(c);
+    showFeedback('ok',{num:String(idx+1).padStart(2,'0'),client:o.name});
+    const cg=ordersEl.querySelector(`[data-cage="${activeIdx}-${idx}"]`);
+    if(cg){cg.classList.add('flash');setTimeout(()=>cg.classList.remove('flash'),600);}
+    syncScan(); syncAll();
+    if(pend(o).length===0) finishScan();
+  }
+  function finishScan(){
+    busy=true; simBtn.disabled=true; clearTimeout(fbTimer);
+    feedback.querySelector('.fb-ring').innerHTML=FB_ICON.ok;
+    feedback.querySelector('.fb-title').textContent='Gaiolas do cliente foram lidas';
+    feedback.querySelector('.fb-sub').textContent='Confirme a entrega';
+    feedback.className='feedback show ok';
+    if(navigator.vibrate)navigator.vibrate([40,60,120]);
+    setTimeout(()=>{feedback.classList.remove('show');sheetWrap.classList.remove('open');busy=false;syncAll();openConfirm(activeIdx);},1300);
+  }
+  simBtn.addEventListener('click',readNext);
+  document.querySelectorAll('.sim-tests button').forEach(b=>b.addEventListener('click',()=>{
+    const st=b.dataset.state;
+    if(st==='wrong'){const other=orders.find((x,ix)=>ix!==activeIdx)||orders[0];showFeedback('wrong',{id:other.id,name:other.name});}
+    else showFeedback(st);
+  }));
+  document.getElementById('manualBtn').addEventListener('click',()=>{const el=document.getElementById('manualInput');if(el.value.trim()){readNext();el.value='';}});
+  document.getElementById('manualInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('manualBtn').click();});
+  document.getElementById('closeScan').addEventListener('click',()=>sheetWrap.classList.remove('open'));
+  sheetWrap.addEventListener('click',e=>{if(e.target===sheetWrap)sheetWrap.classList.remove('open');});
+
+  /* ---------- PROBLEMA ---------- */
+  const reportWrap=document.getElementById('reportWrap'),reportSelect=document.getElementById('reportSelect'),reportOther=document.getElementById('reportOther'),reportBtn=document.getElementById('reportBtn');
+  let reportIdx=0,rpQty=0,rpMax=0;
+  const NOTE_READ='A gaiola pode ser entregue normalmente. Isto só registra que o código não pôde ser lido.';
+  const NOTE_NODELIVER='Isto não conta como entrega. A parada sai da sua lista.';
+  const NOTE_ACIDENTE='Isto encerra a viagem. As paradas restantes não serão realizadas e você vai registrar o acidente.';
+  const READ_REASONS=['codigo','ilegivel','faltando','outro'];
+  function isNoDeliver(v){ return v && READ_REASONS.indexOf(v)<0; }
+  function openReport(i){
+    reportIdx=i; reportSelect.value=''; reportOther.value=''; reportOther.hidden=true;
+    rpMax=pend(orders[i]).length; rpQty=0;
+    document.getElementById('reportForm').hidden=false; document.getElementById('reportSuccess').hidden=true;
+    renderReport(); reportWrap.classList.add('open');
+  }
+  function renderReport(){
+    const val=reportSelect.value, nod=isNoDeliver(val), acc=(val==='acidente');
+    const note=document.getElementById('reportNote'), qtyBlock=document.getElementById('reportQtyBlock');
+    note.hidden=!val; if(val) note.textContent = acc ? NOTE_ACIDENTE : (nod ? NOTE_NODELIVER : NOTE_READ);
+    qtyBlock.hidden = !val || nod;
+    reportOther.hidden = val!=='outro';
+    document.getElementById('rpVal').textContent=rpQty;
+    document.getElementById('rpMinus').disabled=rpQty<=0;
+    document.getElementById('rpPlus').disabled=rpQty>=rpMax;
+    reportBtn.textContent = acc ? 'Registrar acidente' : 'Registrar problema';
+    const ok = nod ? true : (val && rpQty>=1 && (val!=='outro' || reportOther.value.trim()));
+    reportBtn.disabled=!ok;
+  }
+  document.getElementById('rpMinus').addEventListener('click',()=>{if(rpQty>0){rpQty--;renderReport();}});
+  document.getElementById('rpPlus').addEventListener('click',()=>{if(rpQty<rpMax){rpQty++;renderReport();}});
+  reportSelect.addEventListener('change',renderReport);
+  reportOther.addEventListener('input',renderReport);
+  document.getElementById('reportBtn').addEventListener('click',()=>{
+    const o=orders[reportIdx], val=reportSelect.value;
+    if(val==='acidente'){
+      orders.forEach(function(x){ if(!x.delivered && !x.failed){ x.failed=true; x.failReason='Viagem encerrada por acidente'; x.failText=''; persistFail(x); } });
+      try{ if(window.GAO&&GAO.setTrip){ var t=(GAO.getTrip&&GAO.getTrip())||{route:0}; t.step='acidente'; GAO.setTrip(t); } }catch(e){}
+      window.location.href='acidente.html'; return;
+    }
+    const sT=document.getElementById('reportSuccTitle'), sM=document.getElementById('reportSuccMsg');
+    if(isNoDeliver(val)){
+      o.failed=true; o.failSel=val; o.failReason=FAIL_LABELS[val]||'Não entregue'; o.failText='';
+      persistFail(o);
+      sT.textContent='Problema registrado'; sM.textContent='Esta entrega não será registrada.';
+    } else {
+      let n=rpQty;
+      for(const c of o.cages){ if(n<=0) break; if(c.status==='pendente'){ c.status='problema'; n--; } }
+      o.leitura=o.leitura||[]; o.leitura.push({motivo:(val==='outro'?'Outro':reportSelect.options[reportSelect.selectedIndex].text), gaiolas:rpQty, comentario:(val==='outro'?reportOther.value:'')});
+      sT.textContent='Problema de leitura registrado'; sM.textContent='A gaiola pode ser entregue normalmente.';
+    }
+    syncAll();
+    document.getElementById('reportForm').hidden=true; document.getElementById('reportSuccess').hidden=false;
+    if(navigator.vibrate)navigator.vibrate(50);
+    setTimeout(()=>reportWrap.classList.remove('open'),1500);
+  });
+  document.getElementById('closeReport').addEventListener('click',()=>reportWrap.classList.remove('open'));
+  reportWrap.addEventListener('click',e=>{if(e.target===reportWrap)reportWrap.classList.remove('open');});
+
+  /* ---------- NÃO ENTREGUE (motivo vem do modal de problema; a parada sai da lista) ---------- */
+  const FAIL_LABELS={ausente:'Cliente ausente',recusada:'Entrega recusada pelo cliente','sem-acesso':'Endereço sem acesso / fechado'};
+  function undoFail(i){ const o=orders[i]; o.failed=false; o.failSel=null; o.failReason=null; o.failText=''; o._failcol=false; removeEntrega(o.name); syncAll(); }
+  function persistFail(o){ try{
+    var d=new Date(), hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    var entry={name:o.name, qty:0, total:o.n, failed:true, failReason:o.failReason, failText:o.failText, setor:'', nome:'', hora:hora, foto:null};
+    var list=(window.GAO&&GAO.load&&GAO.load('gao_entregas'))||[]; var ix=list.findIndex(function(x){return x.name===entry.name;}); if(ix>=0)list[ix]=entry; else list.push(entry); GAO.save&&GAO.save('gao_entregas',list);
+  }catch(e){} }
+  function removeEntrega(name){ try{ var list=(window.GAO&&GAO.load&&GAO.load('gao_entregas'))||[]; list=list.filter(function(x){return x.name!==name;}); GAO.save&&GAO.save('gao_entregas',list); }catch(e){} }
+
+  /* ---------- CONFIRMAR ENTREGA ---------- */
+  const confirmWrap=document.getElementById('confirmWrap'),confirmSelect=document.getElementById('confirmSelect'),confirmOther=document.getElementById('confirmOther');
+  const recebeuSelect=document.getElementById('recebeuSelect'),recebeuNome=document.getElementById('recebeuNome'),nomeBlock=document.getElementById('nomeBlock');
+  const photoInput=document.getElementById('photoInput'),photoGrid=document.getElementById('photoGrid'),photoBig=document.getElementById('photoBig'),photoMore=document.getElementById('photoMore');
+  let confirmIdx=0, photos=[];
+  function scrollInSheet(el){ if(el) try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
+  function openConfirm(i){
+    confirmIdx=i; const o=orders[i];
+    if(o.deliveredQty===null) o.deliveredQty=o.cages.length;
+    confirmSelect.value=o.reason||''; confirmOther.value=o.reasonText||'';
+    recebeuSelect.value=o.recebeu||''; recebeuNome.value=o.nome||''; nomeBlock.hidden=!recebeuSelect.value;
+    photos=[...(o.photos||[])];
+    document.getElementById('confirmSub').textContent=`${o.name} · ${o.id}`;
+    document.getElementById('confirmForm').hidden=false; document.getElementById('confirmSuccess').hidden=true;
+    renderPhotos(); renderConfirm(); updateColetaLink(); confirmWrap.classList.add('open');
+    setTimeout(sizeCanvas,60);
+  }
+  function renderConfirm(){
+    const o=orders[confirmIdx], total=o.cages.length, diff=total-o.deliveredQty;
+    document.getElementById('qtyVal').textContent=o.deliveredQty;
+    document.getElementById('stepMinus').disabled=o.deliveredQty<=0;
+    document.getElementById('stepPlus').disabled=o.deliveredQty>=total;
+    document.getElementById('reasonBlock').hidden=diff<=0;
+    if(diff>0) document.getElementById('reasonLabel').innerHTML=`Por que ${diff} gaiola${diff>1?'s':''} não ${diff>1?'foram':'foi'} entregue${diff>1?'s':''}? <span class="req">*</span>`;
+    confirmOther.hidden = confirmSelect.value!=='outro';
+    const reasonOk = diff<=0 || (confirmSelect.value && (confirmSelect.value!=='outro' || confirmOther.value.trim()));
+    const recebeuOk = recebeuSelect.value && recebeuNome.value.trim();
+    const photoOk = photos.length>=1;
+    document.getElementById('confirmBtn').disabled=!(reasonOk && recebeuOk && photoOk);
+  }
+  function renderPhotos(){
+    photoGrid.innerHTML=photos.map((src,i)=>`<div class="pthumb"><img src="${src}" alt="Foto ${i+1}"><button class="prm" data-rm="${i}" aria-label="Remover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`).join('');
+    photoGrid.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{photos.splice(+b.dataset.rm,1);renderPhotos();}));
+    photoBig.hidden=photos.length>0; photoMore.hidden=photos.length===0;
+    renderConfirm();
+  }
+  photoBig.addEventListener('click',()=>photoInput.click());
+  photoMore.addEventListener('click',()=>photoInput.click());
+  photoInput.addEventListener('change',e=>{
+    const files=[...e.target.files]; let left=files.length;
+    files.forEach(f=>{const r=new FileReader();r.onload=()=>{photos.push(r.result);if(--left===0){renderPhotos();scrollInSheet(document.getElementById('sign'));}};r.readAsDataURL(f);});
+    photoInput.value='';
+  });
+  recebeuSelect.addEventListener('change',()=>{
+    const v=recebeuSelect.value, auto=NOMES[v];
+    nomeBlock.hidden=!v;
+    recebeuNome.value = (v && v!=='outro' && auto) ? auto : '';
+    renderConfirm();
+    scrollInSheet(nomeBlock.hidden ? document.querySelector('#confirmForm .photo-row') : nomeBlock);
+  });
+  recebeuNome.addEventListener('input',renderConfirm);
+  document.getElementById('stepMinus').addEventListener('click',()=>{const o=orders[confirmIdx];if(o.deliveredQty>0){o.deliveredQty--;renderConfirm();if(!document.getElementById('reasonBlock').hidden)scrollInSheet(document.getElementById('reasonBlock'));}});
+  document.getElementById('stepPlus').addEventListener('click',()=>{const o=orders[confirmIdx];if(o.deliveredQty<o.cages.length){o.deliveredQty++;renderConfirm();}});
+  confirmSelect.addEventListener('change',renderConfirm);
+  confirmOther.addEventListener('input',renderConfirm);
+  document.getElementById('closeConfirm').addEventListener('click',()=>confirmWrap.classList.remove('open'));
+  confirmWrap.addEventListener('click',e=>{if(e.target===confirmWrap)confirmWrap.classList.remove('open');});
+  document.getElementById('confirmBtn').addEventListener('click',()=>{
+    const o=orders[confirmIdx], total=o.cages.length, loaded=o.deliveredQty, diff=total-loaded;
+    o.delivered=true; o.reason=confirmSelect.value||null; o.reasonText=confirmOther.value||''; o.recebeu=recebeuSelect.value; o.nome=recebeuNome.value; o.photos=[...photos];
+    (function(){ try{
+      var setorLabel = recebeuSelect.value ? recebeuSelect.options[recebeuSelect.selectedIndex].text : '';
+      var reasonLabel = confirmSelect.value ? confirmSelect.options[confirmSelect.selectedIndex].text : null;
+      var d=new Date(), hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      var occ=[];
+      (o.leitura||[]).forEach(function(l){ var oc={tipo:'leitura-entrega', motivo:l.motivo, gaiolas:l.gaiolas}; if(l.comentario) oc.comentario=l.comentario; occ.push(oc); });
+      var ddiff=o.cages.length-o.deliveredQty;
+      if(ddiff>0){ var od={tipo:'qtd-entrega', gaiolas:ddiff}; if(confirmSelect.value==='outro'){ od.motivo='Outro'; if(o.reasonText)od.comentario=o.reasonText; } else { od.motivo=reasonLabel||''; } occ.push(od); }
+      var entry={name:o.name, qty:o.deliveredQty, total:o.cages.length, setor:setorLabel, nome:o.nome, hora:hora, foto:null, ocorrencias:occ};
+      function persist(){ try{ var list=(window.GAO&&GAO.load&&GAO.load('gao_entregas'))||[]; var ix=list.findIndex(function(x){return x.name===entry.name;}); if(ix>=0)list[ix]=entry; else list.push(entry); GAO.save&&GAO.save('gao_entregas',list); }catch(e){} }
+      var f=o.photos&&o.photos[0];
+      if(f && window.GAO && GAO.shrink){ GAO.shrink(f,480,function(s){ entry.foto=s; persist(); }); }
+      else { entry.foto=f||null; persist(); }
+    }catch(e){} })();
+    document.getElementById('confirmForm').hidden=true; document.getElementById('confirmSuccess').hidden=false;
+    document.getElementById('succLine').textContent=diff>0?`${loaded} de ${total} gaiolas entregues · ${o.nome}`:`${total} gaiolas entregues a ${o.nome}`;
+    if(navigator.vibrate)navigator.vibrate([40,60,120]);
+    setTimeout(()=>{
+      confirmWrap.classList.remove('open');
+      const next=orders.findIndex(x=>!x.delivered);
+      if(next!==-1){activeIdx=next;orders[next].listOpen=true;}
+      syncAll();
+      const t=ordersEl.querySelector(`[data-order="${next!==-1?next:confirmIdx}"]`);
+      if(t)t.scrollIntoView({behavior:'smooth',block:'center'});
+    },1500);
+  });
+
+  /* ---------- ASSINATURA ---------- */
+  const sign=document.getElementById('sign'), canvas=document.getElementById('sigCanvas'), ctx=canvas.getContext('2d');
+  let drawing=false;
+  function sizeCanvas(){ const r=canvas.getBoundingClientRect(); if(!r.width) return; canvas.width=r.width; canvas.height=r.height; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#0f172a'; }
+  function sPos(e){ const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}; }
+  function sStart(e){ drawing=true; const p=sPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); if(e.cancelable)e.preventDefault(); }
+  function sMove(e){ if(!drawing)return; const p=sPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); sign.classList.add('has'); if(e.cancelable)e.preventDefault(); }
+  function sEnd(){ drawing=false; }
+  if(ctx){
+    canvas.addEventListener('pointerdown',sStart); canvas.addEventListener('pointermove',sMove); window.addEventListener('pointerup',sEnd);
+    document.getElementById('sigClear').addEventListener('click',()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); sign.classList.remove('has'); });
+    window.addEventListener('resize',()=>{ if(confirmWrap.classList.contains('open')) sizeCanvas(); });
+  }
+
+  /* ---------- GPS simulado + geofence (raio de 2 km) ---------- */
+  const geoChip=document.getElementById('geoChip'), toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
+  let atClient=true, toastTimer=null;
+  function renderGeo(){ geoChip.className='geo-chip '+(atClient?'in':'out'); geoChip.innerHTML='<span class="dot"></span>'+(atClient?'No cliente':'Fora do raio'); }
+  geoChip.addEventListener('click',()=>{ atClient=!atClient; renderGeo(); });
+  renderGeo();
+  function showToast(msg){ toastMsg.textContent=msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
+  function geoBlocked(){ if(!atClient){ showToast('Você precisa estar a até 2 km do cliente para registrar a entrega.'); return true; } return false; }
+
+  /* ---------- coleta extra (só no confirmar entrega) ---------- */
+  const coletaWrap=document.getElementById('coletaWrap'), coletaDelete=document.getElementById('coletaDelete'), confirmColeta=document.getElementById('confirmColeta');
+  let coletaIdx=0, colQty=1;
+  function saveExtras(){ if(window.GAO&&GAO.save) GAO.save('gao_extras', orders.filter(o=>o.extraColeta).map(o=>({client:o.name,id:o.id,gaiolas:o.extraColeta}))); }
+  function updateColetaLink(){
+    const o=orders[confirmIdx];
+    if(o && o.extraColeta){ confirmColeta.textContent=`Coleta adicionada · ${o.extraColeta} ${o.extraColeta>1?'gaiolas':'gaiola'}`; confirmColeta.classList.add('has'); }
+    else { confirmColeta.textContent='Cliente pediu uma coleta extra?'; confirmColeta.classList.remove('has'); }
+  }
+  function openColeta(i){
+    coletaIdx=i; const o=orders[i];
+    colQty = o.extraColeta || 1;
+    coletaDelete.hidden=!o.extraColeta;
+    document.getElementById('coletaBtn').textContent = o.extraColeta ? 'Salvar coleta' : 'Registrar coleta';
+    document.getElementById('coletaSub').textContent=`${o.name} · ${o.id}`;
+    document.getElementById('coletaForm').hidden=false; document.getElementById('coletaSuccess').hidden=true;
+    renderColeta(); coletaWrap.classList.add('open');
+  }
+  function renderColeta(){ document.getElementById('colVal').textContent=colQty; document.getElementById('colMinus').disabled=colQty<=1; document.getElementById('colPlus').disabled=colQty>=20; }
+  document.getElementById('colMinus').addEventListener('click',()=>{if(colQty>1){colQty--;renderColeta();}});
+  document.getElementById('colPlus').addEventListener('click',()=>{if(colQty<20){colQty++;renderColeta();}});
+  document.getElementById('coletaBtn').addEventListener('click',()=>{
+    orders[coletaIdx].extraColeta=colQty; saveExtras(); updateColetaLink(); syncAll();
+    document.getElementById('coletaForm').hidden=true; document.getElementById('coletaSuccess').hidden=false;
+    if(navigator.vibrate)navigator.vibrate(50);
+    setTimeout(()=>coletaWrap.classList.remove('open'),1400);
+  });
+  coletaDelete.addEventListener('click',()=>{
+    orders[coletaIdx].extraColeta=null; saveExtras(); updateColetaLink(); syncAll();
+    coletaWrap.classList.remove('open');
+  });
+  document.getElementById('closeColeta').addEventListener('click',()=>coletaWrap.classList.remove('open'));
+  coletaWrap.addEventListener('click',e=>{if(e.target===coletaWrap)coletaWrap.classList.remove('open');});
+  confirmColeta.addEventListener('click',()=>openColeta(confirmIdx));
+
+  /* footer / navegação */
+  const okWrap=document.getElementById('okWrap');
+  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='coletas';GAO.setTrip(t);} window.location.href='coleta-rota.html'; } });
+  document.getElementById('okBtn').addEventListener('click',()=>okWrap.classList.remove('open'));
+  okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='rota.html';});
+  build();
+</script>
+</body>
+</html>

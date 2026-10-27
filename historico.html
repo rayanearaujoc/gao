@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>GAO · Histórico de viagens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="static/css/app.css">
+<link rel="stylesheet" href="static/css/home.css">
+<link rel="stylesheet" href="static/css/historico.css">
+</head>
+<body class="p-historico" data-page="historico" data-top-title="Histórico de viagens" data-top-sub="Suas rotas e o seu aproveitamento">
+
+<div class="app">
+  <div class="topbar">
+    <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
+    <div class="avatar" data-gao-user>RA</div>
+  </div>
+
+  <div class="content">
+    <div class="h-head">
+      <h2>Histórico de viagens</h2>
+      <p>Suas rotas e o seu aproveitamento</p>
+    </div>
+    <div class="fil-wrap">
+      <div class="filters">
+        <div class="fil-field">
+          <label>Período</label>
+          <select id="periodSel">
+            <option value="hoje">Hoje</option>
+            <option value="semana">Essa semana</option>
+            <option value="mes" selected>Esse mês</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+        <div class="fil-field">
+          <label>Status</label>
+          <select id="statusSel">
+            <option value="todas" selected>Todas</option>
+            <option value="done">Concluídas</option>
+            <option value="nao">Não realizadas</option>
+          </select>
+        </div>
+        <div class="date-field" id="deField" hidden><label>De</label><input type="date" id="deInput"></div>
+        <div class="date-field" id="ateField" hidden><label>Até</label><input type="date" id="ateInput"></div>
+      </div>
+      <div class="fil-clear-row"><button class="fil-clear" id="clearBtn">Limpar filtros</button></div>
+    </div>
+
+    <div id="summary"></div>
+    <div id="tableArea"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="static/js/shell.js"></script>
+<script>
+(function(){
+  var TODAY='2026-10-26';
+  var MO=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var INBOX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>';
+  var ICO_APROV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>';
+  var ICO_VIAGENS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>';
+  var ICO_GAIOLAS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="1.5"/><path d="M4 9h16M4 14.5h16"/></svg>';
+  var ICO_KM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4.5-5"/></svg>';
+  var ICO_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+  // viagens (mais recentes primeiro). status: done | nao
+  var TRIPS=[
+    {d:'2026-10-22', route:'Rota Hospitalar', ent:2, col:3, km:62, status:'done'},
+    {d:'2026-10-22', route:'Rota Centro',     ent:3, col:1, km:38, status:'done'},
+    {d:'2026-10-21', route:'Rota Hospitalar', ent:2, col:2, km:58, status:'done'},
+    {d:'2026-10-21', route:'Rota Norte',      ent:4, col:2, km:74, status:'done'},
+    {d:'2026-10-21', route:'Rota Oeste',      ent:0, col:0, km:0,  status:'nao'},
+    {d:'2026-10-20', route:'Rota Hospitalar', ent:2, col:3, km:60, status:'done'},
+    {d:'2026-10-20', route:'Rota Sul',        ent:3, col:2, km:49, status:'done'},
+    {d:'2026-10-17', route:'Rota Centro',     ent:3, col:1, km:41, status:'done'},
+    {d:'2026-10-17', route:'Rota Hospitalar', ent:2, col:3, km:63, status:'done'},
+    {d:'2026-10-15', route:'Rota Norte',      ent:4, col:1, km:71, status:'done'},
+    {d:'2026-10-15', route:'Rota Oeste',      ent:2, col:3, km:66, status:'done'},
+    {d:'2026-10-10', route:'Rota Hospitalar', ent:2, col:3, km:59, status:'done'},
+    {d:'2026-10-10', route:'Rota Sul',        ent:0, col:0, km:0,  status:'nao'},
+    {d:'2026-10-03', route:'Rota Centro',     ent:3, col:2, km:44, status:'done'},
+    {d:'2026-10-03', route:'Rota Hospitalar', ent:2, col:3, km:61, status:'done'},
+    {d:'2026-09-26', route:'Rota Norte',      ent:4, col:2, km:72, status:'done'},
+    {d:'2026-09-26', route:'Rota Hospitalar', ent:2, col:3, km:60, status:'done'}
+  ];
+
+  function dObj(s){ return new Date(s+'T00:00:00'); }
+  function diffDays(a,b){ return Math.round((dObj(b)-dObj(a))/86400000); }
+  function done(t){ return t.status==='done'; }
+  function fmt(d){ var o=dObj(d); function p(n){return String(n).padStart(2,'0');} return p(o.getDate())+'/'+p(o.getMonth()+1)+'/'+o.getFullYear(); }
+
+  var deInput=document.getElementById('deInput'), ateInput=document.getElementById('ateInput');
+  var periodSel=document.getElementById('periodSel'), statusSel=document.getElementById('statusSel');
+  var deField=document.getElementById('deField'), ateField=document.getElementById('ateField');
+  var curP='mes', curS='todas';
+
+  function renderSummary(rows){
+    var assigned=rows.length, dn=rows.filter(done);
+    var pct=assigned?Math.round(dn.length/assigned*100):0;
+    var km=dn.reduce(function(s,t){return s+t.km;},0);
+    document.getElementById('summary').innerHTML=
+      '<div class="sum-grid">'
+      + '<div class="sc aprov"><div class="sc-ic">'+ICO_APROV+'</div><small>Desempenho</small><b>'+pct+'%</b>'
+      +   '<div class="sub">'+dn.length+' de '+assigned+' rota'+(assigned!==1?'s':'')+' concluída'+(dn.length!==1?'s':'')+'</div></div>'
+      + '<div class="sc"><div class="sc-ic">'+ICO_VIAGENS+'</div><small>Viagens</small><b>'+dn.length+'</b></div>'
+      + '<div class="sc"><div class="sc-ic">'+ICO_KM+'</div><small>Km</small><b>'+km+'</b></div>'
+      + '</div>';
+  }
+
+  function statusPill(s){ return s==='nao' ? '<span class="hpill bad">Não realizada</span>' : '<span class="hpill ok">Concluída</span>'; }
+
+  function renderTable(rows){
+    var area=document.getElementById('tableArea');
+    if(!rows.length){ area.innerHTML='<div class="empty"><div class="ei">'+INBOX+'</div><h4>Nenhuma viagem no período</h4><p>Ajuste os filtros acima.</p></div>'; return; }
+    var body=rows.map(function(t){
+      var nao=(t.status==='nao');
+      var clk=!nao?' class="clickable" data-open="1"':'';
+      var act=!nao
+        ? '<button type="button" class="act-eye" data-open="1" aria-label="Ver resumo da viagem">'+ICO_EYE+'</button>'
+        : '<span class="off">—</span>';
+      return '<tr'+clk+'>'
+        + '<td class="data" data-label="Data">'+fmt(t.d)+'</td>'
+        + '<td class="rota" data-label="Rota"><b>'+t.route+'</b></td>'
+        + '<td class="num'+(nao?' off':'')+'" data-label="Entregas">'+(nao?'—':t.ent)+'</td>'
+        + '<td class="num'+(nao?' off':'')+'" data-label="Coletas">'+(nao?'—':t.col)+'</td>'
+        + '<td class="num'+(nao?' off':'')+'" data-label="Km">'+(nao?'—':t.km)+'</td>'
+        + '<td data-label="Status">'+statusPill(t.status)+'</td>'
+        + '<td class="acts" data-label="Ações">'+act+'</td>'
+        + '</tr>';
+    }).join('');
+    area.innerHTML='<div class="tbl-wrap"><div class="tbl-scroll"><table class="htbl"><thead><tr>'
+      + '<th>Data</th><th>Rota</th><th class="r">Entregas</th><th class="r">Coletas</th><th class="r">Km</th><th>Status</th><th class="acts">Ações</th>'
+      + '</tr></thead><tbody>'+body+'</tbody></table></div></div>';
+    area.querySelectorAll('[data-open]').forEach(function(r){ r.addEventListener('click',function(e){ e.stopPropagation(); window.location.href='resumo.html?from=historico'; }); });
+  }
+
+  function inPeriod(t){
+    if(curP==='hoje')   return t.d===TODAY;
+    if(curP==='semana'){ var g=diffDays(t.d,TODAY); return g>=0 && g<=6; }
+    if(curP==='mes')    return t.d.slice(0,7)===TODAY.slice(0,7);
+    var de=deInput.value, ate=ateInput.value; // custom
+    return (!de||t.d>=de) && (!ate||t.d<=ate);
+  }
+  function inStatus(t){ return curS==='todas' ? true : t.status===curS; }
+  function apply(){
+    var rows=TRIPS.filter(function(t){return inPeriod(t)&&inStatus(t);});
+    renderSummary(rows); renderTable(rows);
+    var active=!(curP==='mes' && curS==='todas');  // limpar só aparece quando há filtro
+    var cb=document.getElementById('clearBtn'); cb.parentElement.style.display=active?'':'none';
+  }
+
+  periodSel.addEventListener('change',function(){
+    curP=periodSel.value;
+    var custom=(curP==='custom'); deField.hidden=!custom; ateField.hidden=!custom;
+    apply();
+  });
+  statusSel.addEventListener('change',function(){ curS=statusSel.value; apply(); });
+  deInput.addEventListener('change',apply);
+  ateInput.addEventListener('change',apply);
+  document.getElementById('clearBtn').addEventListener('click',function(){
+    periodSel.value='mes'; curP='mes';
+    statusSel.value='todas'; curS='todas';
+    deField.hidden=true; ateField.hidden=true;
+    deInput.value='2026-10-01'; ateInput.value='2026-10-26';
+    apply();
+  });
+
+  deInput.value='2026-10-01'; ateInput.value='2026-10-26';
+  apply();
+})();
+</script>
+</body>
+</html>
