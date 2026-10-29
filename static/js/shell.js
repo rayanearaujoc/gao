@@ -13,8 +13,7 @@
     {label:'Histórico de viagens', icon:'route',       href:'historico.html', key:'historico'}
   ];
   var FOOT = [
-    {label:'Meu perfil', icon:'circle-user-round', href:'#'},
-    {label:'Suporte',    icon:'headphones',        href:'#'}
+    {label:'Suporte', icon:'headphones', href:'#'}
   ];
   var USER = {name:'Ronaldo Araújo', short:'Olá, Ronaldo', role:'Motorista', initials:'RA'};
 
