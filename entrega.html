@@ -152,7 +152,7 @@
       <p class="f-label">Assinatura de quem recebeu <span style="color:var(--muted);font-weight:500">(opcional)</span></p>
       <div class="sign" id="sign"><canvas id="sigCanvas"></canvas><span class="sign-ph">Assine aqui</span><button type="button" class="sign-clear" id="sigClear">Limpar</button></div>
 
-      <button type="button" class="link-report" id="confirmColeta" style="margin:16px 0 0">Cliente possui uma coleta?</button>
+      <button type="button" class="link-report" id="confirmColeta" style="margin:16px 0 0">Cliente pediu coleta?</button>
       <button class="cta" id="confirmBtn" disabled>Confirmar entrega <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
     </div>
     <div id="confirmSuccess" hidden>
@@ -549,7 +549,7 @@
   function updateColetaLink(){
     const o=orders[confirmIdx];
     if(o && o.extraColeta){ confirmColeta.textContent=`Coleta adicionada · ${o.extraColeta} ${o.extraColeta>1?'gaiolas':'gaiola'}`; confirmColeta.classList.add('has'); }
-    else { confirmColeta.textContent='Cliente pediu uma coleta extra?'; confirmColeta.classList.remove('has'); }
+    else { confirmColeta.textContent='Cliente pediu coleta?'; confirmColeta.classList.remove('has'); }
   }
   function openColeta(i){
     coletaIdx=i; const o=orders[i];

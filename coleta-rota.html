@@ -19,7 +19,7 @@
   <section class="view active" id="viewLoading">
     <div class="spinner"></div>
     <h1 id="loadTitle">Recalculando a rota de coleta</h1>
-    <p id="loadSub">Incluímos a coleta extra e estamos montando a ordem mais curta até os clientes.</p>
+    <p id="loadSub">Incluímos a coleta e estamos montando a ordem mais curta até os clientes.</p>
   </section>
 
   <section class="view" id="viewRoute">
@@ -64,10 +64,10 @@
     {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:ADDR['Hospital São Marcos']},
     {type:'c', kind:'Coleta', name:'SJ Hotel', addr:ADDR['SJ Hotel']},
   ];
-  // coletas extras registradas na fase de entrega (localStorage) — ganham a tag "Extra"
+  // coletas registradas na fase de entrega (localStorage) — entram junto das coletas da rota
   let extras=[];
   try{ extras=(window.GAO&&GAO.load&&GAO.load('gao_extras'))||[]; }catch(e){ extras=[]; }
-  const extraStops=extras.map(x=>({type:'c', kind:'Coleta extra', name:x.client, addr:ADDR[x.client]||'Endereço cadastrado do cliente'}));
+  const extraStops=extras.map(x=>({type:'c', kind:'Coleta', name:x.client, addr:ADDR[x.client]||'Endereço cadastrado do cliente'}));
   const coletas=base.concat(extraStops);
 
   const stops=[{type:'start', kind:'Partida', name:ULTIMA_ENTREGA, addr:ADDR[ULTIMA_ENTREGA]}]
