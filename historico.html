@@ -130,9 +130,20 @@
         + '<td class="acts" data-label="Ações">'+act+'</td>'
         + '</tr>';
     }).join('');
+    // mobile: lista enxuta (a tabela acima vira confusa no celular)
+    var list=rows.map(function(t){
+      var nao=(t.status==='nao');
+      var sub=nao ? fmt(t.d) : fmt(t.d)+' · '+t.ent+' entregas · '+t.col+' coletas';
+      var chev='<svg class="tr-chev'+(nao?' off':'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+      return '<div class="trip-row'+(nao?'':' clickable')+'"'+(nao?'':' data-open="1"')+'>'
+        + '<div class="tr-main"><div class="tr-rota">'+t.route+'</div><div class="tr-sub">'+sub+'</div></div>'
+        + statusPill(t.status) + chev
+        + '</div>';
+    }).join('');
     area.innerHTML='<div class="tbl-wrap"><div class="tbl-scroll"><table class="htbl"><thead><tr>'
       + '<th>Data</th><th>Rota</th><th class="r">Entregas</th><th class="r">Coletas</th><th class="r">Km</th><th>Status</th><th class="acts">Ações</th>'
-      + '</tr></thead><tbody>'+body+'</tbody></table></div></div>';
+      + '</tr></thead><tbody>'+body+'</tbody></table></div></div>'
+      + '<div class="trip-list">'+list+'</div>';
     area.querySelectorAll('[data-open]').forEach(function(r){ r.addEventListener('click',function(e){ e.stopPropagation(); window.location.href='resumo.html?from=historico'; }); });
   }
 
