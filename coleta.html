@@ -88,26 +88,25 @@
   const CHKW='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
   const INBOX='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
 
-  // entregas feitas hoje (p/ a coleta extra comparar com a entrega do dia)
+  // entregas feitas hoje (p/ comparar a coleta com a entrega do dia)
   const TODAY_DELIVERY={'Materno Infantil':7,'Hospital Albert Einstein':4};
   // coletas do dia — vindas do Gal Cliente: requested = qtd aproximada que o cliente pediu;
   // lastDelivery = quanto a GAO entregou da última vez a esse cliente.
   const base=[
     {name:"Hospital São Marcos", id:"#4120", lastDelivery:8, requested:9},
-    {name:"SJ Hotel", id:"#2277", lastDelivery:5, requested:6},
   ];
-  // coletas extras registradas na entrega — já vêm com a quantidade informada lá
-  let extras=[];
-  try{ extras=(window.GAO&&GAO.load&&GAO.load('gao_extras'))||[]; }catch(e){ extras=[]; }
-  const extraData=extras.map(x=>({name:x.client, id:x.id, lastDelivery:(x.client in TODAY_DELIVERY?TODAY_DELIVERY[x.client]:null), extraQty:x.gaiolas||1, isExtra:true}));
-  const data=base.concat(extraData);
+  // coletas registradas na entrega — já vêm com a quantidade informada lá
+  let registradas=[];
+  try{ registradas=(window.GAO&&GAO.load&&GAO.load('gao_extras'))||[]; }catch(e){ registradas=[]; }
+  const regData=registradas.map(x=>({name:x.client, id:x.id, lastDelivery:(x.client in TODAY_DELIVERY?TODAY_DELIVERY[x.client]:null), regQty:x.gaiolas||0, isReg:true}));
+  const data=base.concat(regData);
 
   let orders=[];
   const ordersEl=document.getElementById('orders');
   const goBtn=document.getElementById('goBtn');
 
   function build(){
-    orders=data.map(o=>({...o, done:false, qty:(o.isExtra?(o.extraQty||1):0), setor:'', photos:[]}));
+    orders=data.map(o=>({...o, done:false, qty:(o.isReg?(o.regQty||0):0), setor:'', photos:[]}));
     ordersEl.innerHTML=orders.map((o,i)=>orderHTML(o,i)).join('');
     orders.forEach((o,i)=>{
       ordersEl.querySelector(`[data-confirmopen="${i}"]`).addEventListener('click',()=>{ if(geoBlocked())return; openConfirm(i); });
@@ -116,12 +115,11 @@
     syncAll();
   }
   function orderHTML(o,i){
-    const extraTag = o.lastDelivery==null ? '<span class="chip pend" style="margin-left:6px">Extra</span>' : '';
     return `
     <div class="order" data-order="${i}">
       <div class="order-head">
         <div class="badge">${INBOX}</div>
-        <div class="t"><h3>${o.name}</h3><div><span class="chip" data-chip="${i}"></span>${extraTag}</div></div>
+        <div class="t"><h3>${o.name}</h3><div><span class="chip" data-chip="${i}"></span></div></div>
         <span class="order-id">${o.id}</span>
       </div>
       <div class="order-pad">
@@ -157,7 +155,7 @@
     setorSelect.value=o.setor||'';
     photos=[...(o.photos||[])];
     document.getElementById('confirmSub').textContent=`${o.name} · ${o.id}`;
-    if(!o.isExtra && o.requested){ reqHint.hidden=false; reqHint.textContent=`Cliente pediu aproximadamente ${o.requested} ${o.requested>1?'gaiolas':'gaiola'}.`; }
+    if(!o.isReg && o.requested){ reqHint.hidden=false; reqHint.textContent=`Cliente pediu aproximadamente ${o.requested} ${o.requested>1?'gaiolas':'gaiola'}.`; }
     else reqHint.hidden=true;
     document.getElementById('confirmForm').hidden=false; document.getElementById('confirmSuccess').hidden=true;
     renderPhotos(); renderConfirm(); confirmWrap.classList.add('open');
@@ -220,9 +218,12 @@
   function showToast(msg){ toastMsg.textContent=msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
   function geoBlocked(){ if(!atClient){ showToast('Você precisa estar a até 2 km do cliente para registrar a coleta.'); return true; } return false; }
 
+  /* ---------- Comprovantes: agora enviados automaticamente pelo Z-API (número da GAO). Sem etapa manual aqui. ---------- */
+  function goCheckout(){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='checkout';GAO.setTrip(t);} window.location.href='checkout.html'; }
+
   /* ---------- footer / navegação ---------- */
   const okWrap=document.getElementById('okWrap');
-  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='checkout';GAO.setTrip(t);} window.location.href='checkout.html'; } });
+  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ goCheckout(); } });
   document.getElementById('okBtn').addEventListener('click',()=>{ if(window.GAO&&GAO.clearTrip)GAO.clearTrip(); try{GAO.remove&&GAO.remove('gao_extras');}catch(e){} window.location.href='index.html'; });
   okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
   document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='coleta-rota.html';});

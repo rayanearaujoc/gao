@@ -29,9 +29,11 @@
 .rstat b{display:block;font-size:16px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
 .rstat small{font-size:11px;color:var(--muted)}
 .route-btn{width:100%;border:none;border-radius:11px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;padding:14px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+.route-btn svg{width:16px;height:16px}
 .route-ic.done{background:var(--ok-bg);color:var(--ok-ink)}
 .route.is-done .cm{color:var(--ok-ink);font-weight:600}
 .route-btn.ghost{background:var(--card);color:var(--read);border:1px solid color-mix(in srgb,var(--read) 28%,transparent)}
+.route-btn.muted{background:var(--row);color:var(--read);border:none}
 .route.is-done .rstat b{color:var(--muted)}
 
 .two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:24px}
@@ -85,6 +87,43 @@ textarea.f-area::placeholder{color:var(--ph)}
 .acc-note svg{flex:none;margin-top:1px;width:18px;height:18px;color:var(--bad)}
 .acc-note p{margin:0;font-size:12.5px;line-height:1.5;font-weight:500;color:#7f1d1d}
 
+/* status padrão (mesma pílula do histórico) — "Rota extra" à direita do card, com respiro */
+.rt-status{flex:none;margin-left:auto;display:inline-flex;align-items:center;font-size:11px;font-weight:600;border-radius:20px;padding:4px 10px;white-space:nowrap;background:var(--info-bg);color:var(--read)}
+
+/* FAB fixo "Rota extra" (só na home) — leve, com respiro, sem sombra */
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:90;
+  display:inline-flex;align-items:center;gap:9px;border:none;border-radius:30px;background:var(--primary);color:#fff;
+  font-size:13.5px;font-weight:600;font-family:inherit;padding:15px 22px 15px 19px;cursor:pointer}
+.fab svg{width:17px;height:17px}
+.fab:active{transform:translateY(1px)}
+#viewHome .content{padding-bottom:94px}
+
+/* conteúdo do sheet (reaproveita .sheet/.sheet-wrap do app.css) */
+.sheet-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.sheet-top .ico{width:38px;height:38px;border-radius:9px;background:var(--info-bg);display:grid;place-items:center;color:var(--read)}
+.sheet-x{width:38px;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--card);display:grid;place-items:center;color:var(--fg);cursor:pointer}
+.sheet h2{margin:0;font-size:16.5px;font-weight:600;letter-spacing:-.01em}
+.sheet .sub{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+.cta{margin-top:24px;width:100%;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:14.5px;font-weight:600;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.cta:disabled{background:var(--row);color:var(--muted);cursor:not-allowed}
+
+/* montar rota extra (dentro do modal) */
+.ex-row{display:flex;gap:10px;align-items:stretch}
+.ex-row input.txt{flex:1}
+.ex-val{flex:none;border:none;border-radius:11px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;padding:0 20px;cursor:pointer;font-family:inherit}
+.ex-added{margin-top:22px}
+.ex-added-h{font-size:13px;font-weight:600;margin:0 2px 12px;display:flex;align-items:center;gap:8px}
+.ex-cnt{font-size:11px;font-weight:700;color:var(--read);background:var(--info-bg);border-radius:20px;padding:2px 9px;font-variant-numeric:tabular-nums}
+.ex-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px}
+.ex-err{display:flex;align-items:center;gap:7px;margin:11px 2px 0;font-size:12px;font-weight:500;color:var(--bad)}
+.ex-err svg{width:15px;height:15px;flex:none}
+.ex-tx{flex:1;min-width:0}
+.ex-tx b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.ex-tx small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.ex-tx small b{display:inline;color:var(--fg);font-weight:600}
+.ex-rm{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.ex-rm svg{width:14px;height:14px}
+
 /* rodapé aparece só quando a view precisa (start/checkin) */
 #footer{display:none}
 #footer.show{display:block}
@@ -94,9 +133,5 @@ textarea.f-area::placeholder{color:var(--ph)}
   #viewHome #routes{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;align-items:start}
   #viewHome .route{margin-bottom:0}
 }
-/* desktop (≥900, com a topbar branca): a saudação "Olá, Ronaldo" (bolinha + nome) vive
-   no chip da barra, movido pra ESQUERDA; esconde a saudação duplicada do conteúdo */
-@media(min-width:900px){
-  .p-home .hello{display:none}
-  .p-home .sr-date{display:flex}
-}
+/* desktop: a saudação "Olá, Ronaldo" (com o chip de data) fica no conteúdo;
+   o cabeçalho agora é só o breadcrumb, então não duplica a data na section-row */

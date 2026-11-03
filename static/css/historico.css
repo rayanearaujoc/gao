@@ -1,34 +1,35 @@
 /* ===== Exclusivo: Histórico de viagens (historico.html) ===== */
 
-.h-head{margin:0 2px 14px}
+/* título da página — agora no conteúdo, na mesma linha dos filtros */
+.h-head{margin:0;min-width:0}
 .h-head h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.02em}
 .h-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}
 
-/* bloco de filtros: fica ABAIXO do título, logo após o subtítulo */
-.fil-wrap{margin-bottom:22px}
+/* ===== Barra de filtros: Limpar à esquerda · filtros compactos à direita ===== */
+.fil-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 2px 20px}
+.ph-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
-/* ===== Filtros: período + status (dropdowns) + datas personalizadas ===== */
-.filters{margin:0;display:flex;gap:12px;flex-wrap:wrap}
-.fil-field,.date-field{flex:1;min-width:150px}
-.fil-field label,.date-field label{display:block;font-size:11.5px;font-weight:600;color:#334155;margin:0 0 6px}
-.fil-field select,.date-field input{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:13.5px;background:var(--card);color:var(--fg);font-family:inherit}
-.fil-field select{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;background-repeat:no-repeat;background-position:right 12px center;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>')}
-.fil-field select:focus,.date-field input:focus{border-color:color-mix(in srgb,var(--primary) 45%,var(--line))}
-/* limpar filtros: ABAIXO do componente de filtros, só quando há filtro ativo */
-.fil-clear-row{margin:12px 2px 0;text-align:left}
-/* desktop: filtros compactos e alinhados à direita (lado oposto do título) */
-@media(min-width:700px){
-  .fil-field,.date-field{flex:0 0 auto;min-width:0}
-  .fil-field select,.date-field input{width:auto}
-  .fil-field select{min-width:170px}
-}
-.fil-clear{border:none;background:none;color:var(--read);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 0}
+/* filtro compacto: pílula com rótulo + valor; Período e Status com a MESMA largura */
+.fil-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 14px;font-size:13px;white-space:nowrap}
+.fil-pill:focus-within{border-color:color-mix(in srgb,var(--primary) 45%,var(--line))}
+.fil-pill .fp-k{color:var(--muted);font-weight:500;flex:none}
+.fil-pill select,.fil-pill input{flex:none;field-sizing:content;max-width:132px;border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--fg);cursor:pointer;padding:0;margin:0}
+.fil-pill input{font-variant-numeric:tabular-nums}
+.fil-pill select:focus,.fil-pill input:focus{outline:none}
+.fil-pill select{appearance:none;-webkit-appearance:none;padding-right:16px;background-repeat:no-repeat;background-position:right center;background-size:12px 12px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%230F172A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>')}
+.fil-clear{border:none;background:none;color:var(--read);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 2px;margin-right:6px}
 .fil-clear:hover{text-decoration:underline}
+
+/* mobile: filtros fininhos (hug no conteúdo), à esquerda — não ocupam a tela toda */
+@media(max-width:620px){
+  .fil-bar{justify-content:flex-start;margin-bottom:18px}
+  .ph-controls{gap:8px}
+}
 
 /* ===== Cards de resumo: aproveitamento (gradiente) + brancos com ícone ===== */
 .sum-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:18px;margin-bottom:24px;align-items:stretch;max-width:780px}
-.sc{position:relative;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column}
-.sc-ic{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:8px;background:var(--info-bg);color:var(--read);display:grid;place-items:center}
+.sc{position:relative;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column}
+.sc-ic{position:absolute;top:16px;right:16px;width:26px;height:26px;border-radius:8px;background:var(--info-bg);color:var(--read);display:grid;place-items:center}
 .sc-ic svg{width:14px;height:14px}
 .sc small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;padding-right:38px}
 .sc b{display:block;font-size:22px;font-weight:700;margin-top:auto;padding-top:8px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
@@ -103,5 +104,4 @@ table.htbl{width:100%;border-collapse:collapse;font-size:13px;min-width:580px}
 /* ≥900px a topbar branca aparece: título vai pra ela e sai do conteúdo */
 @media(min-width:900px){
   .p-historico .topbar{display:none}
-  .p-historico .h-head{display:none}
 }

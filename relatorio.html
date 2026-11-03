@@ -30,12 +30,10 @@
     <div class="party">
       <span class="lbl">Cliente</span>
       <b id="cliName">—</b>
-      <span class="addr" id="cliAddr">—</span>
     </div>
     <div class="party">
       <span class="lbl">Prestador</span>
-      <b>GAO · Gestão de Enxoval</b>
-      <span class="addr">Rota Hospitalar · 22 de outubro de 2026</span>
+      <b>GAO Lavanderia</b>
     </div>
   </section>
 
@@ -43,7 +41,6 @@
     <div class="fact"><span>Motorista</span><b>Ronaldo Araújo</b></div>
     <div class="fact"><span>Veículo</span><b>GAO-2847 · Iveco Daily</b></div>
     <div class="fact"><span>Atendimento</span><b id="cliHora">—</b></div>
-    <div class="fact"><span>Localização</span><b class="geo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> GPS confirmado</b></div>
   </div>
 
   <section class="block" id="secEntregas" hidden>
@@ -52,6 +49,10 @@
       <thead><tr><th>Descrição</th><th class="r">Gaiolas</th><th>Recebido por</th><th class="r">Horário</th></tr></thead>
       <tbody id="entRows"></tbody>
     </table>
+    <div class="ev-wrap" id="entEvWrap" hidden>
+      <div class="ev-sub">Comprovação fotográfica</div>
+      <div class="evgrid" id="entEv"></div>
+    </div>
   </section>
 
   <section class="block" id="secColetas" hidden>
@@ -61,18 +62,9 @@
       <tbody id="colRows"></tbody>
     </table>
     <div id="saldoNote"></div>
-  </section>
-
-  <section class="block">
-    <h3>Comprovação fotográfica</h3>
-    <div class="evgrid" id="evGrid"></div>
-  </section>
-
-  <section class="block" id="secOcc" hidden>
-    <h3>Ocorrências</h3>
-    <div class="occ-box">
-      <div class="oi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
-      <div class="occ-body"><b id="occT">—</b><span class="occ-stage" id="occStage"></span><p id="occD" hidden></p></div>
+    <div class="ev-wrap" id="colEvWrap" hidden>
+      <div class="ev-sub">Comprovação fotográfica</div>
+      <div class="evgrid" id="colEv"></div>
     </div>
   </section>
 
@@ -85,10 +77,10 @@
     <div class="seal-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
   </section>
 
-  <section class="sign">
-    <div class="sign-line"><span></span>Responsável pelo recebimento</div>
-    <div class="sign-line"><span></span>Ronaldo Araújo · Motorista GAO</div>
-  </section>
+  <div class="hig-ev">
+    <div class="ev-sub">Registro fotográfico da higienização</div>
+    <div class="evgrid" id="higEv"></div>
+  </div>
 
   <footer class="doc-foot">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -100,34 +92,37 @@
 (function(){
   var IMG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>';
 
+  // cada cliente: entregas + coletas (toda entrega gera coleta, feita depois) + fotos de cada etapa
   var clients=[
     {name:'Materno Infantil', addr:'Av. T-9, 1200 · Setor Bueno, Goiânia', hora:'07:12',
       entregas:[{desc:'Enxoval hospitalar limpo', obs:'Lençóis, fronhas, cobertores e aventais', q:7, setor:'Recepção', hora:'07:12'}],
-      coletas:[],
-      occ:{etapa:'Entrega', motivo:'Etiqueta ilegível', gaiolas:1, comentario:null},
-      evid:['Gaiolas entregues no local','Comprovante · Recepção']},
+      coletas:[{desc:'Enxoval hospitalar usado', obs:'Recolhido para processamento na GAO', q:4, setor:'Rouparia', hora:'10:20'}],
+      entEv:['Carregamento na GAO','Entrega · Recepção'],
+      colEv:['Coleta · Rouparia']},
     {name:'Hospital Albert Einstein', addr:'Av. Brasil, 850 · Centro, Goiânia', hora:'08:40',
       entregas:[{desc:'Enxoval hospitalar limpo', obs:'Lençóis, fronhas e campos cirúrgicos', q:4, setor:'Rouparia', hora:'08:40'}],
-      coletas:[], occ:null,
-      evid:['Gaiolas entregues no local']},
+      coletas:[{desc:'Enxoval hospitalar usado', obs:'Recolhido para processamento na GAO', q:3, setor:'Rouparia', hora:'11:05'}],
+      entEv:['Carregamento na GAO','Entrega · Rouparia'],
+      colEv:['Coleta · Rouparia']},
     {name:'Hospital São Marcos', addr:'Rua 84, 420 · Setor Sul, Goiânia', hora:'10:05',
       entregas:[],
       coletas:[{desc:'Enxoval hospitalar usado', obs:'Para processamento na lavanderia GAO', q:6, setor:'Rouparia', hora:'10:05', pedido:9, saldo:3}],
-      occ:null,
-      evid:['Gaiolas coletadas','Conferência · Rouparia']},
+      entEv:[],
+      colEv:['Coleta no local','Conferência · Rouparia']},
     {name:'SJ Hotel', addr:'Av. Anhanguera, 77 · Centro, Goiânia', hora:'10:52',
       entregas:[],
       coletas:[{desc:'Enxoval usado', obs:'Roupa de cama e banho', q:5, setor:'Governança', hora:'10:52', pedido:5, saldo:0}],
-      occ:null,
-      evid:['Gaiolas coletadas']}
+      entEv:[],
+      colEv:['Coleta no local']}
   ];
+  // higienização é do veículo (vale para todos os clientes da rota)
+  var higieneEv=['Higienização terminal','Teto e paredes','Cabine'];
 
   function getParam(){ var m=location.search.match(/[?&]c=(\d+)/); var i=m?parseInt(m[1],10):0; return (i>=0&&i<clients.length)?i:0; }
   var idx=getParam(), c=clients[idx];
 
   document.getElementById('docN').textContent='Nº GAO-2026-'+(1042+idx);
   document.getElementById('cliName').textContent=c.name;
-  document.getElementById('cliAddr').textContent=c.addr;
   document.getElementById('cliHora').textContent=c.hora;
   document.title='GAO · Relatório · '+c.name;
 
@@ -137,10 +132,17 @@
       + '<td>'+o.setor+'</td>'
       + '<td class="num r">'+o.hora+'</td></tr>';
   }
+  function evHTML(caps){ return (caps||[]).map(function(cap){
+    return '<div class="ev"><div class="ev-img">'+IMG+'</div><div class="ev-cap">'+cap+'</div></div>';
+  }).join(''); }
 
   if(c.entregas.length){
     document.getElementById('secEntregas').hidden=false;
     document.getElementById('entRows').innerHTML=c.entregas.map(rowHTML).join('');
+    if(c.entEv && c.entEv.length){
+      document.getElementById('entEvWrap').hidden=false;
+      document.getElementById('entEv').innerHTML=evHTML(c.entEv);
+    }
   }
   if(c.coletas.length){
     document.getElementById('secColetas').hidden=false;
@@ -150,19 +152,13 @@
       var x=sal[0];
       document.getElementById('saldoNote').innerHTML='<div class="saldo-note">O cliente havia solicitado '+x.pedido+' gaiolas. Foram coletadas '+x.q+' · <b>'+x.saldo+' gaiola'+(x.saldo>1?'s':'')+' permaneceu'+(x.saldo>1?'ram':'')+' com o cliente</b>, conforme disponibilidade no momento da coleta.</div>';
     }
+    if(c.colEv && c.colEv.length){
+      document.getElementById('colEvWrap').hidden=false;
+      document.getElementById('colEv').innerHTML=evHTML(c.colEv);
+    }
   }
 
-  document.getElementById('evGrid').innerHTML=c.evid.map(function(cap){
-    return '<div class="ev"><div class="ev-img">'+IMG+'</div><div class="ev-cap">'+cap+'</div></div>';
-  }).join('');
-
-  if(c.occ){
-    document.getElementById('secOcc').hidden=false;
-    document.getElementById('occT').textContent=c.occ.motivo;
-    var stage=c.occ.etapa + (c.occ.gaiolas ? ' · '+c.occ.gaiolas+' gaiola'+(c.occ.gaiolas>1?'s':'')+' afetada'+(c.occ.gaiolas>1?'s':'') : '');
-    document.getElementById('occStage').textContent=stage;
-    if(c.occ.comentario){ var d=document.getElementById('occD'); d.hidden=false; d.textContent='"'+c.occ.comentario+'"'; }
-  }
+  document.getElementById('higEv').innerHTML=evHTML(higieneEv);
 
   document.getElementById('printBtn').addEventListener('click',function(){ window.print(); });
 })();

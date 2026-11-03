@@ -1,25 +1,44 @@
 /* ============================================================
    GAO — shell.js
-   Injeta em TODA página: barra lateral (desktop) / drawer (mobile),
-   a topbar com o chip do usuário (desktop) e o dropdown do usuário
-   (Meu perfil / Sair) — que funciona também no mobile ao tocar na
-   bolinha RA (qualquer elemento [data-gao-user]).
+   Injeta em TODA página: sidebar recolhível (desktop) / drawer (mobile),
+   com seções colapsáveis e o perfil do motorista no rodapé (toque abre
+   "Meu perfil / Sair"). A topbar do desktop é um breadcrumb fininho que
+   só diz em que página do menu o usuário está — os títulos de página
+   vivem dentro do conteúdo.
    Item ativo do menu: <body data-page="home">.
    Abrir o menu no mobile: qualquer elemento [data-gao-menu].
    ============================================================ */
 (function(){
-  var NAV = [
-    {label:'Início',               icon:'layout-grid', href:'index.html', key:'home'},
-    {label:'Histórico de viagens', icon:'route',       href:'historico.html', key:'historico'}
+  var NAV_TOP = [
+    {label:'Início', icon:'layout-grid', href:'index.html', key:'home'}
   ];
-  var FOOT = [
-    {label:'Suporte', icon:'headphones', href:'#'}
+  var SECTIONS = [
+    {name:'Operação', items:[
+      {label:'Histórico de viagens', icon:'route', href:'historico.html', key:'historico'}
+    ]}
+  ];
+  var NAV_BOTTOM = [
+    {label:'Suporte', icon:'headphones', href:'#', key:'suporte'}
   ];
   var USER = {name:'Ronaldo Araújo', short:'Olá, Ronaldo', role:'Motorista', initials:'RA'};
 
+  /* ---- ícones estruturais inline (independem do lucide) ---- */
+  var CHV_SEC   = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  var CHV_DOWN  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  var CHV_UP    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>';
+  var IC_X      = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  var IC_GRID   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>';
+  var TG_COL    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M16 15l-3-3 3-3"/></svg>';
+  var TG_EXP    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M14 9l3 3-3 3"/></svg>';
+
+  // ----- persistência no navegador (sem back-end) -----
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function load(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
+  function remove(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
   // ----- stepper / mapa de orientação do fluxo (read-only) -----
-  var FLOW_KEYS   = ['checkin','carregamento','rota','entregas','coleta','checkout','resumo'];
-  var FLOW_LABELS = ['Check-in','Carregamento','Rota','Entregas','Coleta','Check-out','Resumo'];
+  var FLOW_KEYS   = ['checkin','rota','carregamento','entregas','coleta','checkout','resumo'];
+  var FLOW_LABELS = ['Check-in','Rota','Carregamento','Entregas','Coleta','Check-out','Resumo'];
   function flowHTML(activeKey){
     var cur = FLOW_KEYS.indexOf(activeKey); if(cur<0) cur=0;
     var steps='';
@@ -27,7 +46,7 @@
       var cls = i<cur ? 'done' : (i===cur ? 'cur' : 'pending');
       steps += '<div class="gf-step '+cls+'"><span class="gf-dotwrap"><span class="gf-d"></span></span><span class="gf-name">'+FLOW_LABELS[i]+'</span></div>';
     }
-    return '<div class="gf-track">'+steps+'</div><span class="gf-cnt">'+(cur+1)+'/'+FLOW_KEYS.length+'</span>';
+    return '<div class="gf-track">'+steps+'</div>';
   }
   function enableDrag(track){
     if(!track || track._drag) return; track._drag=true;
@@ -46,24 +65,86 @@
 
   function icons(){ if(window.lucide && lucide.createIcons) lucide.createIcons(); }
 
+  function esc(s){ return String(s).replace(/"/g,'&quot;'); }
+  function navItem(it, page){
+    return '<a class="gao-nav'+(it.key===page?' active':'')+'" href="'+it.href+'" data-lbl="'+esc(it.label)+'" title="'+esc(it.label)+'">'
+      + '<span class="gni"><i data-lucide="'+it.icon+'"></i></span><span class="lb">'+it.label+'</span></a>';
+  }
+
+  // breadcrumb a partir da key da página: caminho + ícone do próprio item (null = fora do menu)
+  function crumbInfo(page){
+    var r=null;
+    NAV_TOP.forEach(function(it){ if(it.key===page) r={path:[it.label], icon:it.icon}; });
+    if(r) return r;
+    SECTIONS.forEach(function(s){ s.items.forEach(function(it){ if(it.key===page) r={path:[s.name, it.label], icon:it.icon}; }); });
+    if(r) return r;
+    NAV_BOTTOM.forEach(function(it){ if(it.key===page) r={path:[it.label], icon:it.icon}; });
+    return r;
+  }
+
   function buildSidebar(page){
-    var h = '<a class="gao-brand" href="index.html"><img class="gao-logo" src="static/img/logo.svg" alt="GAO"></a>';
-    h += '<div class="gao-navlabel">Operação</div>';
-    NAV.forEach(function(it){ h += '<a class="gao-nav'+(it.key===page?' active':'')+'" href="'+it.href+'"><i data-lucide="'+it.icon+'"></i> '+it.label+'</a>'; });
-    h += '<div class="gao-sp"></div><div class="gao-sidefoot">';
-    FOOT.forEach(function(it){ h += '<a class="gao-nav" href="'+it.href+'"><i data-lucide="'+it.icon+'"></i> '+it.label+'</a>'; });
-    h += '</div>';
+    var closedSet = load('gao_side_closed') || [];
+    var h = '<button class="gao-tg" id="gaoTg" type="button" aria-label="Recolher menu"></button>';
+    h += '<div class="gao-top">'
+      + '<a class="gao-brand" href="index.html"><img class="gao-logo-full" src="static/img/logo.svg" alt="GAO"><img class="gao-logo-mark" src="static/img/flor.svg" alt="GAO"></a>'
+      + '<button class="gao-x" id="gaoX" type="button" aria-label="Fechar menu">'+IC_X+'</button>'
+      + '</div>';
+    h += '<nav class="gao-navwrap" id="gaoNav">';
+    NAV_TOP.forEach(function(it){ h += navItem(it, page); });
+    SECTIONS.forEach(function(s){
+      var hasActive = s.items.some(function(it){ return it.key===page; });
+      var cl = (closedSet.indexOf(s.name) >= 0) && !hasActive;
+      h += '<div class="gao-sec'+(cl?' cl':'')+'" data-sec="'+esc(s.name)+'">'
+        + '<button class="gao-sh" type="button"><span>'+s.name+'</span><span class="chv">'+CHV_SEC+'</span></button>'
+        + '<div class="gao-sec-bd">'+ s.items.map(function(it){ return navItem(it, page); }).join('') +'</div></div>';
+    });
+    h += '</nav>';
+    h += '<div class="gao-foot">';
+    if(NAV_BOTTOM.length){
+      h += '<div class="gao-foot-nav">'+ NAV_BOTTOM.map(function(it){ return navItem(it, page); }).join('') +'</div>';
+    }
+    h += '<div class="gao-pop" id="gaoPop">'
+      + '<a class="gao-pop-item me" href="perfil.html"><span class="pii"><i data-lucide="circle-user-round"></i></span> Meu perfil</a>'
+      + '<div class="gao-pop-dv"></div>'
+      + '<a class="gao-pop-item" href="login.html"><span class="pii"><i data-lucide="log-out"></i></span> Sair</a>'
+      + '</div>'
+      + '<button class="gao-pc" id="gaoPc" data-gao-user aria-haspopup="true"><span class="gao-avatar">'+USER.initials+'</span>'
+      + '<span class="gao-pt"><b>'+USER.name+'</b><small>'+USER.role+'</small></span>'
+      + '<span class="gao-pc-cx" id="gaoPcCx">'+CHV_UP+'</span></button>'
+      + '</div>';
     var side = document.createElement('aside'); side.className='gao-side'; side.id='gaoSide'; side.innerHTML=h;
     return side;
   }
+
   function buildTopbar(){
+    var page = document.body.getAttribute('data-page') || '';
+    // fluxo / voltar / cabeçalho .nav têm prioridade sobre o breadcrumb
+    var hasFlow = !!document.body.getAttribute('data-flow-step');
+    var hasBack = !!document.body.getAttribute('data-top-back');
+    var _navEl = document.querySelector('.nav');
+    var hasNav  = !!(_navEl && _navEl.querySelector('h1') && !_navEl.closest('.view:not(.active)'));
+    var skipCrumb = hasFlow || hasBack || hasNav;
+    var info = skipCrumb ? null : crumbInfo(page);
+    // páginas fora do menu podem declarar o próprio breadcrumb (data-crumb / data-crumb-icon)
+    if(!info && !skipCrumb){
+      var dc=document.body.getAttribute('data-crumb');
+      if(dc) info={path:dc.split('›').map(function(s){return s.trim();}), icon:document.body.getAttribute('data-crumb-icon')||'layout-grid'};
+    }
+    // páginas do menu: breadcrumb fininho (só localização; o título vive no conteúdo)
+    if(info){
+      document.body.classList.add('gao-crumb');
+      var path=info.path, segs='';
+      for(var i=0;i<path.length;i++){ segs += (i>0?'<span class="gbc-sep">›</span>':'') + '<span class="gbc-seg">'+path[i]+'</span>'; }
+      var bc=document.createElement('header'); bc.className='gao-topbar gao-topbar-bc';
+      bc.innerHTML='<div class="gao-top-inner"><div class="gao-bc"><span class="gbc-ic"><i data-lucide="'+info.icon+'"></i></span>'+segs+'</div></div>';
+      return bc;
+    }
+    // demais páginas (fluxo / resumo): título + voltar
     var tt = document.body.getAttribute('data-top-title');
     var ts = document.body.getAttribute('data-top-sub');
     var tb = document.body.getAttribute('data-top-back');
-    var tg = document.body.getAttribute('data-top-greet');
     var navProxy = false;
-    // telas de fluxo: puxa o cabeçalho (.nav) pra topbar no desktop
-    if(!tt && !tg){
+    if(!tt){
       var navEl = document.querySelector('.nav'), navH1 = navEl && navEl.querySelector('h1');
       if(navH1){
         tt = navH1.textContent;
@@ -75,24 +156,11 @@
     var back = navProxy
       ? '<button class="back" id="gaoTopBack" type="button" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'
       : (tb ? '<button class="gao-top-back" id="gaoTopBack" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Voltar</button>' : '');
-    var greet = tg ? '<div class="gao-top-greet"><span class="gtg-hi"><img class="gtg-wave" src="static/img/wave.svg" width="18" height="18" alt=""> Olá,</span><b class="gtg-name">'+tg+'</b></div>' : '';
     var title = tt ? '<div class="gao-top-title"><b>'+tt+'</b>'+(ts?'<small>'+ts+'</small>':'')+'</div>' : '';
-    var hasLeft = !!(tt||tb||tg);
-    var left = hasLeft ? '<div class="gao-top-left">'+back+greet+title+'</div>' : '';
-    var h = left
-      + '<button class="gao-userchip" id="gaoUser" data-gao-user aria-haspopup="true">'
-      + '<span class="gao-avatar">'+USER.initials+'</span>'
-      + '<span class="gao-nm"><b>'+USER.short+'</b><small>'+USER.role+'</small></span>'
-      + '<i data-lucide="chevron-down"></i></button>';
-    var bar = document.createElement('header'); bar.className='gao-topbar'+(hasLeft?' has-left':'')+((tb||navProxy)?' has-back':''); bar.innerHTML='<div class="gao-top-inner">'+h+'</div>';
+    var hasLeft = !!(tt||tb);
+    var left = hasLeft ? '<div class="gao-top-left">'+back+title+'</div>' : '';
+    var bar = document.createElement('header'); bar.className='gao-topbar'+(hasLeft?' has-left':'')+((tb||navProxy)?' has-back':''); bar.innerHTML='<div class="gao-top-inner">'+left+'</div>';
     return bar;
-  }
-  function buildPop(){
-    var h = '<div class="gao-pop-id"><span class="gao-avatar">'+USER.initials+'</span><div><b>'+USER.name+'</b><small>'+USER.role+'</small></div></div>'
-      + '<a class="gao-pop-item" href="#"><i data-lucide="circle-user-round"></i> Meu perfil</a>'
-      + '<a class="gao-pop-item" href="#"><i data-lucide="log-out"></i> Sair</a>';
-    var pop = document.createElement('div'); pop.className='gao-pop'; pop.id='gaoPop'; pop.innerHTML=h;
-    return pop;
   }
 
   function build(){
@@ -101,12 +169,13 @@
     var side  = buildSidebar(page);
     var scrim = document.createElement('div'); scrim.className='gao-scrim'; scrim.id='gaoScrim';
     var top   = buildTopbar();
-    var pop   = buildPop();
+
+    // estado recolhido salvo (só faz efeito no desktop, via CSS)
+    if(load('gao_side_collapsed')) document.body.classList.add('gao-col');
 
     document.body.insertBefore(top, document.body.firstChild);
     document.body.insertBefore(scrim, document.body.firstChild);
     document.body.insertBefore(side, document.body.firstChild);
-    document.body.appendChild(pop);
 
     // stepper automático: páginas do fluxo declaram data-flow-step no <body>
     var fstep = document.body.getAttribute('data-flow-step');
@@ -119,17 +188,38 @@
       }
     }
 
+    var pop = document.getElementById('gaoPop');
+
+    // abrir/fechar drawer no mobile
     scrim.addEventListener('click', closeMenu);
     document.querySelectorAll('[data-gao-menu]').forEach(function(b){ b.addEventListener('click', openMenu); });
+    var xb = document.getElementById('gaoX'); if(xb) xb.addEventListener('click', closeMenu);
 
-    // dropdown do usuário — qualquer gatilho [data-gao-user] (chip do desktop ou bolinha do mobile)
-    function togglePop(e){ e.stopPropagation(); pop.classList.toggle('open'); }
-    document.querySelectorAll('[data-gao-user]').forEach(function(b){ b.addEventListener('click', togglePop); });
-    document.addEventListener('click', function(e){
-      if(!pop.contains(e.target) && !e.target.closest('[data-gao-user]')) pop.classList.remove('open');
+    // recolher/expandir (desktop)
+    var tg=document.getElementById('gaoTg');
+    function setTgIcon(){ if(!tg) return; var c=document.body.classList.contains('gao-col'); tg.innerHTML=c?TG_EXP:TG_COL; tg.setAttribute('aria-label', c?'Expandir menu':'Recolher menu'); }
+    setTgIcon();
+    if(tg) tg.addEventListener('click', function(){ var c=document.body.classList.toggle('gao-col'); save('gao_side_collapsed', c); setTgIcon(); if(pop) pop.classList.remove('show'); });
+
+    // seções colapsáveis (persistidas)
+    side.querySelectorAll('.gao-sh').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var sec=btn.closest('.gao-sec'); if(!sec) return;
+        sec.classList.toggle('cl');
+        var name=sec.getAttribute('data-sec'), closed=load('gao_side_closed')||[], i=closed.indexOf(name);
+        if(sec.classList.contains('cl')){ if(i<0) closed.push(name); } else if(i>=0){ closed.splice(i,1); }
+        save('gao_side_closed', closed);
+      });
     });
 
-    // ação "Voltar" na topbar
+    // dropdown do perfil — gatilho [data-gao-user] (card do rodapé)
+    function togglePop(e){ e.stopPropagation(); if(!pop) return; var open=pop.classList.toggle('show'); var cx=document.getElementById('gaoPcCx'); if(cx) cx.innerHTML=open?CHV_DOWN:CHV_UP; }
+    document.querySelectorAll('[data-gao-user]').forEach(function(b){ b.addEventListener('click', togglePop); });
+    document.addEventListener('click', function(e){
+      if(pop && !pop.contains(e.target) && !e.target.closest('[data-gao-user]')){ pop.classList.remove('show'); var cx=document.getElementById('gaoPcCx'); if(cx) cx.innerHTML=CHV_UP; }
+    });
+
+    // ação "Voltar" na topbar (só nas páginas de fluxo/resumo)
     var backBtn=document.getElementById('gaoTopBack');
     if(backBtn){
       var backDest=document.body.getAttribute('data-top-back');
@@ -137,20 +227,18 @@
         document.body.classList.add('gao-has-back');  // mostra a barra também no mobile (ex.: resumo)
         backBtn.addEventListener('click', function(){ window.location.href=backDest; });
       } else {
-        // telas de fluxo: aciona o voltar original do cabeçalho (.nav .back)
         backBtn.addEventListener('click', function(){ var nb=document.querySelector('.nav .back'); if(nb) nb.click(); });
       }
     }
+
+    // ao trocar de breakpoint, fecha o drawer
+    try{ var mq=matchMedia('(max-width:899px)'); mq.onchange=function(){ closeMenu(); }; }catch(e){}
+
     icons();
   }
 
   function openMenu(){ var s=document.getElementById('gaoSide'),c=document.getElementById('gaoScrim'); if(s)s.classList.add('open'); if(c)c.classList.add('show'); }
-  function closeMenu(){ var s=document.getElementById('gaoSide'),c=document.getElementById('gaoScrim'); if(s)s.classList.remove('open'); if(c)c.classList.remove('show'); }
-
-  // ----- persistência no navegador (sem back-end) -----
-  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
-  function load(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
-  function remove(k){ try{ localStorage.removeItem(k); }catch(e){} }
+  function closeMenu(){ var s=document.getElementById('gaoSide'),c=document.getElementById('gaoScrim'),p=document.getElementById('gaoPop'); if(s)s.classList.remove('open'); if(c)c.classList.remove('show'); if(p)p.classList.remove('show'); }
 
   // reduz uma foto (dataURL) p/ caber no localStorage antes de salvar; cai pro original se falhar
   function shrink(src, maxW, cb){

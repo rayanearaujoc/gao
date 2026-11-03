@@ -14,37 +14,30 @@
 <div class="app">
   <div class="topbar">
     <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
-    <div class="avatar" data-gao-user>RA</div>
   </div>
 
   <div class="content">
-    <div class="h-head">
-      <h2>Histórico de viagens</h2>
-      <p>Suas rotas e o seu aproveitamento</p>
-    </div>
-    <div class="fil-wrap">
-      <div class="filters">
-        <div class="fil-field">
-          <label>Período</label>
-          <select id="periodSel">
-            <option value="hoje">Hoje</option>
-            <option value="semana">Essa semana</option>
-            <option value="mes" selected>Esse mês</option>
-            <option value="custom">Personalizado</option>
-          </select>
-        </div>
-        <div class="fil-field">
-          <label>Status</label>
-          <select id="statusSel">
-            <option value="todas" selected>Todas</option>
-            <option value="done">Concluídas</option>
-            <option value="nao">Não realizadas</option>
-          </select>
-        </div>
-        <div class="date-field" id="deField" hidden><label>De</label><input type="date" id="deInput"></div>
-        <div class="date-field" id="ateField" hidden><label>Até</label><input type="date" id="ateInput"></div>
+    <div class="fil-bar">
+      <div class="h-head">
+        <h2>Histórico de viagens</h2>
+        <p>Suas rotas e o seu aproveitamento</p>
       </div>
-      <div class="fil-clear-row"><button class="fil-clear" id="clearBtn">Limpar filtros</button></div>
+      <div class="ph-controls">
+        <button class="fil-clear" id="clearBtn" hidden>Limpar</button>
+        <div class="fil-pill"><span class="fp-k">Período:</span><select id="periodSel">
+          <option value="hoje">Hoje</option>
+          <option value="semana">Essa semana</option>
+          <option value="mes" selected>Esse mês</option>
+          <option value="custom">Personalizado</option>
+        </select></div>
+        <div class="fil-pill"><span class="fp-k">Status:</span><select id="statusSel">
+          <option value="todas" selected>Todas</option>
+          <option value="done">Concluídas</option>
+          <option value="nao">Não realizadas</option>
+        </select></div>
+        <div class="fil-pill" id="deField" hidden><span class="fp-k">De:</span><input type="date" id="deInput"></div>
+        <div class="fil-pill" id="ateField" hidden><span class="fp-k">Até:</span><input type="date" id="ateInput"></div>
+      </div>
     </div>
 
     <div id="summary"></div>
@@ -159,7 +152,7 @@
     var rows=TRIPS.filter(function(t){return inPeriod(t)&&inStatus(t);});
     renderSummary(rows); renderTable(rows);
     var active=!(curP==='mes' && curS==='todas');  // limpar só aparece quando há filtro
-    var cb=document.getElementById('clearBtn'); cb.parentElement.style.display=active?'':'none';
+    var cb=document.getElementById('clearBtn'); cb.hidden=!active;
   }
 
   periodSel.addEventListener('change',function(){

@@ -21,9 +21,9 @@
     </div>
 
     <div class="stats">
-      <div class="st"><b id="stClientes">4</b><small>CLIENTES</small></div>
-      <div class="st"><b id="stGaiolas">22</b><small>GAIOLAS</small></div>
-      <div class="st"><b>551 km</b><small>RODADOS</small></div>
+      <div class="st"><small>CLIENTES</small><b id="stClientes">4</b></div>
+      <div class="st"><small>GAIOLAS</small><b id="stGaiolas">22</b></div>
+      <div class="st"><small>RODADOS</small><b>551 km</b></div>
     </div>
 
     <div class="r-sec">
@@ -65,6 +65,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
 <script src="static/js/done.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script>if(/[?&]from=historico/.test(location.search))document.body.setAttribute('data-top-back','historico.html');</script>
 <script src="static/js/shell.js"></script>
 <script>
   const PKG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>';
@@ -264,13 +265,14 @@
       try{ lottie.loadAnimation({ container:document.getElementById('lottie'), renderer:'svg', loop:true, autoplay:true, animationData:window.DONE_ANIM }); }catch(e){}
     } else { setTimeout(playLottie,120); }
   }
-  if(!acid) playLottie();
+  var fromHist=/[?&]from=historico/.test(location.search);
+  if(!acid && !fromHist) playLottie();
   if(window.lucide) lucide.createIcons();
 
-  // aberto pelo histórico = só "Voltar" pra tabela; no fim da viagem = "Voltar ao início" (finaliza)
+  // aberto pelo histórico = só os cards + "Voltar" pra tabela (sem a animação/hero); no fim da viagem = o grande final
   var homeBtn=document.getElementById('homeBtn');
-  var fromHist=/[?&]from=historico/.test(location.search);
   if(fromHist){
+    var _hero=document.querySelector('.hero'); if(_hero) _hero.style.display='none';
     var _ft=document.querySelector('.footer'); if(_ft) _ft.style.display='none';
     document.body.setAttribute('data-top-back','historico.html');
   } else {

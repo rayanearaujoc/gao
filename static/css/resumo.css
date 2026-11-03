@@ -15,10 +15,10 @@
 .hero h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
 .hero .sub{margin:7px 0 0;font-size:14px;color:var(--muted);font-weight:500}
 
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0 6px}
-.st{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px 8px;text-align:center}
-.st b{display:block;font-size:19px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.st small{display:block;margin-top:6px;font-size:10.5px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0 6px}
+.st{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:20px 16px;text-align:left}
+.st small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+.st b{display:block;margin-top:9px;font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 
 .r-sec{margin-top:24px}
 .r-sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 13px}
@@ -74,3 +74,6 @@
 .co-row .v{font-size:13.5px;font-weight:500;font-variant-numeric:tabular-nums;text-align:right}
 .co-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
 .co-tag{font-size:11px;font-weight:600;color:var(--read);background:var(--info-bg);border-radius:20px;padding:4px 10px}
+
+/* resumo aberto pelo histórico (mobile): topbar só com o botão Voltar, sem o chip do usuário */
+@media(max-width:899px){ .p-resumo .gao-userchip{display:none} }

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/home.css">
+<link rel="stylesheet" href="static/css/entrega.css">
 </head>
 <body class="p-home" data-page="home" data-top-greet="Ronaldo">
 
@@ -16,7 +17,6 @@
   <section class="view active" id="viewHome">
     <div class="topbar">
       <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
-      <div class="avatar" data-gao-user>RA</div>
     </div>
     <div class="content">
       <div class="hello">
@@ -26,9 +26,10 @@
         </div>
         <div class="datechip jsdate" id="dateChip">—</div>
       </div>
-      <div class="section-row"><h3>Suas rotas de hoje</h3><div class="sr-right"><span>2 disponíveis</span><div class="datechip jsdate sr-date">—</div></div></div>
+      <div class="section-row"><h3>Suas rotas de hoje</h3><div class="sr-right"><span id="routeCount">2 disponíveis</span><div class="datechip jsdate sr-date">—</div></div></div>
       <div id="routes"></div>
     </div>
+    <button class="fab" id="fabExtra" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Rota extra</button>
   </section>
 
   <!-- ============ INÍCIO DE ROTA ============ -->
@@ -65,6 +66,7 @@
     </div>
     <div class="gao-flow" id="ckFlow"></div>
     <div class="content">
+      <div class="geo"><span class="geo-lbl">Simular GPS:</span><button class="geo-chip in" id="geoChip"></button></div>
       <div class="sec">
         <div class="sec-head"><div class="sec-num">1</div><div><h4>Quilometragem inicial</h4><p>Digite o valor exibido no painel e fotografe o odômetro</p></div></div>
         <p class="in-label">Quilometragem atual <span class="req">*</span></p>
@@ -99,17 +101,46 @@
       </div>
     </div>
   </section>
+
 </div>
 
 <div class="footer" id="footer">
   <button class="foot-btn" id="footBtn">—</button>
 </div>
 
+<!-- MONTAR ROTA EXTRA (modal) -->
+<div class="sheet-wrap" id="extraWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16h6M19 13v6"/><path d="M21 10V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0"/><path d="M3.3 7l8.7 5 8.7-5M12 22V12"/></svg></div>
+      <button class="sheet-x" id="extraClose" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <h2>Montar rota extra</h2>
+    <p class="sub">Digite o código da comanda que você vai fazer</p>
+
+    <p class="in-label" style="margin-top:20px">Código da comanda</p>
+    <div class="ex-row">
+      <input class="txt" id="cmdInput" inputmode="numeric" maxlength="6" placeholder="Ex: 1234" autocomplete="off">
+      <button class="ex-val" id="cmdVal" type="button">Validar</button>
+    </div>
+    <p class="ex-err" id="cmdErr" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span></span></p>
+
+    <div class="ex-added" id="exAdded" hidden>
+      <p class="ex-added-h">Comandas desta rota</p>
+      <div id="exList"></div>
+    </div>
+
+    <button class="cta" id="extraCreate" disabled>Criar rota extra</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span id="toastMsg"></span></div>
+
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
 <script src="static/js/shell.js"></script>
 <script>
-  const ARROW='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
-  const TRUCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>';
+  const ARROW='<i data-lucide="chevron-right"></i>';
+  const TRUCK='<i data-lucide="truck"></i>';
   const CAM='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>';
 
   const routes=[
@@ -118,16 +149,26 @@
   ];
   let pendingRoute=null;
   const routesEl=document.getElementById('routes');
+  /* rotas extras montadas pelo motorista (persistidas) */
+  function loadExtras(){ try{ return (window.GAO&&GAO.load&&GAO.load('gao_rotas_extra'))||[]; }catch(e){ return []; } }
+  function saveExtras(a){ try{ if(window.GAO&&GAO.save) GAO.save('gao_rotas_extra', a); }catch(e){} }
+  function allRoutes(){ return routes.concat(loadExtras()); }
   function trip(){ return (window.GAO&&GAO.getTrip)?GAO.getTrip():null; }
   function doneRoute(){ return (window.GAO&&GAO.load)?GAO.load('gao_done'):null; }
   function timeStr(ts){ try{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}catch(e){return '';} }
-  const CHECK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const CHECK='<i data-lucide="check"></i>';
   function renderRoutes(){
     const t=trip(), done=doneRoute();
     const isDoneI=(i)=>!!(done && done.route===i);
-    const order=routes.map((_,i)=>i).sort((a,b)=>(isDoneI(a)?1:0)-(isDoneI(b)?1:0));  // concluídas vão pro fim
+    const isActiveI=(i)=>!!(t && t.route===i);
+    const RR=allRoutes();
+    const order=RR.map((_,i)=>i).sort((a,b)=>{  // em andamento -> extra -> normais -> concluídas
+      const rank=(i)=> isDoneI(i)?3 : isActiveI(i)?0 : (RR[i].extra?1:2);
+      return rank(a)-rank(b);
+    });
     routesEl.innerHTML=order.map(i=>{
-      const r=routes[i];
+      const r=RR[i];
+      const tag=r.extra?'<span class="rt-status">Rota extra</span>':'';
       const isDone = isDoneI(i);
       const active = t && t.route===i;
       const stats=`<div class="route-stats">
@@ -138,27 +179,90 @@
       if(isDone){
         return `
       <div class="route is-done">
-        <div class="route-top"><div class="route-ic done">${CHECK}</div><div><h4>${r.name}</h4><div class="cm">Concluída${done.at?' · '+timeStr(done.at):''}</div></div></div>
+        <div class="route-top"><div class="route-ic done">${CHECK}</div><div><h4>${r.name}</h4><div class="cm">Concluída${done.at?' · '+timeStr(done.at):''}</div></div>${tag}</div>
         ${stats}
-        <button class="route-btn ghost" data-resumo="${i}">Ver resumo ${ARROW}</button>
+        <button class="route-btn muted" data-resumo="${i}">Ver resumo ${ARROW}</button>
       </div>`;
       }
       return `
       <div class="route">
-        <div class="route-top"><div class="route-ic">${TRUCK}</div><div><h4>${r.name}</h4><div class="cm">${r.comandas} comandas${active?' · em andamento':''}</div></div></div>
+        <div class="route-top"><div class="route-ic">${TRUCK}</div><div><h4>${r.name}</h4><div class="cm">${r.comandas} ${r.comandas===1?'comanda':'comandas'}${active?' · em andamento':''}</div></div>${tag}</div>
         ${stats}
-        <button class="route-btn" data-route="${i}">${active?'Continuar viagem':'Iniciar rota'} ${ARROW}</button>
+        <button class="route-btn${active?'':' ghost'}" data-route="${i}">${active?'Continuar viagem':'Iniciar rota'} ${ARROW}</button>
       </div>`;
     }).join('');
+    const avail=RR.filter((_,i)=>!isDoneI(i)).length;
+    const rc=document.getElementById('routeCount'); if(rc) rc.textContent=avail+(avail===1?' disponível':' disponíveis');
     routesEl.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>{
       const i=+b.dataset.route, t=trip();
       if(t && t.route===i){ const P={carregar:'carregar.html',rota:'rota.html',entrega:'entrega.html',coletas:'coleta-rota.html',checkout:'checkout.html',resumo:'resumo.html',acidente:'acidente.html'}; window.location.href = P[t.step]||'carregar.html'; }
       else { pendingRoute=i; showView('viewStart'); }
     }));
     routesEl.querySelectorAll('[data-resumo]').forEach(b=>b.addEventListener('click',()=>{ window.location.href='resumo.html'; }));
+    if(window.lucide&&lucide.createIcons)lucide.createIcons();
   }
   renderRoutes();
   if(window.GAO&&GAO.renderFlow) GAO.renderFlow(document.getElementById('ckFlow'),'checkin');
+
+  /* ---------- Rota extra: montar (ler/digitar comandas) e criar ---------- */
+  const EX_POOL=[
+    {cliente:'Le Jardim',                origem:'Rota Hotel',   gaiolas:3},
+    {cliente:'Hospital Albert Einstein', origem:'Rota Leste',   gaiolas:4},
+    {cliente:'Maternidade Santa Lúcia',  origem:'Rota Sul',     gaiolas:2},
+    {cliente:'Clínica São Vicente',      origem:'Rota Centro',  gaiolas:3}
+  ];
+  const XIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  let exCart=[], exPoolIx=0;
+  const extraWrap=document.getElementById('extraWrap'), extraCreate=document.getElementById('extraCreate');
+  const exAdded=document.getElementById('exAdded'), exList=document.getElementById('exList'), cmdInput=document.getElementById('cmdInput'), cmdVal=document.getElementById('cmdVal');
+  function renderExList(){
+    exAdded.hidden = exCart.length===0;
+    exList.innerHTML = exCart.map((c,i)=>`<div class="ex-item"><div class="ex-tx"><b>${c.cliente}</b><small>${c.origem} · <b>${c.gaiolas} ${c.gaiolas>1?'gaiolas':'gaiola'}</b></small></div><button class="ex-rm" data-exrm="${i}" aria-label="Remover">${XIC}</button></div>`).join('');
+    exList.querySelectorAll('[data-exrm]').forEach(b=>b.addEventListener('click',()=>{ exCart.splice(+b.dataset.exrm,1); renderExList(); }));
+    extraCreate.disabled = exCart.length===0;
+  }
+  const EX_OK='1234';  // comanda válida (protótipo): qualquer outro código cai no estado de erro
+  const cmdErr=document.getElementById('cmdErr');
+  function showCmdErr(msg){ cmdErr.querySelector('span').textContent=msg; cmdErr.hidden=false; cmdInput.classList.add('err'); }
+  function clearCmdErr(){ cmdErr.hidden=true; cmdInput.classList.remove('err'); }
+  function addComanda(code){
+    if(!code){ showCmdErr('Digite o código da comanda.'); return; }
+    if(code!==EX_OK){ showCmdErr('Comanda não encontrada. Confira o código e tente novamente.'); return; }
+    clearCmdErr();
+    const base=EX_POOL[exPoolIx % EX_POOL.length]; exPoolIx++;
+    exCart.push({cliente:base.cliente, origem:base.origem, gaiolas:base.gaiolas, comanda:code});
+    renderExList();
+    cmdInput.value='';
+  }
+  cmdInput.addEventListener('input',()=>{ cmdInput.value=cmdInput.value.replace(/\D/g,''); clearCmdErr(); });
+  cmdVal.addEventListener('click',()=>{ addComanda((cmdInput.value||'').trim()); cmdInput.focus(); });
+  cmdInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); cmdVal.click(); } });
+  function openExtra(){ exCart=[]; exPoolIx=0; cmdInput.value=''; clearCmdErr(); renderExList(); extraWrap.classList.add('open'); setTimeout(()=>{try{cmdInput.focus();}catch(e){}},90); }
+  function closeExtra(){ extraWrap.classList.remove('open'); }
+  document.getElementById('fabExtra').addEventListener('click',openExtra);
+  document.getElementById('extraClose').addEventListener('click',closeExtra);
+  extraWrap.addEventListener('click',e=>{ if(e.target===extraWrap) closeExtra(); });
+  extraCreate.addEventListener('click',()=>{
+    if(exCart.length===0) return;
+    const total=exCart.reduce((s,c)=>s+c.gaiolas,0);
+    const extras=loadExtras();
+    extras.push({ name:exCart[0].origem, extra:true, comandas:exCart.length, entregas:exCart.length, coletas:exCart.length, gaiolas:total,
+      clientes:exCart.map(c=>({cliente:c.cliente, gaiolas:c.gaiolas, comanda:c.comanda})) });
+    saveExtras(extras);
+    exCart=[];
+    closeExtra();
+    renderRoutes();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  /* ---------- GPS / geofence (precisa estar na GAO) — mesmo esquema do check-out ---------- */
+  const geoChip=document.getElementById('geoChip'), toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
+  let atGao=true, toastTimer=null;
+  function renderGeo(){ geoChip.className='geo-chip '+(atGao?'in':'out'); geoChip.innerHTML='<span class="dot"></span>'+(atGao?'No pátio da GAO':'Fora da GAO'); }
+  geoChip.addEventListener('click',()=>{ atGao=!atGao; renderGeo(); checkValid(); });
+  renderGeo();
+  function showToast(msg){ toastMsg.textContent=msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
+  function geoBlocked(){ if(!atGao){ showToast('Você precisa estar no pátio da GAO para fazer o check-in.'); return true; } return false; }
 
   const dias=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
   const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
@@ -199,7 +303,7 @@
       <div class="pslot-filled" hidden><img alt="Foto"><button type="button" class="pslot-replace"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Substituir</button></div>
     </div>`;
     const input=el.querySelector('input'), empty=el.querySelector('.pslot-empty'), filled=el.querySelector('.pslot-filled'), img=el.querySelector('img');
-    const open=()=>input.click();
+    const open=()=>{ if(geoBlocked())return; input.click(); };
     empty.addEventListener('click',open);
     el.querySelector('.pslot-replace').addEventListener('click',open);
     input.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{img.src=r.result;slots[key]=r.result;empty.hidden=true;filled.hidden=false;el.classList.remove('err');if(el.previousElementSibling)el.previousElementSibling.classList.remove('err');checkValid();};r.readAsDataURL(f);input.value='';});
@@ -224,7 +328,7 @@
   function checkValid(){
     if(current!=='viewCheckin') return;
     const photos = ckDone || (slots.odometro && slots.cabine && slots.traseira && slots.esq && slots.dir);
-    let ok = document.getElementById('kmInput').value.trim() && avaria!==null && photos;
+    let ok = atGao && document.getElementById('kmInput').value.trim() && avaria!==null && photos;
     if(avaria==='sim') ok = ok && avariaDesc.value.trim() && (ckDone || slots.avaria);
     footBtn.classList.toggle('off',!ok);
   }
@@ -246,15 +350,17 @@
     return m;
   }
   function attemptConclude(){
+    if(!atGao){ showToast('Você precisa estar no pátio da GAO para fazer o check-in.'); return; }
     const m=collectMissing();
     if(m.length===0){
       const route = pendingRoute==null ? (((window.GAO&&GAO.getTrip&&GAO.getTrip())||{}).route||0) : pendingRoute;
+      const _rd=allRoutes()[route]; if(window.GAO){ if(_rd&&_rd.extra&&GAO.save)GAO.save('gao_active_extra',{name:_rd.name,clientes:_rd.clientes||[]}); else if(GAO.remove)GAO.remove('gao_active_extra'); }
       const prev = window.GAO&&GAO.getTrip&&GAO.getTrip();
       if(!prev || prev.route!==route){ if(window.GAO&&GAO.remove)GAO.remove('gao_cargo'); }  // viagem nova = carregamento zerado
       if(window.GAO&&GAO.remove){GAO.remove('gao_extras');GAO.remove('gao_entregas');GAO.remove('gao_coletas');GAO.remove('gao_acidente');}  // coletas extras e resultados pertencem a esta viagem: começa zerado
       ckDone=true; saveCk();
-      if(window.GAO&&GAO.setTrip)GAO.setTrip({route:route,step:'carregar'});
-      window.location.href='carregar.html'; return;
+      if(window.GAO&&GAO.setTrip)GAO.setTrip({route:route,step:'rota'});
+      window.location.href='rota.html'; return;
     }
     clearErrors();
     m.forEach(x=>{ if(x.l)x.l.classList.add('err'); if(x.f)x.f.classList.add('err'); });

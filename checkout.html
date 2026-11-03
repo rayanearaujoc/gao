@@ -210,7 +210,7 @@
   goBtn.addEventListener('click',attemptFinalize);
   document.getElementById('okBtn').addEventListener('click',()=>{
     if(window.GAO&&GAO.clearTrip)GAO.clearTrip();
-    try{ GAO.remove&&GAO.remove('gao_extras'); GAO.remove&&GAO.remove('gao_cargo'); }catch(e){}
+    try{ GAO.remove&&GAO.remove('gao_extras'); GAO.remove&&GAO.remove('gao_cargo'); GAO.remove&&GAO.remove('gao_active_extra'); }catch(e){}
     window.location.href='index.html';
   });
   okWrap.addEventListener('click',e=>{ if(e.target===okWrap) okWrap.classList.remove('open'); });

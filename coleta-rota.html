@@ -62,7 +62,6 @@
   // coletas fixas da rota (clientes do dia)
   const base=[
     {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:ADDR['Hospital São Marcos']},
-    {type:'c', kind:'Coleta', name:'SJ Hotel', addr:ADDR['SJ Hotel']},
   ];
   // coletas registradas na fase de entrega (localStorage) — entram junto das coletas da rota
   let extras=[];
@@ -99,7 +98,7 @@
   const dest=stops.map(s=>encodeURIComponent(s.name+' Goiânia'));
   document.getElementById('mapsBtn').href='https://www.google.com/maps/dir/'+dest.join('/');
 
-  // sem coleta extra → não precisa da animação pesada; com extra → recalcula de verdade
+  // sem coleta registrada → não precisa da animação pesada; com coleta → recalcula de verdade
   const viewLoading=document.getElementById('viewLoading'), viewRoute=document.getElementById('viewRoute'), footer=document.getElementById('footer');
   const hasExtra=extras.length>0;
   if(!hasExtra){

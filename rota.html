@@ -39,7 +39,7 @@
 </div>
 
 <div class="footer" id="footer">
-  <button class="foot-btn" id="startBtn">Iniciar entregas <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  <button class="foot-btn" id="startBtn">Ir para o carregamento <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
 </div>
 
 <div class="sheet-wrap" id="okWrap">
@@ -94,9 +94,12 @@
     window.scrollTo({top:0});
   }, 1800);
 
-  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='carregar.html';});
+  /* As mensagens de "a caminho" saem automaticamente pelo Z-API (número da GAO) ao iniciar as entregas — sem etapa manual aqui. */
+  function goCarregar(){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='carregar';GAO.setTrip(t);} window.location.href='carregar.html'; }
+
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html#checkin';});
   const okWrap=document.getElementById('okWrap');
-  document.getElementById('startBtn').addEventListener('click',()=>{ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='entrega';GAO.setTrip(t);} window.location.href='entrega.html'; });
+  document.getElementById('startBtn').addEventListener('click',goCarregar);
   document.getElementById('okBtn').addEventListener('click',()=>okWrap.classList.remove('open'));
   okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
 </script>
