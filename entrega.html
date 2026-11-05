@@ -34,13 +34,13 @@
       <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" stroke-linecap="round"/></svg></div>
       <button class="sheet-x" id="closeScan" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <h2>Ler o QR Code da gaiola</h2>
+    <h2>Ler o código de barras da gaiola</h2>
     <p class="sub" id="sheetSub">—</p>
     <div class="sheet-prog"><span class="count" id="sheetCount">0 de 4 lidas</span><div class="bar" id="sheetBar"><i></i></div></div>
     <div class="cam" id="cam">
       <video id="camVideo" playsinline muted></video>
       <div class="reticle"><span></span><span></span><span></span><span></span></div>
-      <div class="laser"></div><div class="hint" id="camHint">Aponte para o QR Code</div>
+      <div class="laser"></div><div class="hint" id="camHint">Aponte para o código de barras</div>
       <div class="feedback" id="feedback"><div class="fb-ring"></div><div class="fb-title"></div><div class="fb-sub"></div></div>
     </div>
     <div class="manual"><div class="lbl">Ou digite o código da etiqueta</div><div class="row"><input id="manualInput" placeholder="Ex: 0111111" inputmode="numeric"><button id="manualBtn">Confirmar</button></div></div>
@@ -187,7 +187,7 @@
 <div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="toastMsg"></span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/zxing-browser.min.js"></script>
 <script src="static/js/shell.js"></script>
 <script>
   const CHK13='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -251,7 +251,7 @@
         </div>
         <div class="list-head" data-listhead="${i}"><span class="lh-l" data-lhl="${i}">Gaiolas desta entrega</span><span class="lh-chev">${CHEV}</span></div>
         <div class="cages-wrap"><div class="cages-inner"><div class="cages">${rows}</div></div></div>
-        <button class="btn read" data-scan="${i}">Ler QR Code ${BARCODE}</button>
+        <button class="btn read" data-scan="${i}">Ler código de barras ${BARCODE}</button>
         <button class="link-report" data-report="${i}">Reportar um problema</button>
         <button class="btn primary" data-confirmopen="${i}" hidden>Confirmar entrega ${CHKW}</button>
         <button class="btn-revise" data-revise="${i}" hidden>Revisar entrega</button>
@@ -336,7 +336,7 @@
     activeIdx=i; const o=orders[i];
     if(!o.listOpen){o.listOpen=true;syncAll();}
     sheetSub.textContent=`${o.name} · ${o.id}`;
-    if(camHint)camHint.textContent='Aponte para o QR Code';
+    if(camHint)camHint.textContent='Aponte para o código de barras';
     feedback.classList.remove('show');
     syncScan(); sheetWrap.classList.add('open');
     startScan();

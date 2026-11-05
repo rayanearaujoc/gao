@@ -372,26 +372,18 @@
   function setTrip(t){ save(TRIP_KEY,t); }
   function clearTrip(){ remove(TRIP_KEY); }
 
-  // câmera + leitura de QR (jsQR) — compartilhado por carregamento e entrega
+  // câmera + leitura de código de barras / QR (ZXing) — compartilhado por carregamento e entrega
   function startCamera(video, opts){
-    opts=opts||{}; var stream=null, raf=null, paused=false;
-    var canvas=document.createElement('canvas'), ctx=canvas.getContext('2d',{willReadFrequently:true});
-    function loop(){
-      raf=requestAnimationFrame(loop);
-      if(paused || !video.videoWidth) return;
-      canvas.width=video.videoWidth; canvas.height=video.videoHeight;
-      ctx.drawImage(video,0,0,canvas.width,canvas.height);
-      var img; try{ img=ctx.getImageData(0,0,canvas.width,canvas.height); }catch(e){ return; }
-      if(!window.jsQR) return;
-      var code=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
-      if(code && code.data && opts.onCode){ paused=true; opts.onCode(code.data); setTimeout(function(){ paused=false; }, opts.cooldown||1200); }
-    }
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ if(opts.onError)opts.onError(new Error('no-cam')); return function(){}; }
-    navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}}).then(function(s){
-      stream=s; video.srcObject=s; video.setAttribute('playsinline',''); video.muted=true;
-      var p=video.play(); if(p&&p.then) p.then(loop).catch(loop); else loop();
-    }).catch(function(e){ if(opts.onError)opts.onError(e); });
-    return function stop(){ if(raf)cancelAnimationFrame(raf); if(stream)stream.getTracks().forEach(function(t){t.stop();}); try{ video.srcObject=null; }catch(e){} };
+    opts=opts||{};
+    if(!window.ZXingBrowser || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ if(opts.onError)opts.onError(new Error('no-cam')); return function(){}; }
+    var reader=new ZXingBrowser.BrowserMultiFormatReader();
+    var controls=null, stopped=false, paused=false;
+    reader.decodeFromConstraints({video:{facingMode:{ideal:'environment'}}}, video, function(result){
+      if(stopped || paused || !result || !opts.onCode) return;
+      paused=true; opts.onCode(result.getText ? result.getText() : (result.text||''));
+      setTimeout(function(){ paused=false; }, opts.cooldown||1400);
+    }).then(function(c){ controls=c; if(stopped && controls){ try{controls.stop();}catch(e){} } }).catch(function(e){ if(opts.onError)opts.onError(e); });
+    return function stop(){ stopped=true; if(controls){ try{controls.stop();}catch(e){} } try{ video.srcObject=null; }catch(e){} };
   }
 
   window.GAO = { open:openMenu, close:closeMenu, icons:icons, renderFlow:renderFlow, flowHTML:flowHTML, getTrip:getTrip, setTrip:setTrip, clearTrip:clearTrip, save:save, load:load, remove:remove, shrink:shrink, startCamera:startCamera };
