@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Rotas do motorista</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/home.css">
 <link rel="stylesheet" href="static/css/entrega.css">
@@ -28,8 +29,9 @@
       </div>
       <div class="section-row"><h3>Suas rotas de hoje</h3><div class="sr-right"><span id="routeCount">2 disponíveis</span><div class="datechip jsdate sr-date">—</div></div></div>
       <div id="routes"></div>
+      <button class="proto-toggle" id="protoToggle" type="button">Protótipo · ver como folguista (sem rota)</button>
     </div>
-    <button class="fab" id="fabExtra" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Rota extra</button>
+    <button class="fab" id="fabExtra" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Iniciar rota extra</button>
   </section>
 
   <!-- ============ INÍCIO DE ROTA ============ -->
@@ -148,11 +150,12 @@
     {name:"Rota Rio Verde", comandas:2, entregas:1, coletas:0, gaiolas:7},
   ];
   let pendingRoute=null;
+  let PROTO_EMPTY=false;  // protótipo: simula motorista sem rota fixa (estado vazio)
   const routesEl=document.getElementById('routes');
   /* rotas extras montadas pelo motorista (persistidas) */
   function loadExtras(){ try{ return (window.GAO&&GAO.load&&GAO.load('gao_rotas_extra'))||[]; }catch(e){ return []; } }
   function saveExtras(a){ try{ if(window.GAO&&GAO.save) GAO.save('gao_rotas_extra', a); }catch(e){} }
-  function allRoutes(){ return routes.concat(loadExtras()); }
+  function allRoutes(){ return PROTO_EMPTY ? [] : routes.concat(loadExtras()); }
   function trip(){ return (window.GAO&&GAO.getTrip)?GAO.getTrip():null; }
   function doneRoute(){ return (window.GAO&&GAO.load)?GAO.load('gao_done'):null; }
   function timeStr(ts){ try{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}catch(e){return '';} }
@@ -162,6 +165,12 @@
     const isDoneI=(i)=>!!(done && done.route===i);
     const isActiveI=(i)=>!!(t && t.route===i);
     const RR=allRoutes();
+    if(RR.length===0){
+      routesEl.innerHTML='<div class="route route-empty"><div class="re-ic"><i data-lucide="truck"></i><span class="re-x"><i data-lucide="route"></i></span></div><h4>Nenhuma rota atribuída</h4><p>Nenhuma rota atribuída por enquanto. Enquanto isso, inicie uma rota extra.</p></div>';
+      const rc0=document.getElementById('routeCount'); if(rc0) rc0.textContent='0 disponíveis';
+      if(window.lucide&&lucide.createIcons)lucide.createIcons();
+      return;
+    }
     const order=RR.map((_,i)=>i).sort((a,b)=>{  // em andamento -> extra -> normais -> concluídas
       const rank=(i)=> isDoneI(i)?3 : isActiveI(i)?0 : (RR[i].extra?1:2);
       return rank(a)-rank(b);
@@ -203,6 +212,11 @@
   }
   renderRoutes();
   if(window.GAO&&GAO.renderFlow) GAO.renderFlow(document.getElementById('ckFlow'),'checkin');
+  document.getElementById('protoToggle').addEventListener('click',function(){
+    PROTO_EMPTY=!PROTO_EMPTY;
+    this.textContent = PROTO_EMPTY ? 'Protótipo · ver como Ronaldo (com rotas)' : 'Protótipo · ver como folguista (sem rota)';
+    renderRoutes(); window.scrollTo({top:0,behavior:'smooth'});
+  });
 
   /* ---------- Rota extra: montar (ler/digitar comandas) e criar ---------- */
   const EX_POOL=[

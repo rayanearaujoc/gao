@@ -4,80 +4,87 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Login</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/login.css">
 </head>
 <body class="p-login">
 
-<div class="lg-wrap">
-  <!-- painel azul com a arte -->
-  <div class="lg-art">
-    <img class="lg-art-bg" src="static/img/login-art.svg" alt="">
-    <div class="lg-art-foot">
-      <b>GAO LOGÍSTICA</b>
-    </div>
+<!-- painel azul com a arte das hélices + símbolo da GAO -->
+<aside class="lg-art" aria-hidden="true">
+  <img class="lg-art-bg" src="static/img/login-art.svg" alt="">
+  <div class="lg-badge">
+    <svg viewBox="0 0 100 101" xmlns="http://www.w3.org/2000/svg">
+      <path d="M55.8034 1.54543L54.624 3.07052L54.8477 16.532C54.9697 23.9338 55.1121 31.0508 55.1731 32.3319C55.2137 33.613 55.2951 37.2732 55.3154 40.4657C55.3357 43.6583 55.4171 47.0338 55.4781 47.9895C55.5797 49.718 55.5797 49.6976 55.7424 46.7694C55.8238 45.1427 56.0271 41.8078 56.2101 39.3473C56.3728 36.8869 56.6778 31.9049 56.9015 28.265C57.1252 24.6251 57.3489 21.1073 57.4099 20.4362C57.4709 19.7652 57.6539 16.8777 57.8165 14.0308C58.3249 5.32766 58.3859 4.45327 58.5283 4.37193C58.6503 4.29059 61.7818 6.40538 76.321 16.3693C78.2324 17.6707 80.8149 19.4398 82.0757 20.2939C91.2669 26.5569 96.2285 30.0138 96.2692 30.1968C96.3098 30.2985 93.158 32.6776 89.2944 35.4838C85.4309 38.2696 81.3843 41.2181 80.3065 42.0112C79.2288 42.8042 74.7959 46.0374 70.424 49.2096C60.582 56.347 60.9074 56.103 60.0127 56.774C58.5893 57.8721 59.606 57.3231 62.2495 55.5743C63.7339 54.5982 67.1704 52.3411 69.9156 50.5313C72.6608 48.7216 76.9107 45.9154 79.3712 44.2886C81.8316 42.6619 86.7323 39.449 90.2501 37.1105C93.768 34.7924 97.1232 32.5759 97.7129 32.1896C98.3026 31.8032 98.811 31.3355 98.872 31.1525C98.9127 30.9695 99.2177 29.9121 99.5227 28.8344C99.8277 27.7363 100.051 26.8213 99.9904 26.7603C99.848 26.6383 93.6663 22.734 87.0983 18.6264C83.7431 16.532 77.8461 12.8311 73.9825 10.391C70.1189 7.97115 64.832 4.63628 62.2088 2.98918C59.5857 1.34209 57.3285 3.8147e-06 57.2065 3.8147e-06C57.0845 3.8147e-06 56.4541 0.69138 55.8034 1.54543Z"/>
+      <path d="M12.4898 9.80209C12.4288 9.94444 11.8798 12.7709 11.2494 16.0651C10.6191 19.3593 9.70401 24.0769 9.21598 26.5374C8.74828 28.9979 8.05691 32.5158 7.69089 34.3662C7.3452 36.2167 6.93851 38.3111 6.77583 39.0432C6.61315 39.7752 5.98278 43.0084 5.35241 46.2619C4.72204 49.4951 3.99 53.257 3.72565 54.5991C3.44096 55.9412 2.76992 59.4591 2.18022 62.4279C1.61086 65.3967 0.878812 69.179 0.553459 70.8464C0.207772 72.5138 -0.0362426 74.0999 0.00442651 74.3846C0.0450956 74.771 0.472121 75.1777 1.65152 75.991L3.21728 77.1094L4.09167 76.8044C4.55937 76.6214 5.6371 76.2147 6.47081 75.8894C8.34159 75.1573 17.9395 71.4361 21.01 70.2567C22.2504 69.789 28.1474 67.5115 34.1258 65.1731C40.1042 62.8549 45.8385 60.6385 46.8349 60.2521C47.8516 59.8657 49.5191 59.215 50.5561 58.8083C51.5728 58.422 52.4269 58.0153 52.4269 57.9543C52.4269 57.2426 51.4102 57.5679 36.7693 63.0583C28.4321 66.1898 20.522 69.1383 19.1799 69.6467C17.8378 70.1347 16.1501 70.7651 15.418 71.0497C13.2829 71.8631 8.19925 73.7542 5.51509 74.7506L3.01394 75.6657L2.4039 75.2183C2.03788 74.9336 1.79387 74.5676 1.79387 74.2829C1.79387 74.0389 2.3429 71.5581 3.03427 68.7926C4.09167 64.4003 6.61315 53.9687 7.69089 49.4138C7.89423 48.5801 9.03297 43.8218 10.2327 38.8398C11.4324 33.8579 12.6118 28.9166 12.8762 27.8592C13.1202 26.8018 13.9946 23.1416 14.808 19.7253C15.6214 16.3091 16.3331 13.4623 16.4144 13.381C16.5161 13.259 24.1009 21.4945 28.5338 26.5374C28.7575 26.7814 30.1402 28.3065 31.584 29.913C35.9356 34.7119 40.4498 39.6735 41.5276 40.8733C53.2199 53.806 53.4843 54.0907 53.769 53.8671C53.9927 53.684 53.952 53.5214 53.4843 52.9723C53.1793 52.6063 50.8611 49.8611 48.3396 46.8516C45.7978 43.8421 41.1819 38.3518 38.091 34.6712C34.9798 30.9704 31.1976 26.4968 29.6725 24.687C28.1474 22.8975 24.6702 18.7493 21.9454 15.4958L16.9634 9.55807H14.7673C13.1812 9.55807 12.5305 9.63941 12.4898 9.80209Z"/>
+      <path d="M90.1458 51.7523C89.5968 51.8946 87.9904 52.2606 86.5873 52.5657C85.1842 52.8503 82.7644 53.379 81.1986 53.7044C79.6329 54.0501 77.3961 54.5381 76.2167 54.8025C75.0373 55.0668 72.9835 55.5142 71.6414 55.7989C65.236 57.1613 64.1989 57.3849 62.3892 57.7916C61.3318 58.0153 60.3761 58.3 60.254 58.3813C59.949 58.666 60.3151 58.6254 65.0937 57.6696C67.5745 57.1613 73.1868 56.0632 77.5384 55.2091C81.9103 54.3551 86.811 53.3994 88.4377 53.0537C91.9149 52.3623 92.0979 52.342 92.708 52.8503L93.1757 53.2164L90.6745 61.3298C87.8887 70.3177 86.3839 75.2387 84.0251 82.9658C83.1711 85.8126 82.378 88.2324 82.317 88.3138C82.2357 88.4155 79.9786 85.8533 77.3147 82.6404C74.6306 79.4073 71.0517 75.076 69.3233 73.0019C61.2708 63.3023 59.034 60.6385 58.9526 60.6995C58.8306 60.8215 59.4813 61.7365 61.5148 64.38C62.5519 65.7018 66.5578 70.9074 70.4213 75.9504C74.2849 80.973 78.4128 86.3413 79.5922 87.8664L81.7273 90.6523L82.8661 90.7946C83.4761 90.8759 84.0658 90.8556 84.1471 90.7539C84.2488 90.6726 84.6962 89.2085 85.1435 87.5411C85.6112 85.8533 86.1603 83.7995 86.3839 82.9658C86.6076 82.1321 87.4413 79.0616 88.2344 76.1537C89.0274 73.2459 89.8001 70.3991 89.9425 69.85C90.0848 69.2807 90.5322 67.5929 90.9592 66.0881C91.3659 64.5834 91.8336 62.8753 91.9759 62.3262C92.1386 61.7569 92.525 60.2928 92.8707 59.032C93.2163 57.7916 93.684 56.0632 93.9077 55.1685L94.3551 53.5824L93.196 52.5047C91.9759 51.3659 91.7929 51.3252 90.1458 51.7523Z"/>
+      <path d="M48.6644 65.6201C45.8786 68.6093 42.686 72.0662 41.5676 73.3066C40.4289 74.5266 38.9038 76.1737 38.1718 76.9668C37.4397 77.7395 35.1623 80.2 33.1491 82.4164L29.4482 86.4427V88.0491V89.6352L41.8116 93.7225C61.2921 100.148 62.2072 100.453 62.4715 100.453C62.7562 100.453 64.017 98.3791 64.017 97.9114C64.017 97.586 63.2239 93.7835 62.3902 90.0826C62.1665 89.1268 61.6582 86.8494 61.2718 84.9989C60.8651 83.1485 60.3974 81.054 60.2347 80.322C59.8891 78.7562 57.5099 67.8366 56.7779 64.3594C56.2695 62.0006 55.9035 60.8822 55.8832 61.6549C55.8832 61.8379 56.3102 64.034 56.8185 66.5352C57.3269 69.016 57.9573 72.1678 58.2216 73.5099C58.486 74.852 59.4417 79.5696 60.3568 83.9822C63.4883 99.3348 63.3256 98.3587 62.9392 98.7858C62.5529 99.2128 64.1593 99.8228 43.8858 91.6483C31.746 86.7477 32.4578 87.0527 32.5391 86.829C32.5798 86.7274 34.0845 84.8363 35.874 82.6198C40.8356 76.5194 50.4945 64.6237 52.3043 62.3666C53.1787 61.2685 53.8497 60.3331 53.7887 60.2721C53.748 60.2111 51.4299 62.6309 48.6644 65.6201Z"/>
+    </svg>
   </div>
+</aside>
 
-  <!-- formulário -->
-  <div class="lg-main">
-    <div class="lg-body">
-      <div class="lg-card">
-        <img class="lg-logo" src="static/img/logo.svg" alt="GAO Logística">
-        <h1>Login</h1>
-        <p class="lg-sub">Entre com as credenciais que a GAO disponibilizou.</p>
+<!-- formulário -->
+<div class="lg-rt">
+  <main class="lg-main">
+    <div class="lg-card">
+      <img class="lg-logo" src="static/img/logo.svg" alt="GAO Logística">
+      <h1>Entrar</h1>
+      <p class="lg-sub">Entre com as credenciais que a GAO disponibilizou.</p>
 
-        <form id="lgForm">
+      <form id="lgForm" novalidate>
+        <div class="lg-f">
           <label class="lg-label" for="lgUser">Usuário/E-mail</label>
-          <div class="lg-field">
-            <span class="lg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
-            <input type="text" id="lgUser" placeholder="Seu usuário" autocomplete="username">
-          </div>
+          <input id="lgUser" type="text" placeholder="Seu usuário" autocomplete="username">
+          <div class="lg-msg" id="m1">Informe seu usuário ou e-mail.</div>
+        </div>
 
+        <div class="lg-f">
           <label class="lg-label" for="lgPass">Senha</label>
-          <div class="lg-field">
-            <span class="lg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <input type="password" id="lgPass" placeholder="Sua senha" autocomplete="current-password">
-            <button type="button" class="lg-eye" id="lgEye" aria-label="Mostrar senha"></button>
+          <div class="lg-w">
+            <input id="lgPass" type="password" placeholder="Sua senha" autocomplete="current-password">
+            <button class="lg-eye" id="lgEye" type="button" aria-label="Mostrar senha"><i data-lucide="eye"></i></button>
           </div>
+          <div class="lg-msg" id="m2">Informe sua senha.</div>
+        </div>
 
-          <button type="button" class="lg-forgot" id="lgForgot">Esqueceu a senha?</button>
-          <div class="lg-forgot-note" id="lgForgotNote" hidden>Solicite uma nova senha ao responsável da sua operação.</div>
+        <button type="button" class="lg-forgot" id="lgForgot">Esqueceu a senha?</button>
+        <div class="lg-forgot-note" id="lgForgotNote" hidden>Solicite uma nova senha ao responsável da sua operação.</div>
 
-          <button type="submit" class="lg-btn">Entrar</button>
-        </form>
-      </div>
+        <button type="submit" class="lg-btn" id="lgGo">Entrar</button>
+      </form>
     </div>
-
-    <div class="lg-foot">
-      <span>© 2026 GAO Logística</span>
-      <span>Todos os direitos reservados.</span>
-    </div>
-  </div>
+  </main>
+  <footer class="lg-foot">© 2026 GAO Logística</footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
-  var EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M2 2l20 20"/></svg>';
-  var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var eye=document.getElementById('lgEye'), pass=document.getElementById('lgPass');
-  eye.innerHTML=EYE_OFF;
+  function ic(){ if(window.lucide&&lucide.createIcons) lucide.createIcons(); }
+  var pass=document.getElementById('lgPass'), eye=document.getElementById('lgEye');
   eye.addEventListener('click',function(){
     var show=pass.type==='password';
     pass.type=show?'text':'password';
-    eye.innerHTML=show?EYE:EYE_OFF;
+    eye.innerHTML='<i data-lucide="'+(show?'eye-off':'eye')+'"></i>';
     eye.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');
+    ic();
   });
   document.getElementById('lgForgot').addEventListener('click',function(){
     document.getElementById('lgForgotNote').hidden=false;
   });
-  document.getElementById('lgForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    var btn=e.target.querySelector('.lg-btn');
-    if(btn.classList.contains('loading')) return;
-    btn.classList.add('loading'); btn.disabled=true;
-    btn.innerHTML='<span class="lg-spin"></span>Entrando…';
-    setTimeout(function(){ window.location.href='index.html'; }, 1000);
-  });
+  var user=document.getElementById('lgUser'), m1=document.getElementById('m1'), m2=document.getElementById('m2'), go=document.getElementById('lgGo');
+  function submit(){
+    var a=!user.value.trim(), b=!pass.value;
+    user.classList.toggle('err',a); m1.classList.toggle('on',a);
+    pass.classList.toggle('err',b); m2.classList.toggle('on',b);
+    if(a||b||go.disabled) return;
+    go.disabled=true; go.classList.add('ld'); go.innerHTML='<span class="lg-spin"></span>Entrando';
+    setTimeout(function(){ window.location.href='index.html'; },1100);
+  }
+  document.getElementById('lgForm').addEventListener('submit',function(e){ e.preventDefault(); submit(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Enter') submit(); });
+  user.addEventListener('input',function(){ user.classList.remove('err'); m1.classList.remove('on'); });
+  pass.addEventListener('input',function(){ pass.classList.remove('err'); m2.classList.remove('on'); });
+  ic();
 </script>
 </body>
 </html>

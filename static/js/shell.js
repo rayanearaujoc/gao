@@ -9,6 +9,8 @@
    Abrir o menu no mobile: qualquer elemento [data-gao-menu].
    ============================================================ */
 (function(){
+  // aplica o tema salvo o quanto antes (evita a maior parte do flash)
+  try{ if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
   var NAV_TOP = [
     {label:'Início', icon:'layout-grid', href:'index.html', key:'home'}
   ];
@@ -163,6 +165,92 @@
     return bar;
   }
 
+  // ----- Suporte: modal global (abrir chamado -> GLPI da GAO) -----
+  var SUP_TOPICS=[
+    {t:'Localização (GPS) não funciona', p:'urgente'},
+    {t:'Não consigo adicionar foto', p:'urgente'},
+    {t:'App travando ou muito lento', p:'normal'},
+    {t:'Erro ao registrar entrega ou coleta', p:'alta'},
+    {t:'Problema no leitor de gaiola', p:'alta'},
+    {t:'Outro', p:'normal'}
+  ];
+  var PRIO_LABEL={urgente:'Urgente', alta:'Alta', normal:'Normal'};
+  var SUP_SEL=-1, SUP_PHOTO=null;
+  var SUP_ADD='<input type="file" accept="image/*" id="gaoSupFile" hidden><button type="button" class="pslot-empty" id="gaoSupAdd"><div class="cam-ic"><i data-lucide="camera"></i></div><div class="pt">Tirar ou adicionar foto</div><div class="ps">Adicione uma foto do problema</div></button>';
+  function supWirePhoto(){
+    var add=document.getElementById('gaoSupAdd'), file=document.getElementById('gaoSupFile');
+    if(!add||!file) return;
+    add.addEventListener('click', function(){ file.click(); });
+    file.addEventListener('change', function(e){
+      var f=e.target.files[0]; if(!f) return;
+      var r=new FileReader();
+      r.onload=function(){
+        SUP_PHOTO=r.result;
+        var ph=document.getElementById('gaoSupPhoto');
+        ph.innerHTML='<div class="sup-thumb"><img src="'+r.result+'" alt="Print"><button type="button" class="st-rm" id="gaoSupRm" aria-label="Remover">'+IC_X+'</button></div>';
+        var rm=document.getElementById('gaoSupRm');
+        if(rm) rm.addEventListener('click', function(){ SUP_PHOTO=null; document.getElementById('gaoSupPhoto').innerHTML=SUP_ADD; supWirePhoto(); icons(); });
+      };
+      r.readAsDataURL(f); file.value='';
+    });
+  }
+  function supReset(){
+    SUP_SEL=-1; SUP_PHOTO=null;
+    var b=document.getElementById('gaoSupBody'), d=document.getElementById('gaoSupDone');
+    if(b) b.hidden=false; if(d){ d.hidden=true; d.innerHTML=''; }
+    var sel=document.getElementById('gaoSupSel'); if(sel) sel.value='';
+    var desc=document.getElementById('gaoSupDesc'); if(desc) desc.value='';
+    var ph=document.getElementById('gaoSupPhoto'); if(ph) ph.innerHTML=SUP_ADD;
+    supWirePhoto();
+    var s=document.getElementById('gaoSupSend'); if(s) s.disabled=true;
+  }
+  function openSupport(){ var w=document.getElementById('gaoSupWrap'); if(!w) return; supReset(); w.classList.add('open'); icons(); }
+  function closeSupport(){ var w=document.getElementById('gaoSupWrap'); if(w) w.classList.remove('open'); }
+  function buildSupport(){
+    if(document.getElementById('gaoSupWrap')) return;
+    var opts=SUP_TOPICS.map(function(o,i){ return '<option value="'+i+'">'+o.t+'</option>'; }).join('');
+    var h='<div class="sheet sup-sheet">'
+      +'<div class="sup-top"><div class="sup-ico"><i data-lucide="headset"></i></div><button class="sup-x" id="gaoSupX" type="button" aria-label="Fechar">'+IC_X+'</button></div>'
+      +'<div class="sup-body" id="gaoSupBody">'
+      +'<h2>Solicitar suporte</h2>'
+      +'<p class="sup-sub">Diga o que está acontecendo. A equipe de TI da GAO recebe na hora.</p>'
+      +'<p class="sup-label">O que aconteceu? <span class="sup-req">*</span></p>'
+      +'<select class="sup-select" id="gaoSupSel"><option value="" selected disabled>Selecione o motivo</option>'+opts+'</select>'
+      +'<p class="sup-label">Foto do problema <span class="sup-opt-tag">(opcional)</span></p>'
+      +'<div class="sup-photo" id="gaoSupPhoto">'+SUP_ADD+'</div>'
+      +'<p class="sup-label">Descrição <span class="sup-opt-tag">(opcional)</span></p>'
+      +'<textarea class="sup-area" id="gaoSupDesc" placeholder="Se quiser, explique em poucas palavras o que aconteceu"></textarea>'
+      +'<button class="sup-send" id="gaoSupSend" type="button" disabled>Enviar ao time</button>'
+      +'</div>'
+      +'<div class="sup-done" id="gaoSupDone" hidden></div>'
+      +'</div>';
+    var wrap=document.createElement('div'); wrap.className='sheet-wrap sup-wrap'; wrap.id='gaoSupWrap'; wrap.innerHTML=h;
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', function(e){ if(e.target===wrap) closeSupport(); });
+    var x=document.getElementById('gaoSupX'); if(x) x.addEventListener('click', closeSupport);
+    var selEl=document.getElementById('gaoSupSel');
+    if(selEl) selEl.addEventListener('change', function(){
+      SUP_SEL = selEl.value===''? -1 : +selEl.value;
+      var s=document.getElementById('gaoSupSend'); if(s) s.disabled = SUP_SEL<0;
+    });
+    supWirePhoto();
+    var send=document.getElementById('gaoSupSend');
+    if(send) send.addEventListener('click', function(){
+      if(SUP_SEL<0) return;
+      var topic=SUP_TOPICS[SUP_SEL], proto='GAO-'+Math.floor(10000+Math.random()*89999);
+      var d=document.getElementById('gaoSupDone');
+      d.innerHTML='<div class="success sup-success"><div class="ring"><i data-lucide="check"></i></div>'
+        +'<h3>Solicitação enviada</h3>'
+        +'<p>A equipe de TI da GAO recebeu. Pode seguir usando o app normalmente.</p>'
+        +'<div class="sd-meta"><div class="sd-row"><span class="k">Protocolo</span><span class="v">'+proto+'</span></div>'
+        +'<div class="sd-row"><span class="k">Problema</span><span class="v">'+topic.t+'</span></div>'
+        +'</div>'
+        +'<button class="sd-close" id="gaoSupClose" type="button">Fechar</button></div>';
+      document.getElementById('gaoSupBody').hidden=true; d.hidden=false; icons();
+      var c=document.getElementById('gaoSupClose'); if(c) c.addEventListener('click', closeSupport);
+    });
+  }
+
   function build(){
     try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; window.scrollTo(0,0); }catch(e){}  // toda fase começa no topo
     var page = document.body.getAttribute('data-page') || '';
@@ -231,6 +319,27 @@
       }
     }
 
+    // tema claro/escuro — lua no topo (fixa no desktop, rola junto no mobile)
+    var themeBtn=document.createElement('button');
+    themeBtn.id='gaoTheme'; themeBtn.type='button'; themeBtn.setAttribute('aria-label','Alternar tema');
+    document.body.appendChild(themeBtn);
+    function applyTheme(t){
+      var dark=(t==='dark');
+      if(dark) document.documentElement.setAttribute('data-theme','dark');
+      else document.documentElement.removeAttribute('data-theme');
+      themeBtn.innerHTML='<i data-lucide="'+(dark?'sun':'moon')+'"></i>';
+    }
+    applyTheme(load('gao_theme')==='dark'?'dark':'light');
+    themeBtn.addEventListener('click', function(){
+      var next=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark';
+      save('gao_theme', next); applyTheme(next); icons();
+    });
+
+    // suporte: abrir o modal pelo item "Suporte" do menu
+    buildSupport();
+    var supLink=side.querySelector('.gao-foot-nav a.gao-nav');
+    if(supLink) supLink.addEventListener('click', function(e){ e.preventDefault(); closeMenu(); openSupport(); });
+
     // ao trocar de breakpoint, fecha o drawer
     try{ var mq=matchMedia('(max-width:899px)'); mq.onchange=function(){ closeMenu(); }; }catch(e){}
 
@@ -263,7 +372,29 @@
   function setTrip(t){ save(TRIP_KEY,t); }
   function clearTrip(){ remove(TRIP_KEY); }
 
-  window.GAO = { open:openMenu, close:closeMenu, icons:icons, renderFlow:renderFlow, flowHTML:flowHTML, getTrip:getTrip, setTrip:setTrip, clearTrip:clearTrip, save:save, load:load, remove:remove, shrink:shrink };
+  // câmera + leitura de QR (jsQR) — compartilhado por carregamento e entrega
+  function startCamera(video, opts){
+    opts=opts||{}; var stream=null, raf=null, paused=false;
+    var canvas=document.createElement('canvas'), ctx=canvas.getContext('2d',{willReadFrequently:true});
+    function loop(){
+      raf=requestAnimationFrame(loop);
+      if(paused || !video.videoWidth) return;
+      canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      var img; try{ img=ctx.getImageData(0,0,canvas.width,canvas.height); }catch(e){ return; }
+      if(!window.jsQR) return;
+      var code=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+      if(code && code.data && opts.onCode){ paused=true; opts.onCode(code.data); setTimeout(function(){ paused=false; }, opts.cooldown||1200); }
+    }
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ if(opts.onError)opts.onError(new Error('no-cam')); return function(){}; }
+    navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}}).then(function(s){
+      stream=s; video.srcObject=s; video.setAttribute('playsinline',''); video.muted=true;
+      var p=video.play(); if(p&&p.then) p.then(loop).catch(loop); else loop();
+    }).catch(function(e){ if(opts.onError)opts.onError(e); });
+    return function stop(){ if(raf)cancelAnimationFrame(raf); if(stream)stream.getTracks().forEach(function(t){t.stop();}); try{ video.srcObject=null; }catch(e){} };
+  }
+
+  window.GAO = { open:openMenu, close:closeMenu, icons:icons, renderFlow:renderFlow, flowHTML:flowHTML, getTrip:getTrip, setTrip:setTrip, clearTrip:clearTrip, save:save, load:load, remove:remove, shrink:shrink, startCamera:startCamera };
 
   if(document.readyState !== 'loading') build();
   else document.addEventListener('DOMContentLoaded', build);

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Carregar gaiolas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/carregar.css">
 </head>
@@ -13,12 +14,12 @@
 <div class="app">
   <div class="nav">
     <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div><h1>Carregue todas as gaiolas</h1><p>Leia o código de barras e carregue</p></div>
+    <div><h1>Carregue todas as gaiolas</h1><p>Leia o QR Code e carregue</p></div>
   </div>
   <div class="content">
     <div class="info">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" stroke-linecap="round"/></svg>
-      <div><h2>Como conferir</h2><p>Leia o código de cada etiqueta nas gaiolas e confirme o carregamento. Se alguma não puder ser lida, relate o problema.</p></div>
+      <div><h2>Como conferir</h2><p>Leia o QR Code de cada etiqueta nas gaiolas e confirme o carregamento. Se algum não puder ser lido, relate o problema.</p></div>
     </div>
     <div id="orders"></div>
   </div>
@@ -34,21 +35,15 @@
       <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" stroke-linecap="round"/></svg></div>
       <button class="sheet-x" id="closeScan" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <h2>Ler código de barras da gaiola</h2>
+    <h2>Ler o QR Code da gaiola</h2>
     <p class="sub" id="sheetSub">—</p>
     <div class="sheet-prog"><span class="count" id="sheetCount">0 de 4 lidas</span><div class="bar" id="sheetBar"><i></i></div></div>
     <div class="cam" id="cam">
-      <div class="sim-tests">
-        <button data-state="wrong">Outra comanda</button>
-        <button data-state="invalid">Código inválido</button>
-        <button data-state="fail">Falha na leitura</button>
-        <button data-state="dup">Já lida</button>
-      </div>
+      <video id="camVideo" playsinline muted></video>
       <div class="reticle"><span></span><span></span><span></span><span></span></div>
-      <div class="laser"></div><div class="hint">Aponte para a etiqueta</div>
+      <div class="laser"></div><div class="hint" id="camHint">Aponte para o QR Code</div>
       <div class="feedback" id="feedback"><div class="fb-ring"></div><div class="fb-title"></div><div class="fb-sub"></div></div>
     </div>
-    <button class="sim" id="simBtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Simular leitura correta</button>
     <div class="manual"><div class="lbl">Ou digite o código da etiqueta</div><div class="row"><input id="manualInput" placeholder="Ex: 0111111" inputmode="numeric"><button id="manualBtn">Confirmar</button></div></div>
   </div>
 </div>
@@ -130,6 +125,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="static/js/shell.js"></script>
 <script>
   const CHK13='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -199,7 +195,7 @@
       <div class="order-pad">
         <div class="list-head" data-listhead="${i}"><span class="lh-l" data-lhl="${i}">Gaiolas a serem lidas</span><span class="lh-chev">${CHEV}</span></div>
         <div class="cages-wrap"><div class="cages-inner"><div class="cages">${rows}</div></div></div>
-        <button class="btn read" data-scan="${i}">Ler código ${BARCODE}</button>
+        <button class="btn read" data-scan="${i}">Ler QR Code ${BARCODE}</button>
         <button class="link-report" data-report="${i}">Reportar um problema</button>
         <button class="btn primary" data-confirmopen="${i}" hidden>Confirmar carregamento ${CHKW}</button>
         <button class="btn-revise" data-revise="${i}" hidden>Revisar carregamento</button>
@@ -247,7 +243,16 @@
     saveCargo();
   }
 
-  const sheetWrap=document.getElementById('sheetWrap'),sheetSub=document.getElementById('sheetSub'),sheetCount=document.getElementById('sheetCount'),sheetBar=document.getElementById('sheetBar'),simBtn=document.getElementById('simBtn'),feedback=document.getElementById('feedback');
+  const sheetWrap=document.getElementById('sheetWrap'),sheetSub=document.getElementById('sheetSub'),sheetCount=document.getElementById('sheetCount'),sheetBar=document.getElementById('sheetBar'),feedback=document.getElementById('feedback'),camVideo=document.getElementById('camVideo'),camHint=document.getElementById('camHint');
+  let camStop=null;
+  function onScanCode(text){
+    if(busy) return;
+    if(text==='GAO-GAIOLA-OK'){ readNext(); }
+    else if(text==='GAO-GAIOLA-OUTRA'){ var other=orders.find(function(x,ix){return ix!==activeIdx;})||orders[0]; showFeedback('wrong',{id:other.id,name:other.name}); }
+    else { showFeedback('invalid'); }
+  }
+  function startScan(){ stopScan(); if(window.GAO&&GAO.startCamera){ camStop=GAO.startCamera(camVideo,{onCode:onScanCode,onError:function(){ if(camHint)camHint.textContent='Câmera indisponível — digite o código abaixo'; }}); } }
+  function stopScan(){ if(camStop){ camStop(); camStop=null; } }
   let fbTimer=null;
   const FB_ICON={
     ok:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
@@ -275,10 +280,10 @@
     activeIdx=i; const o=orders[i];
     if(!o.listOpen){o.listOpen=true;syncAll();}
     sheetSub.textContent=`${o.name} · ${o.id}`;
-    document.querySelector('.cam .hint').textContent='Aponte para a etiqueta';
-    feedback.classList.remove('show'); simBtn.disabled=false;
-    simBtn.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Simular leitura correta';
+    if(camHint)camHint.textContent='Aponte para o QR Code';
+    feedback.classList.remove('show');
     syncScan(); sheetWrap.classList.add('open');
+    startScan();
   }
   function syncScan(){
     const o=orders[activeIdx],total=loadable(o).length,lidas=o.cages.filter(c=>c.status==='lida').length,scanned=o.cages.filter(c=>c.status==='lida'||c.status==='problema').length;
@@ -297,24 +302,19 @@
     if(pend(o).length===0) finishScan();
   }
   function finishScan(){
-    busy=true; simBtn.disabled=true; clearTimeout(fbTimer);
+    busy=true; clearTimeout(fbTimer);
     feedback.querySelector('.fb-ring').innerHTML=FB_ICON.ok;
     feedback.querySelector('.fb-title').textContent='Gaiolas do cliente foram lidas';
     feedback.querySelector('.fb-sub').textContent='Confirme o carregamento';
     feedback.className='feedback show ok';
     if(navigator.vibrate)navigator.vibrate([40,60,120]);
-    setTimeout(()=>{feedback.classList.remove('show');sheetWrap.classList.remove('open');busy=false;syncAll();openConfirm(activeIdx);},1300);
+    setTimeout(()=>{feedback.classList.remove('show');stopScan();sheetWrap.classList.remove('open');busy=false;syncAll();openConfirm(activeIdx);},1300);
   }
-  simBtn.addEventListener('click',readNext);
-  document.querySelectorAll('.sim-tests button').forEach(b=>b.addEventListener('click',()=>{
-    const st=b.dataset.state;
-    if(st==='wrong'){const other=orders.find((x,ix)=>ix!==activeIdx)||orders[0];showFeedback('wrong',{id:other.id,name:other.name});}
-    else showFeedback(st);
-  }));
+
   document.getElementById('manualBtn').addEventListener('click',()=>{const el=document.getElementById('manualInput');if(el.value.trim()){readNext();el.value='';}});
   document.getElementById('manualInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('manualBtn').click();});
-  document.getElementById('closeScan').addEventListener('click',()=>sheetWrap.classList.remove('open'));
-  sheetWrap.addEventListener('click',e=>{if(e.target===sheetWrap)sheetWrap.classList.remove('open');});
+  document.getElementById('closeScan').addEventListener('click',()=>{stopScan();sheetWrap.classList.remove('open');});
+  sheetWrap.addEventListener('click',e=>{if(e.target===sheetWrap){stopScan();sheetWrap.classList.remove('open');}});
 
   const reportWrap=document.getElementById('reportWrap'),reportSelect=document.getElementById('reportSelect'),reportOther=document.getElementById('reportOther'),reportBtn=document.getElementById('reportBtn');
   let reportIdx=0,rpQty=0,rpMax=0;

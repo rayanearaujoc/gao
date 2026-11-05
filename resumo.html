@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Resumo da viagem</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/resumo.css">
 </head>
@@ -158,8 +159,8 @@
       +   '<span class="dt">'+USER+' '+who+' '+o.setor+'</span>'
       +   '<span class="dt">'+CLOCK+' '+o.hora+'</span>'
       + '</div>'
-      + '<div class="stop-bar">'+thumbs(1,o.foto)+'<button class="stop-rep" data-c="'+o.c+'">Ver relatório '+CHEV+'</button></div>'
       + occBlock(o.ocorrencias)
+      + '<div class="stop-bar"><button class="stop-rep" data-c="'+o.c+'">Ver comprovante '+CHEV+'</button></div>'
       + '</div>';
   }
 
@@ -257,7 +258,7 @@
 
   // abrir relatório do cliente
   document.querySelectorAll('.stop-rep').forEach(function(b){
-    b.addEventListener('click',function(){ window.location.href='relatorio.html?c='+b.getAttribute('data-c'); });
+    b.addEventListener('click',function(){ window.open('comprovante.html','_blank'); });
   });
 
   function playLottie(){

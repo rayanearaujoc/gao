@@ -20,10 +20,13 @@
 .fil-clear{border:none;background:none;color:var(--read);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 2px;margin-right:6px}
 .fil-clear:hover{text-decoration:underline}
 
-/* mobile: filtros fininhos (hug no conteúdo), à esquerda — não ocupam a tela toda */
+/* mobile: filtros ocupam a largura toda, empilhados; "Limpar" full-width embaixo */
 @media(max-width:620px){
-  .fil-bar{justify-content:flex-start;margin-bottom:18px}
-  .ph-controls{gap:8px}
+  .fil-bar{flex-direction:column;align-items:stretch;gap:12px;margin-bottom:18px}
+  .ph-controls{flex-direction:column;align-items:stretch;gap:10px;width:100%}
+  .fil-pill{width:100%;padding:12px 14px}
+  .fil-pill select,.fil-pill input{flex:1;max-width:none}
+  .fil-clear{order:99;width:100%;text-align:center;border:1px solid var(--line);border-radius:10px;padding:12px 0;margin:0}
 }
 
 /* ===== Cards de resumo: aproveitamento (gradiente) + brancos com ícone ===== */
@@ -48,26 +51,34 @@
 }
 
 /* ===== Tabela ===== */
-.tbl-wrap{background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden}
+.tbl-wrap{background:var(--card);border-radius:8px;border:1px solid var(--line);overflow:hidden}
 .tbl-scroll{overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
 .tbl-scroll::-webkit-scrollbar{width:0;height:0;display:none}
-table.htbl{width:100%;border-collapse:collapse;font-size:13px;min-width:580px}
-.htbl thead th{text-align:left;font-size:12px;font-weight:600;letter-spacing:0;color:#0C1D4E;padding:13px 16px;border-bottom:1px solid var(--line);white-space:nowrap;background:#E2E8F0}
-.htbl thead th.r{text-align:right}
+table.htbl{width:100%;border-collapse:collapse;font-size:13px;min-width:580px;table-layout:fixed}
+.htbl thead th{text-align:left;font-size:12px;font-weight:600;letter-spacing:0;color:#475C86;padding:13px 16px;border-bottom:1px solid var(--line);white-space:nowrap;background:#E7EDF6}
+.htbl thead th.r{text-align:center}
 .htbl tbody td{padding:15px 16px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--fg)}
 .htbl tbody tr:last-child td{border-bottom:none}
 .htbl tbody tr.clickable{cursor:pointer}
 .htbl tbody tr.clickable:hover{background:var(--row)}
 .htbl td.data{color:var(--fg);font-weight:400;font-variant-numeric:tabular-nums}
 .htbl td.rota b{font-weight:400}
-.htbl td.num{font-variant-numeric:tabular-nums;text-align:right}
+.htbl td.num{font-variant-numeric:tabular-nums;text-align:center}
 .htbl td.off{color:var(--ph)}
 /* travessão "—" (linha não realizada): centralizado na célula */
 .htbl td.off{text-align:center}
 .htbl td.acts:has(.off){text-align:center}
 
 /* ===== Coluna de ações (padrão de tabela do design system): ver / excluir ===== */
-.htbl th.acts,.htbl td.acts{text-align:right;width:1%;white-space:nowrap}
+.htbl th.acts,.htbl td.acts{text-align:center;white-space:nowrap}
+.htbl th.stt,.htbl td.stt{text-align:center}
+/* larguras fixas p/ distribuir bem as colunas (ninguém engole o espaço) */
+.htbl th:nth-child(1){width:13%}
+.htbl th:nth-child(2){width:24%}
+.htbl th:nth-child(3),.htbl th:nth-child(4){width:12%}
+.htbl th:nth-child(5){width:10%}
+.htbl th:nth-child(6){width:18%}
+.htbl th:nth-child(7){width:11%}
 .act-eye{border:none;background:none;color:var(--read);cursor:pointer;padding:7px;border-radius:9px;display:inline-grid;place-items:center;transition:background .12s}
 .act-eye:hover{background:var(--info-bg)}
 .act-eye svg{width:18px;height:18px;display:block}

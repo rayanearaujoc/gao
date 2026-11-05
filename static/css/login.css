@@ -1,48 +1,53 @@
-/* ===== Login (login.html) — split: painel azul + formulário ===== */
-.p-login{margin:0;background:var(--bg)}
-.lg-wrap{position:fixed;inset:0;display:flex}
+/* ===== Login — painel + formulário (ref. layout Getsnack, identidade GAO) ===== */
+html{height:100%}
+/* padding:0 anula o padding-left/top que o app.css aplica no desktop (sidebar/topbar) — o login é full-bleed */
+body.p-login{margin:0;padding:0;min-height:100vh;display:flex;background:var(--card);color:var(--fg);
+  font:500 13px/1.5 "Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 
-/* painel esquerdo: gradiente azul da marca + arte geométrica */
-.lg-art{position:relative;flex:none;width:clamp(240px,24%,360px);overflow:hidden;
-  background:radial-gradient(130% 100% at 38% 36%,#2B55D6 0%,#1C44C0 48%,#112B7A 100%)}
-.lg-art-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.9}
-.lg-art-foot{position:absolute;left:0;right:0;bottom:0;padding:30px 32px;color:#fff}
-.lg-art-foot b{display:block;font-size:12px;font-weight:700;letter-spacing:.08em}
-.lg-art-foot p{margin:9px 0 0;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.82);max-width:260px}
+/* painel esquerdo (faixa no mobile): azul da marca + arte das hélices + símbolo */
+.lg-art{width:260px;flex:none;position:relative;overflow:hidden;background:linear-gradient(#2B55D6,#112B7A)}
+.lg-art-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:.92}
+.lg-badge{position:absolute;left:24px;top:24px;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.lg-badge svg{width:25px;height:25px}
+.lg-badge svg path{fill:#fff}
 
 /* lado direito: formulário centralizado + rodapé */
-.lg-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow-y:auto;background:#fafafa}
-.lg-body{flex:1;display:grid;place-items:center;padding:24px}
+.lg-rt{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh;background:#fafafa}
+.lg-main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px}
 .lg-card{width:100%;max-width:400px;animation:gaoFadeIn .32s ease}
-.lg-logo{height:44px;width:auto;display:block;margin-bottom:26px}
-.lg-card h1{margin:0;font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--fg)}
-.lg-sub{margin:5px 0 24px;font-size:12.5px;color:var(--muted)}
+.lg-logo{height:44px;width:auto;display:block;margin-bottom:32px}
+.lg-card h1{margin:0;font-size:18px;line-height:26px;font-weight:600;letter-spacing:-.2px;color:var(--fg)}
+.lg-sub{margin:4px 0 24px;font-size:12px;color:var(--muted)}
 
-.lg-label{display:block;font-size:12.5px;font-weight:600;color:var(--fg);margin-bottom:8px}
-.lg-field{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:11px;padding:0 12px;margin-bottom:18px}
-.lg-field:focus-within{border-color:var(--primary)}
-.lg-field .lg-ic{color:var(--muted);flex:none;display:grid}
-.lg-field .lg-ic svg{width:15px;height:15px}
-.lg-field input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:13px;color:var(--fg);padding:13px 0}
-.lg-field input::placeholder{color:var(--ph)}
-.lg-eye{border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;padding:4px;flex:none}
-.lg-eye svg{width:16px;height:16px}
+.lg-f{margin-bottom:16px}
+.lg-label{display:block;font-size:11px;font-weight:600;color:var(--fg);margin-bottom:6px}
+.lg-w{position:relative}
+.lg-f input{width:100%;height:42px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;font-size:13px}
+.lg-f input::placeholder{color:var(--ph)}
+.lg-f input:focus{outline:0;border-color:var(--primary)}
+.lg-f input.err{border-color:var(--bad)}
+.lg-w input{padding-right:44px}
+.lg-eye{position:absolute;right:4px;top:4px;width:34px;height:34px;display:grid;place-items:center;border:0;background:none;border-radius:8px;color:var(--ph);cursor:pointer}
+.lg-eye:hover{color:var(--fg)}
+.lg-eye svg{width:16px;height:16px;stroke-width:1.75}
+.lg-msg{font-size:11px;color:var(--bad);margin-top:6px;display:none}
+.lg-msg.on{display:block}
 
-.lg-forgot{display:block;width:fit-content;margin:-6px 0 0 auto;border:0;background:none;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:2px 0}
+.lg-forgot{display:block;width:fit-content;margin:-4px 0 0 auto;border:0;background:none;color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;padding:2px 0}
 .lg-forgot:hover{text-decoration:underline}
-.lg-forgot-note{margin-top:12px;background:var(--info-bg);color:var(--info-ink);border-radius:10px;padding:10px 12px;font-size:12px;font-weight:500;line-height:1.45}
+.lg-forgot-note{margin-top:12px;background:var(--info-bg);color:var(--info-ink);border-radius:10px;padding:10px 12px;font-size:11.5px;font-weight:500;line-height:1.45}
 
-.lg-btn{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:20px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;padding:14px;cursor:pointer;font-family:inherit}
+.lg-btn{width:100%;height:42px;margin-top:10px;border:0;border-radius:10px;background:var(--primary);color:#fff;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .lg-btn:hover{background:#1d4ed8}
-.lg-btn:disabled{cursor:default}
-.lg-spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;display:inline-block;margin-right:9px;animation:lgspin .7s linear infinite}
-@keyframes lgspin{to{transform:rotate(360deg)}}
+.lg-btn.ld{display:flex;align-items:center;justify-content:center;gap:10px;cursor:default}
+.lg-spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:lgsp .7s linear infinite}
+@keyframes lgsp{to{transform:rotate(360deg)}}
 
-.lg-foot{display:flex;justify-content:space-between;gap:12px;padding:18px 28px;font-size:12px;color:var(--muted)}
+.lg-foot{padding:20px;font-size:11px;color:var(--ph);text-align:center}
 
-@media(max-width:860px){
-  .lg-art{display:none}
-  .lg-foot{flex-direction:column;align-items:center;text-align:center;gap:3px}
-  /* no mobile o input vai a 16px p/ o iOS não dar zoom ao focar (visualmente fica igual) */
-  .lg-field input{font-size:16px}
+@media(max-width:899px){
+  body.p-login{flex-direction:column}
+  .lg-art{width:100%;height:112px}
+  .lg-rt{min-height:0}
+  .lg-main{align-items:flex-start;padding:40px 20px}
 }

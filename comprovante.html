@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GAO · Comprovante de entrega</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --primary:#2563EB;--read:#14359B;--brand:#1957FB;
+  --info-bg:#EAF1FE;--info-ink:#1E3A8A;
+  --ok:#16A34A;--ok-ink:#15803D;--ok-bg:#DCFCE7;
+  --bg:#EEF1F5;--card:#fff;--row:#F5F7FA;
+  --fg:#0F172A;--muted:#6B7A90;--line:#E7EAEF;--ph:#9AA4B2;
+  --shadow:0 2px 6px -1px rgba(16,24,40,.04),0 24px 50px -16px rgba(16,24,40,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Manrope",-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;line-height:1.6;padding:28px 20px 60px}
+.wrap{max-width:900px;margin:0 auto}
+
+/* barra com o botão de imprimir */
+.toolbar{display:flex;justify-content:flex-end;margin-bottom:16px}
+.print-btn{display:inline-flex;align-items:center;gap:9px;border:none;border-radius:12px;background:var(--read);color:#fff;font:inherit;font-size:12.5px;font-weight:500;padding:11px 17px;cursor:pointer}
+.print-btn:hover{background:#0f2a7e}
+.print-btn svg{width:17px;height:17px}
+
+/* documento */
+.doc{background:var(--card);border-radius:0;box-shadow:0 1px 3px rgba(16,24,40,.05);padding:36px 40px}
+
+/* cabeçalho */
+.doc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.doc-logo{height:54px;width:auto;display:block;flex:none}
+.doc-title{text-align:right}
+.doc-title .kicker{font-size:10px;font-weight:600;letter-spacing:.16em;color:var(--primary)}
+.doc-title h1{margin:7px 0 0;font-size:19px;font-weight:600;letter-spacing:-.01em;color:var(--fg)}
+.doc-title .docid{margin-top:3px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.rule{height:1px;background:var(--line);margin:32px 0}
+
+/* cliente + resumo */
+.lbl{font-size:12px;color:var(--muted);font-weight:500}
+.cliente h2{margin:6px 0 3px;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.cliente .meta{font-size:13px;color:var(--muted)}
+.sum-h{font-size:12px;color:var(--muted);font-weight:600;margin:30px 0 14px}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tile{background:var(--row);border-radius:12px;padding:16px 18px}
+.tile b{display:block;font-size:22px;font-weight:700;color:var(--read);line-height:1;font-variant-numeric:tabular-nums}
+.tile small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:9px}
+
+/* seções */
+.section{border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:22px}
+.sec-head{display:flex;align-items:center;gap:13px}
+.sec-ic{width:34px;height:34px;border-radius:10px;background:var(--info-bg);color:var(--read);display:grid;place-items:center;flex:none}
+.sec-ic svg{width:17px;height:17px}
+.sec-tt{flex:1;min-width:0}
+.sec-tt b{display:block;font-size:14px;font-weight:600;letter-spacing:-.01em}
+.sec-tt span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.chip{flex:none;font-size:11px;font-weight:500;color:var(--read);background:var(--info-bg);border-radius:20px;padding:5px 11px;white-space:nowrap}
+.chip.ok{color:var(--ok-ink);background:var(--ok-bg)}
+.chev{flex:none;color:var(--muted);display:grid;transition:transform .2s;cursor:pointer}
+.chev svg{width:18px;height:18px}
+.acc.open .chev{transform:rotate(180deg)}
+
+/* linhas de dados */
+.rows{margin-top:20px}
+.drow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 2px;border-bottom:1px solid var(--line)}
+.drow:last-child{border-bottom:none}
+.drow .k{font-size:12.5px;color:var(--muted)}
+.drow .v{font-size:13px;font-weight:500;text-align:right;color:#334155}
+
+/* entrega: grid com assinatura */
+.ent-grid{display:grid;grid-template-columns:1fr 320px;gap:26px;margin-top:18px;align-items:start}
+.sign{border:1px solid var(--line);border-radius:14px;padding:16px}
+.sign-h{font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:10px}
+.sign-pad{border:1px dashed var(--line);border-radius:10px;height:120px;display:grid;place-items:center;background:var(--row)}
+.sign-pad svg{width:160px;height:60px;color:var(--read)}
+.sign-who{text-align:center;font-size:11.5px;color:var(--muted);margin-top:9px}
+
+/* enxoval: categorias + tabela */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.cat{background:var(--row);border-radius:12px;padding:12px 14px}
+.cat b{display:block;font-size:20px;font-weight:700;color:var(--read);line-height:1;font-variant-numeric:tabular-nums}
+.cat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:7px}
+.acc-link{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);color:var(--read);font-size:13px;font-weight:600;cursor:pointer}
+.acc-link .chev{color:var(--read)}
+.acc-body{display:none}
+.acc.open .acc-body{display:block}
+table.items{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+table.items th{text-align:left;font-size:11.5px;font-weight:600;color:var(--muted);padding:0 0 10px}
+table.items th.r,table.items td.r{text-align:right}
+table.items td{padding:11px 0;border-top:1px solid var(--line);color:var(--fg)}
+table.items td.cat-c{color:var(--muted)}
+table.items td.qt{font-weight:600;color:var(--read);font-variant-numeric:tabular-nums}
+
+/* galeria de fotos */
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.ev-h{font-size:12px;font-weight:500;color:var(--muted);margin:22px 0 0}
+.ev-h + .photos{margin-top:12px}
+.photo{border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.photo:hover{border-color:var(--read)}
+.ph-img{aspect-ratio:4/3;background:linear-gradient(135deg,#dfe7f2,#eef2f7);display:grid;place-items:center;color:#aab6c6}
+.ph-img svg{width:34px;height:34px}
+.ph-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-cap{font-size:11.5px;color:var(--muted);padding:9px 11px;border-top:1px solid var(--line)}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.84);display:none;align-items:center;justify-content:center;padding:28px}
+.lightbox.open{display:flex}
+.lb-box{max-width:760px;width:100%}
+.lb-img{border-radius:14px;overflow:hidden;background:#0b1220;display:grid;place-items:center;max-height:76vh}
+.lb-img img{width:100%;max-height:76vh;object-fit:contain;display:block}
+.lb-cap{color:#fff;text-align:center;font-size:13px;margin-top:14px}
+.lb-close{position:absolute;top:20px;right:22px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;display:grid;place-items:center}
+.lb-close svg{width:20px;height:20px}
+
+/* rodapé */
+.doc-foot{display:flex;justify-content:space-between;gap:20px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.doc-foot .ft-l b{display:block;font-size:12.5px;font-weight:600}
+.doc-foot .ft-l span{font-size:12px;color:var(--muted)}
+.doc-foot .ft-r{text-align:right;font-size:11.5px;color:var(--muted);line-height:1.6}
+
+@media(max-width:720px){
+  body{padding:16px 12px 40px}
+  .doc{padding:26px 20px}
+  .doc-head{flex-direction:column;gap:14px}
+  .doc-title{text-align:left}
+  .sum,.cats{grid-template-columns:1fr 1fr}
+  .ent-grid,.hig-top{grid-template-columns:1fr}
+  .photos{grid-template-columns:1fr 1fr}
+}
+
+/* ====== MODO DOCUMENTO (impressão / PDF) ====== */
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;padding:0;font-size:12px}
+  .wrap{max-width:none}
+  .toolbar{display:none !important}
+  .doc{box-shadow:none;border-radius:0;padding:0}
+  .sec-ic{display:none !important}          /* sem ícones no PDF */
+  .chev{display:none !important}
+  .sec-head{gap:0}
+  .section{border:none;border-top:1px solid var(--line);border-radius:0;padding:18px 0;margin-top:0;break-inside:avoid}
+  .acc-body{display:block !important}        /* tudo expandido no PDF */
+  .acc-link{color:var(--muted);cursor:default}
+  .tile,.cat{background:#fff;border:1px solid var(--line)}
+  .photo{break-inside:avoid}
+  .ph-img{background:#f3f5f8}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="toolbar">
+    <button class="print-btn" id="printBtn" type="button">
+      <i data-lucide="printer"></i>
+      Imprimir / salvar PDF
+    </button>
+  </div>
+
+  <div class="doc">
+    <!-- cabeçalho -->
+    <div class="doc-head">
+      <img class="doc-logo" src="static/img/logo.svg" alt="GAO Logística">
+
+      <div class="doc-title">
+        <h1>Comprovante de entrega</h1>
+        <div class="docid">Nº CE-42050 · Comanda 42050</div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <!-- cliente -->
+    <div class="cliente">
+      <div class="lbl">Cliente</div>
+      <h2>Hotel Le Jardin</h2>
+      <div class="meta">Av. Nove de Julho, 1540, Jardim Paulista, São Paulo/SP – CNPJ 12.345.678/0001-90</div>
+    </div>
+
+    <div class="sum-h">Resumo da remessa</div>
+    <div class="sum">
+      <div class="tile"><b>380</b><small>Peças entregues</small></div>
+      <div class="tile"><b>3</b><small>Gaiolas entregues</small></div>
+      <div class="tile"><b>2</b><small>Gaiolas coletadas</small></div>
+    </div>
+
+    <!-- ENTREGA -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-tt"><b>Entrega</b><span>Responsáveis e confirmação do recebimento</span></div>
+      </div>
+      <div class="ent-grid">
+        <div class="rows">
+          <div class="drow"><span class="k">Motorista</span><span class="v">Ronaldo Araújo</span></div>
+          <div class="drow"><span class="k">Recebido por</span><span class="v">Mariana Lopes</span></div>
+          <div class="drow"><span class="k">Setor</span><span class="v">Rouparia</span></div>
+          <div class="drow"><span class="k">Data da entrega</span><span class="v">03 nov 2026, 11:18</span></div>
+        </div>
+        <div class="sign">
+          <div class="sign-h">Assinatura de quem recebeu</div>
+          <div class="sign-pad"><svg viewBox="0 0 160 60" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 42c10-4 14-20 18-14s6 20 11 12 7-22 12-14 6 18 12 12 9-16 15-12 10 10 18 8"/></svg></div>
+          <div class="sign-who">Mariana Lopes · Rouparia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENXOVAL ENTREGUE -->
+    <div class="section acc" id="accEnx">
+      <div class="sec-head">
+        <div class="sec-tt"><b>Enxoval entregue</b><span>Resumo das 380 peças entregues</span></div>
+      </div>
+      <div class="cats">
+        <div class="cat"><b>164</b><small>Cirúrgico</small></div>
+        <div class="cat"><b>127</b><small>Hotelaria hospitalar</small></div>
+        <div class="cat"><b>54</b><small>Uniformes</small></div>
+        <div class="cat"><b>35</b><small>Apoio assistencial</small></div>
+      </div>
+      <div class="acc-link" data-acc>
+        <span>Ver lista de itens</span>
+        <span class="chev"><i data-lucide="chevron-down"></i></span>
+      </div>
+      <div class="acc-body">
+        <table class="items">
+          <thead><tr><th>Categoria</th><th>Produto</th><th class="r">Quantidade</th></tr></thead>
+          <tbody>
+            <tr><td class="cat-c">Cirúrgico</td><td>Campo Simples Verde 120x120</td><td class="r qt">64</td></tr>
+            <tr><td class="cat-c">Cirúrgico</td><td>Campo Fenestrado 80x80</td><td class="r qt">48</td></tr>
+            <tr><td class="cat-c">Cirúrgico</td><td>Capote cirúrgico reforçado</td><td class="r qt">52</td></tr>
+            <tr><td class="cat-c">Hotelaria</td><td>Lençol hospitalar branco</td><td class="r qt">72</td></tr>
+            <tr><td class="cat-c">Hotelaria</td><td>Fronha hospitalar</td><td class="r qt">55</td></tr>
+            <tr><td class="cat-c">Uniformes</td><td>Conjunto privativo azul</td><td class="r qt">54</td></tr>
+            <tr><td class="cat-c">Apoio</td><td>Toalha de banho branca</td><td class="r qt">35</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EVIDÊNCIAS -->
+    <div class="section acc open" id="accFotos">
+      <div class="sec-head">
+        <div class="sec-tt"><b>Evidências fotográficas da entrega</b><span>Registros do carregamento e do recebimento</span></div>
+      </div>
+      <div class="acc-body">
+        <div class="photos">
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/entrega-1.png" alt=""></div><div class="ph-cap">Carga no caminhão · 08:42</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/entrega-2.png" alt=""></div><div class="ph-cap">Enxoval a caminho · 09:30</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/entrega-3.png" alt=""></div><div class="ph-cap">Entrega na unidade · 11:17</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLETA (sem contagem de peças) -->
+    <div class="section acc" id="accColeta">
+      <div class="sec-head" data-acc>
+        <div class="sec-tt"><b>Coleta</b><span>Enxoval usado recolhido na mesma visita</span></div>
+        <span class="chip">Realizada</span>
+        <span class="chev"><i data-lucide="chevron-down"></i></span>
+      </div>
+      <div class="acc-body">
+        <div class="rows">
+          <div class="drow"><span class="k">Motorista</span><span class="v">Ronaldo Araújo</span></div>
+          <div class="drow"><span class="k">Entregue por</span><span class="v">Carlos Henrique</span></div>
+          <div class="drow"><span class="k">Setor</span><span class="v">Rouparia</span></div>
+          <div class="drow"><span class="k">Data da coleta</span><span class="v">03 nov 2026, 11:24</span></div>
+        </div>
+        <div class="ev-h">Evidências fotográficas da coleta</div>
+        <div class="photos">
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/coleta-1.png" alt=""></div><div class="ph-cap">Coleta recebida · 11:26</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/coleta-2.png" alt=""></div><div class="ph-cap">Coleta recebida · 11:28</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIGIENIZAÇÃO -->
+    <div class="section acc" id="accHig">
+      <div class="sec-head" data-acc>
+        <div class="sec-tt"><b>Higienização do veículo</b><span>Biossegurança do transporte conforme ANVISA</span></div>
+        <span class="chip ok">Higienização completa</span>
+        <span class="chev"><i data-lucide="chevron-down"></i></span>
+      </div>
+      <div class="acc-body">
+        <div class="rows">
+          <div class="drow"><span class="k">Escopo</span><span class="v">Veículo completo (baú e cabine)</span></div>
+          <div class="drow"><span class="k">Produto utilizado</span><span class="v">Saneante hospitalar registrado na ANVISA</span></div>
+          <div class="drow"><span class="k">Registro ANVISA</span><span class="v">nº 0.0000.0000</span></div>
+          <div class="drow"><span class="k">Data</span><span class="v">03 nov 2026, 07:35</span></div>
+        </div>
+        <div class="photos">
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-1.png" alt=""></div><div class="ph-cap">Higienização do baú · 07:36</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-2.png" alt=""></div><div class="ph-cap">Higienização do baú · 07:37</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-3.png" alt=""></div><div class="ph-cap">Baú higienizado · 07:40</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- rodapé -->
+    <div class="doc-foot">
+      <div class="ft-l">
+        <b>Dúvidas sobre este comprovante?</b>
+        <span>atendimento@gao.com.br</span>
+      </div>
+      <div class="ft-r">
+        Emitido em 03 de novembro de 2026 às 14:32<br>
+        Documento gerado eletronicamente pela GAO Logística
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- lightbox de fotos -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" type="button" aria-label="Fechar"><i data-lucide="x"></i></button>
+  <div class="lb-box">
+    <div class="lb-img"><img id="lbImg" alt=""></div>
+    <div class="lb-cap" id="lbCap"></div>
+  </div>
+</div>
+
+<script>
+  // acordeões
+  document.querySelectorAll('[data-acc]').forEach(function(h){
+    h.addEventListener('click',function(){ h.closest('.acc').classList.toggle('open'); });
+  });
+  // imprimir / salvar PDF
+  document.getElementById('printBtn').addEventListener('click',function(){ window.print(); });
+  // lightbox: clicar na foto expande
+  var lb=document.getElementById('lightbox'), lbCap=document.getElementById('lbCap'), lbImg=document.getElementById('lbImg');
+  function closeLb(){ lb.classList.remove('open'); }
+  document.querySelectorAll('.photo').forEach(function(p){
+    p.addEventListener('click',function(){
+      var cap=p.querySelector('.ph-cap'), im=p.querySelector('.ph-img img');
+      if(lbImg&&im) lbImg.src=im.src;
+      lbCap.textContent=cap?cap.textContent:'';
+      lb.classList.add('open');
+    });
+  });
+  document.getElementById('lbClose').addEventListener('click',closeLb);
+  lb.addEventListener('click',function(e){ if(e.target===lb) closeLb(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLb(); });
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>if(window.lucide&&lucide.createIcons)lucide.createIcons();</script>
+</body>
+</html>

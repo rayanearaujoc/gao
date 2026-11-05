@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Histórico de viagens</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/home.css">
 <link rel="stylesheet" href="static/css/historico.css">
@@ -119,7 +120,7 @@
         + '<td class="num'+(nao?' off':'')+'" data-label="Entregas">'+(nao?'—':t.ent)+'</td>'
         + '<td class="num'+(nao?' off':'')+'" data-label="Coletas">'+(nao?'—':t.col)+'</td>'
         + '<td class="num'+(nao?' off':'')+'" data-label="Km">'+(nao?'—':t.km)+'</td>'
-        + '<td data-label="Status">'+statusPill(t.status)+'</td>'
+        + '<td class="stt" data-label="Status">'+statusPill(t.status)+'</td>'
         + '<td class="acts" data-label="Ações">'+act+'</td>'
         + '</tr>';
     }).join('');
@@ -134,7 +135,7 @@
         + '</div>';
     }).join('');
     area.innerHTML='<div class="tbl-wrap"><div class="tbl-scroll"><table class="htbl"><thead><tr>'
-      + '<th>Data</th><th>Rota</th><th class="r">Entregas</th><th class="r">Coletas</th><th class="r">Km</th><th>Status</th><th class="acts">Ações</th>'
+      + '<th>Data</th><th>Rota</th><th class="r">Entregas</th><th class="r">Coletas</th><th class="r">Km</th><th class="stt">Status</th><th class="acts">Ações</th>'
       + '</tr></thead><tbody>'+body+'</tbody></table></div></div>'
       + '<div class="trip-list">'+list+'</div>';
     area.querySelectorAll('[data-open]').forEach(function(r){ r.addEventListener('click',function(e){ e.stopPropagation(); window.location.href='resumo.html?from=historico'; }); });
