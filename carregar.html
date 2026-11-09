@@ -86,7 +86,7 @@
 <div class="sheet-wrap" id="confirmWrap">
   <div class="sheet">
     <div class="sheet-top">
-      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg></div>
+      <div class="ico"><span class="ic-truck" style="display:inline-flex"></span></div>
       <button class="sheet-x" id="closeConfirm" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div id="confirmForm">
@@ -432,7 +432,7 @@
   });
 
   goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='entrega';GAO.setTrip(t);} window.location.href='entrega.html'; } });
-  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='rota.html';});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html';});
   build();
 </script>
 </body>

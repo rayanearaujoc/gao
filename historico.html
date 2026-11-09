@@ -43,6 +43,7 @@
 
     <div id="summary"></div>
     <div id="tableArea"></div>
+    <button class="proto-toggle" id="protoToggle" type="button">Protótipo · ver estado vazio</button>
   </div>
 </div>
 
@@ -88,7 +89,7 @@
   var deInput=document.getElementById('deInput'), ateInput=document.getElementById('ateInput');
   var periodSel=document.getElementById('periodSel'), statusSel=document.getElementById('statusSel');
   var deField=document.getElementById('deField'), ateField=document.getElementById('ateField');
-  var curP='mes', curS='todas';
+  var curP='mes', curS='todas', PROTO_EMPTY=false;
 
   function renderSummary(rows){
     var assigned=rows.length, dn=rows.filter(done);
@@ -107,7 +108,13 @@
 
   function renderTable(rows){
     var area=document.getElementById('tableArea');
-    if(!rows.length){ area.innerHTML='<div class="empty"><div class="ei">'+INBOX+'</div><h4>Nenhuma viagem no período</h4><p>Ajuste os filtros acima.</p></div>'; return; }
+    if(!rows.length){
+      var _h = PROTO_EMPTY ? 'Nenhuma viagem ainda' : 'Nenhuma viagem no período';
+      var _p = PROTO_EMPTY ? 'Quando você concluir suas rotas, o seu histórico e o aproveitamento aparecem aqui.' : 'Ajuste os filtros acima para ver suas viagens.';
+      area.innerHTML='<div class="empty"><div class="re-ic"><i data-lucide="inbox"></i><span class="re-x"><i data-lucide="route"></i></span></div><h4>'+_h+'</h4><p>'+_p+'</p></div>';
+      if(window.lucide&&lucide.createIcons)lucide.createIcons();
+      return;
+    }
     var body=rows.map(function(t){
       var nao=(t.status==='nao');
       var clk=!nao?' class="clickable" data-open="1"':'';
@@ -150,8 +157,10 @@
   }
   function inStatus(t){ return curS==='todas' ? true : t.status===curS; }
   function apply(){
-    var rows=TRIPS.filter(function(t){return inPeriod(t)&&inStatus(t);});
-    renderSummary(rows); renderTable(rows);
+    var rows = PROTO_EMPTY ? [] : TRIPS.filter(function(t){return inPeriod(t)&&inStatus(t);});
+    var sumEl=document.getElementById('summary');
+    if(rows.length){ renderSummary(rows); } else { sumEl.innerHTML=''; }
+    renderTable(rows);
     var active=!(curP==='mes' && curS==='todas');  // limpar só aparece quando há filtro
     var cb=document.getElementById('clearBtn'); cb.hidden=!active;
   }
@@ -172,6 +181,12 @@
     apply();
   });
 
+  var protoBtn=document.getElementById('protoToggle');
+  if(protoBtn) protoBtn.addEventListener('click',function(){
+    PROTO_EMPTY=!PROTO_EMPTY;
+    this.textContent = PROTO_EMPTY ? 'Protótipo · ver com viagens' : 'Protótipo · ver estado vazio';
+    apply();
+  });
   deInput.value='2026-10-01'; ateInput.value='2026-10-26';
   apply();
 })();

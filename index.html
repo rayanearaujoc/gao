@@ -46,17 +46,17 @@
         <div class="field"><label>Horário de início</label><div class="box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg> <span id="startTime">12:43</span></div></div>
       </div>
       <p class="lbl-strong">Seu veículo</p>
-      <div class="vehicle">
+      <button type="button" class="vehicle vehicle-pick" id="vehCard">
         <div class="vehicle-top">
-          <div class="vehicle-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h13v11H1zM14 8h4l3 3v3h-7M6 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18 18.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg></div>
-          <div><h4>GAO-2847</h4><div class="mo">Iveco Daily</div></div>
+          <div class="vehicle-ic"><span class="ic-truck" style="display:inline-flex"></span></div>
+          <div class="vt-main"><h4 id="vehName">Selecionar veículo</h4><div class="mo" id="vehModelLbl">Toque para escolher o veículo da rota</div></div>
+          <span class="vehicle-change"><span id="vehChangeTxt">Selecionar</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
         </div>
         <div class="vehicle-grid">
-          <div><b>19</b><small>Gaiolas de capacidade</small></div>
-          <div><b>Caminhão</b><small>Tipo de veículo</small></div>
+          <div><b id="vehComandas">2</b><small>Comandas da rota</small></div>
+          <div><b id="vehGaiolas">11</b><small>Gaiolas da rota</small></div>
         </div>
-      </div>
-      <p class="help-note">Não encontrou o veículo ou ele está com algum problema?<br>Por enquanto, fale com o <a href="#">gestor de logística</a> antes de seguir.</p>
+      </button>
     </div>
   </section>
 
@@ -136,13 +136,34 @@
   </div>
 </div>
 
+<!-- SELECIONAR VEÍCULO (modal) -->
+<div class="sheet-wrap" id="vehWrap">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="ico"><span class="ic-truck" style="display:inline-flex"></span></div>
+      <button class="sheet-x" id="vehClose" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <h2>Selecionar veículo</h2>
+    <p class="sub">Escolha o veículo que você vai usar nesta rota</p>
+    <div id="vehList" style="margin-top:18px"></div>
+    <button class="veh-add-toggle" id="vehAddToggle" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Adicionar veículo que não está na lista</button>
+    <div id="vehAddForm" hidden>
+      <p class="in-label" style="margin-top:20px">Placa do veículo <span class="req">*</span></p>
+      <input class="txt" id="vehPlate" placeholder="Ex: ABC1D23" autocomplete="off" maxlength="8">
+      <p class="in-label field-gap">Modelo <span class="req-tag">(opcional)</span></p>
+      <input class="txt" id="vehModel" placeholder="Ex: Fiat Fiorino" autocomplete="off">
+      <button class="cta" id="vehAddConfirm">Adicionar e selecionar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span id="toastMsg"></span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
 <script src="static/js/shell.js"></script>
 <script>
   const ARROW='<i data-lucide="chevron-right"></i>';
-  const TRUCK='<i data-lucide="truck"></i>';
+  const TRUCK=(window.GAO&&GAO.truck)||'<i data-lucide="truck"></i>';
   const CAM='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>';
 
   const routes=[
@@ -166,7 +187,7 @@
     const isActiveI=(i)=>!!(t && t.route===i);
     const RR=allRoutes();
     if(RR.length===0){
-      routesEl.innerHTML='<div class="route route-empty"><div class="re-ic"><i data-lucide="truck"></i><span class="re-x"><i data-lucide="route"></i></span></div><h4>Nenhuma rota atribuída</h4><p>Nenhuma rota atribuída por enquanto. Enquanto isso, inicie uma rota extra.</p></div>';
+      routesEl.innerHTML='<div class="route route-empty"><div class="re-ic">'+TRUCK+'<span class="re-x"><i data-lucide="route"></i></span></div><h4>Nenhuma rota atribuída</h4><p>Nenhuma rota atribuída por enquanto. Enquanto isso, inicie uma rota extra.</p></div>';
       const rc0=document.getElementById('routeCount'); if(rc0) rc0.textContent='0 disponíveis';
       if(window.lucide&&lucide.createIcons)lucide.createIcons();
       return;
@@ -269,6 +290,60 @@
     window.scrollTo({top:0,behavior:'smooth'});
   });
 
+  /* ---------- Seleção de veículo (modal padrão) ---------- */
+  var VEHICLES=[
+    {plate:'RFT2G48', model:'Iveco Daily',       type:'Caminhão', cap:24},
+    {plate:'QPX7H01', model:'VW Delivery 9.170', type:'Caminhão', cap:25},
+    {plate:'NKD4A92', model:'Mercedes Accelo',   type:'Caminhão', cap:24},
+    {plate:'JHL8C36', model:'Hyundai HR',        type:'Caminhão', cap:22},
+    {plate:'BTR5E70', model:'Ford Cargo 816',    type:'Caminhão', cap:25},
+    {plate:'GSM3B14', model:'Renault Master',    type:'Van',      cap:8}
+  ];
+  var vehSel=-1;
+  function renderVehCard(){
+    var ct=document.getElementById('vehChangeTxt');
+    if(vehSel<0){
+      document.getElementById('vehName').textContent='Selecionar veículo';
+      document.getElementById('vehModelLbl').textContent='Toque para escolher o veículo da rota';
+      if(ct) ct.textContent='Selecionar';
+    } else {
+      var v=VEHICLES[vehSel];
+      document.getElementById('vehName').textContent=v.plate;
+      document.getElementById('vehModelLbl').textContent=v.model||'Modelo não informado';
+      if(ct) ct.textContent='Trocar';
+    }
+  }
+  function updateStartGate(){ if(current==='viewStart'){ footBtn.disabled=(vehSel<0); footBtn.classList.toggle('off',vehSel<0); } }
+  function renderVehList(){
+    var el=document.getElementById('vehList');
+    el.innerHTML=VEHICLES.map(function(v,i){
+      return '<button type="button" class="veh-item'+(i===vehSel?' sel':'')+'" data-veh="'+i+'">'
+        +'<span class="veh-tx"><b>'+v.plate+'</b><small>'+(v.model||'Sem modelo')+(v.cap!=null?(' · '+v.cap+' gaiolas'):'')+'</small></span>'
+        +'<span class="veh-rb"></span></button>';
+    }).join('');
+    el.querySelectorAll('[data-veh]').forEach(function(b){ b.addEventListener('click',function(){ vehSel=+b.dataset.veh; renderVehCard(); updateStartGate(); closeVeh(); }); });
+  }
+  var vehWrap=document.getElementById('vehWrap');
+  function openVeh(){ var f=document.getElementById('vehAddForm'); f.hidden=true; document.getElementById('vehPlate').value=''; document.getElementById('vehModel').value=''; renderVehList(); vehWrap.classList.add('open'); }
+  function closeVeh(){ vehWrap.classList.remove('open'); }
+  document.getElementById('vehCard').addEventListener('click',openVeh);
+  document.getElementById('vehClose').addEventListener('click',closeVeh);
+  vehWrap.addEventListener('click',function(e){ if(e.target===vehWrap) closeVeh(); });
+  document.getElementById('vehAddToggle').addEventListener('click',function(){
+    var f=document.getElementById('vehAddForm'); f.hidden=!f.hidden;
+    if(!f.hidden) setTimeout(function(){ try{document.getElementById('vehPlate').focus();}catch(e){} },80);
+  });
+  var vehPlate=document.getElementById('vehPlate'), vehAddBtn=document.getElementById('vehAddConfirm');
+  function vehAddValid(){ vehAddBtn.disabled = !vehPlate.value.trim(); }
+  vehPlate.addEventListener('input',function(){ this.value=this.value.toUpperCase(); vehAddValid(); });
+  vehAddValid();
+  vehAddBtn.addEventListener('click',function(){
+    var p=vehPlate.value.trim(); if(!p) return;
+    VEHICLES.push({plate:p, model:document.getElementById('vehModel').value.trim()||'', type:'', cap:null, added:true});
+    vehSel=VEHICLES.length-1; renderVehCard(); updateStartGate(); closeVeh();
+  });
+  renderVehCard();
+
   /* ---------- GPS / geofence (precisa estar na GAO) — mesmo esquema do check-out ---------- */
   const geoChip=document.getElementById('geoChip'), toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg');
   let atGao=true, toastTimer=null;
@@ -293,9 +368,12 @@
     document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===name));
     window.scrollTo({top:0,behavior:'instant'});
     if(name==='viewStart'){
-      footer.classList.add('show'); footBtn.disabled=false; footBtn.classList.remove('off');
+      footer.classList.add('show'); footBtn.disabled=(vehSel<0); footBtn.classList.toggle('off',vehSel<0);
+      var _RR=allRoutes(), _r=_RR[pendingRoute!=null?pendingRoute:0]||{gaiolas:0,comandas:0};
+      document.getElementById('vehGaiolas').textContent=_r.gaiolas;
+      document.getElementById('vehComandas').textContent=_r.comandas;
       footBtn.innerHTML='Confirmar e iniciar check-in '+ARROW;
-      footBtn.onclick=()=>showView('viewCheckin');
+      footBtn.onclick=()=>{ if(vehSel<0){ openVeh(); return; } showView('viewCheckin'); };
     } else if(name==='viewCheckin'){
       footer.classList.add('show'); footBtn.disabled=false;
       footBtn.innerHTML='Concluir check-in '+ARROW;

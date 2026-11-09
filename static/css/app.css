@@ -83,6 +83,10 @@ svg.lucide{width:20px;height:20px;stroke-width:2;flex:none}
 .gf-step.cur .gf-name{color:var(--fg);font-weight:600}
 .gf-step.pending .gf-name{color:var(--ph)}
 .gf-cnt{flex:none;font-size:11px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+a.gf-step{text-decoration:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a.gf-step .gf-name,a.gf-step .gf-d{transition:color .15s,border-color .15s}
+@media(hover:hover){a.gf-step:hover .gf-name{color:var(--fg)}a.gf-step:hover .gf-d{border-color:var(--primary)}}
+a.gf-step:active{opacity:.7}
 @media(min-width:700px){
   .gf-track{overflow-x:visible;cursor:default}
   .gf-step{flex:1 1 0}

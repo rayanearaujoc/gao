@@ -114,7 +114,7 @@
   }
   setTimeout(reveal, hasExtra?1800:500);
 
-  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='entrega.html';});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html';});
   document.getElementById('startBtn').addEventListener('click',()=>{
     if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='coletas';GAO.setTrip(t);}
     window.location.href='coleta.html';

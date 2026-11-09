@@ -107,10 +107,9 @@ table.htbl{width:100%;border-collapse:collapse;font-size:13px;min-width:580px;ta
 }
 
 /* estado vazio */
-.empty{text-align:center;color:var(--muted);padding:44px 20px}
-.empty .ei{width:52px;height:52px;border-radius:14px;background:var(--row);display:grid;place-items:center;margin:0 auto 14px;color:var(--ph)}
-.empty h4{margin:0 0 5px;font-size:15px;font-weight:600;color:var(--fg)}
-.empty p{margin:0;font-size:13px}
+.empty{text-align:center;color:var(--muted);padding:46px 24px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center}
+.empty h4{margin:16px 0 6px;font-size:16px;font-weight:600;color:var(--fg)}
+.empty p{margin:0;font-size:13.5px;line-height:1.5;max-width:300px}
 
 /* ≥900px a topbar branca aparece: título vai pra ela e sai do conteúdo */
 @media(min-width:900px){

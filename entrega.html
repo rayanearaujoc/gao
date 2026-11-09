@@ -592,7 +592,7 @@
   goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='coletas';GAO.setTrip(t);} window.location.href='coleta-rota.html'; } });
   document.getElementById('okBtn').addEventListener('click',()=>okWrap.classList.remove('open'));
   okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
-  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='carregar.html';});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html';});
   build();
 </script>
 </body>
