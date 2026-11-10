@@ -48,7 +48,7 @@ svg.lucide{width:20px;height:20px;stroke-width:2;flex:none}
 
 .app{width:100%;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative}
 @keyframes gaoFadeIn{from{opacity:0}to{opacity:1}}
-.content{padding:20px max(16px,env(safe-area-inset-left,0px)) 132px max(16px,env(safe-area-inset-right,0px));max-width:600px;margin-left:auto;margin-right:auto;animation:gaoFadeIn .3s ease}
+.content{padding:24px max(16px,env(safe-area-inset-left,0px)) 132px max(16px,env(safe-area-inset-right,0px));max-width:600px;margin-left:auto;margin-right:auto;animation:gaoFadeIn .3s ease}
 @media(min-width:700px){
   /* tablet/desktop: o conteúdo preenche o container */
   .content{max-width:none;padding-left:28px;padding-right:28px}
@@ -212,6 +212,7 @@ a.gf-step:active{opacity:.7}
 .gao-sec.cl .chv{transform:rotate(-90deg)}
 .gao-sec.cl .gao-sec-bd{display:none}
 .gao-foot-nav{padding:0 13px;margin-bottom:6px;flex:none}
+@media(min-width:900px){body.gao-crumb .gao-topbar{display:none}body.gao-crumb{padding-top:0}}
 /* botão de lua (tema) fixo no canto direito do topo */
 #gaoTheme{position:fixed;top:env(safe-area-inset-top,0px);right:6px;z-index:61;width:var(--topbar-h);height:var(--topbar-h);display:grid;place-items:center;border:0;background:none;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
 #gaoTheme:hover{color:var(--fg)}
@@ -239,6 +240,7 @@ a.gf-step:active{opacity:.7}
 .gao-pop-item .pii{width:24px;height:24px;border-radius:50%;background:var(--row);color:var(--muted);display:grid;place-items:center;flex:none}
 .gao-pop-item.me .pii{background:var(--info-bg);color:var(--read)}
 .gao-pop-item .pii svg{width:14px;height:14px}
+button.gao-pop-item{width:100%;background:none;border:0;cursor:pointer;text-align:left}
 .gao-pop-dv{height:1px;background:var(--line);margin:3px 6px}
 
 /* topbar (desktop) — título / saudação / voltar (sem chip: o perfil vive na sidebar) */
@@ -269,7 +271,7 @@ a.gf-step:active{opacity:.7}
 /* ============ TABLET / DESKTOP ============ */
 @media(min-width:900px){
   body{padding-left:var(--side-w);padding-top:var(--topbar-h)}
-  body.gao-crumb{padding-top:var(--crumb-h)}
+  body.gao-crumb{padding-top:0}
   .gao-side{transform:none;width:var(--side-w);box-shadow:none}
   .gao-scrim{display:none}
   .gao-topbar{display:flex;left:var(--side-w)}
