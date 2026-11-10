@@ -187,7 +187,7 @@ a.gf-step:active{opacity:.7}
 .gao-scrim.show{opacity:1;pointer-events:auto}
 
 /* topo: logo da GAO (completa / florzinha quando recolhido) */
-.gao-top{height:64px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--line);flex:none}
+.gao-top{height:64px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none}
 .gao-brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
 .gao-logo-full{height:34px;width:auto;display:block}
 .gao-logo-mark{height:30px;width:30px;display:none}
@@ -211,7 +211,7 @@ a.gf-step:active{opacity:.7}
 .gao-sh .chv{display:grid;transition:transform .2s}
 .gao-sec.cl .chv{transform:rotate(-90deg)}
 .gao-sec.cl .gao-sec-bd{display:none}
-.gao-foot-nav{margin-bottom:8px}
+.gao-foot-nav{padding:0 13px;margin-bottom:6px;flex:none}
 /* botão de lua (tema) fixo no canto direito do topo */
 #gaoTheme{position:fixed;top:env(safe-area-inset-top,0px);right:6px;z-index:61;width:var(--topbar-h);height:var(--topbar-h);display:grid;place-items:center;border:0;background:none;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
 #gaoTheme:hover{color:var(--fg)}
