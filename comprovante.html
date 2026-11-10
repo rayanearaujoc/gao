@@ -69,12 +69,24 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Manrope",-apple-
 .drow .v{font-size:13px;font-weight:500;text-align:right;color:#334155}
 
 /* entrega: grid com assinatura */
-.ent-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;align-items:start}
+.ent-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:8px;align-items:start}
+.ent-grid .rows{margin-top:0}
 .sign{border:none;border-top:1px solid var(--line);border-radius:0;padding:16px 0 0;margin-top:2px}
 .sign-h{font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:10px}
-.sign-pad{border:1px dashed var(--line);border-radius:10px;height:62px;display:grid;place-items:center;background:transparent}
+.sign-pad{border:1px dashed #BBD1F5;border-radius:10px;height:62px;display:grid;place-items:center;background:var(--info-bg)}
 .sign-pad svg{width:140px;height:40px;color:var(--read)}
 .sign-who{text-align:left;font-size:11.5px;color:var(--muted);margin-top:8px}
+
+/* link para o PDF do saneante */
+.pdf-link{display:flex;align-items:center;gap:13px;margin-top:16px;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:var(--row);text-decoration:none;color:var(--fg)}
+.pdf-link:hover{border-color:var(--read);background:var(--info-bg)}
+.pdf-ic{width:36px;height:36px;border-radius:9px;background:#fff;border:1px solid var(--line);color:var(--read);display:grid;place-items:center;flex:none}
+.pdf-ic svg{width:18px;height:18px}
+.pdf-tx{flex:1;min-width:0}
+.pdf-tx b{display:block;font-size:13px;font-weight:600}
+.pdf-tx small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+.pdf-dl{color:var(--muted);flex:none}
+.pdf-dl svg{width:16px;height:16px}
 
 /* enxoval: categorias + tabela */
 .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
@@ -275,21 +287,26 @@ table.items td.qt{font-weight:600;color:var(--read);font-variant-numeric:tabular
     <!-- HIGIENIZAÇÃO -->
     <div class="section acc" id="accHig">
       <div class="sec-head" data-acc>
-        <div class="sec-tt"><b>Higienização do veículo</b><span>Biossegurança do transporte conforme ANVISA</span></div>
-        <span class="chip ok">Higienização completa</span>
+        <div class="sec-tt"><b>Dedetização do terminal</b><span>Sanitização das superfícies e pontos de contato do terminal</span></div>
+        <span class="chip ok">Dedetização concluída</span>
         <span class="chev"><i data-lucide="chevron-down"></i></span>
       </div>
       <div class="acc-body">
         <div class="rows">
-          <div class="drow"><span class="k">Escopo</span><span class="v">Veículo completo (baú e cabine)</span></div>
-          <div class="drow"><span class="k">Produto utilizado</span><span class="v">Saneante hospitalar registrado na ANVISA</span></div>
-          <div class="drow"><span class="k">Registro ANVISA</span><span class="v">nº 0.0000.0000</span></div>
+          <div class="drow"><span class="k">Escopo</span><span class="v">Superfícies externas e pontos de contato</span></div>
+          <div class="drow"><span class="k">Produto utilizado</span><span class="v">Sanitizante Multiuso TermiClean</span></div>
+          <div class="drow"><span class="k">Fabricante</span><span class="v">Higieniza Produtos Profissionais</span></div>
           <div class="drow"><span class="k">Data</span><span class="v">03 nov 2026, 07:35</span></div>
         </div>
+        <a class="pdf-link" href="/_blob/5d4d1e44465b4a53f13c5bb90d57fe63" target="_blank" rel="noopener">
+          <span class="pdf-ic"><i data-lucide="file-text"></i></span>
+          <span class="pdf-tx"><b>Especificação do saneante</b><small>Sanitizante Multiuso TermiClean · PDF</small></span>
+          <span class="pdf-dl"><i data-lucide="external-link"></i></span>
+        </a>
         <div class="photos">
-          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-1.png" alt=""></div><div class="ph-cap">Higienização do baú · 07:36</div></div>
-          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-2.png" alt=""></div><div class="ph-cap">Higienização do baú · 07:37</div></div>
-          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-3.png" alt=""></div><div class="ph-cap">Baú higienizado · 07:40</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-1.png" alt=""></div><div class="ph-cap">Sanitização do terminal · 07:36</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-2.png" alt=""></div><div class="ph-cap">Aplicação do saneante · 07:37</div></div>
+          <div class="photo"><div class="ph-img"><img src="static/img/comprovante/higienizacao-3.png" alt=""></div><div class="ph-cap">Terminal higienizado · 07:40</div></div>
         </div>
       </div>
     </div>
