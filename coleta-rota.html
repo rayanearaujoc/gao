@@ -58,10 +58,15 @@
     'SJ Hotel':'Av. Anhanguera, 77 · Centro',
   };
   // a coleta parte do ÚLTIMO cliente de entrega (o motorista já está lá), não da GAO
-  const ULTIMA_ENTREGA='Hospital Albert Einstein';
+  // (derivado do carregamento real: o último cliente carregado/entregue)
+  let _ex=null, _cg=[]; try{ _ex=GAO.load('gao_active_extra'); _cg=GAO.load('gao_cargo')||[]; }catch(e){}
+  const _isExtra=!!(_ex&&_ex.clientes&&_ex.clientes.length);
+  const _names=_isExtra ? _ex.clientes.map(c=>c.cliente) : ['Materno Infantil','Hospital Albert Einstein'];
+  const _loaded=_names.filter((n,i)=>_cg[i]&&_cg[i].confirmed&&!_cg[i].reported);
+  const ULTIMA_ENTREGA=_loaded.length?_loaded[_loaded.length-1]:_names[_names.length-1];
 
-  // coletas fixas da rota (clientes do dia)
-  const base=[
+  // coletas fixas só existem na rota cadastrada; na rota extra vêm das coletas registradas nas entregas
+  const base=_isExtra ? [] : [
     {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:ADDR['Hospital São Marcos']},
   ];
   // coletas registradas na fase de entrega (localStorage) — entram junto das coletas da rota
@@ -70,7 +75,7 @@
   const extraStops=extras.map(x=>({type:'c', kind:'Coleta', name:x.client, addr:ADDR[x.client]||'Endereço cadastrado do cliente'}));
   const coletas=base.concat(extraStops);
 
-  const stops=[{type:'start', kind:'Partida', name:ULTIMA_ENTREGA, addr:ADDR[ULTIMA_ENTREGA]}]
+  const stops=[{type:'start', kind:'Partida', name:ULTIMA_ENTREGA, addr:ADDR[ULTIMA_ENTREGA]||'Endereço cadastrado do cliente'}]
     .concat(coletas)
     .concat([{type:'hub', kind:'Retorno', name:'GAO Lavanderia', addr:'Devolução no centro de distribuição'}]);
 

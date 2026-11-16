@@ -14,21 +14,21 @@
 <div class="app">
   <div class="nav">
     <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div><h1>Sua rota de hoje</h1><p>Rota otimizada · Rota Hospitalar</p></div>
+    <div><h1>Sua rota de hoje</h1><p id="navSub">Rota otimizada</p></div>
   </div>
 
   <section class="view active" id="viewLoading">
     <div class="spinner"></div>
     <h1>Calculando a melhor rota</h1>
-    <p>Estamos montando a rota mais curta com base nas paradas e nas localizações dos clientes.</p>
+    <p>Estamos montando a rota mais curta só com as comandas que você carregou.</p>
   </section>
 
   <section class="view" id="viewRoute">
     <div class="content">
       <div class="summary">
-        <div class="sm"><b>4</b><small>Paradas</small></div>
-        <div class="sm"><b>18 km</b><small>Distância</small></div>
-        <div class="sm"><b>1h10</b><small>Tempo est.</small></div>
+        <div class="sm"><b id="smStops">—</b><small>Paradas</small></div>
+        <div class="sm"><b id="smDist">—</b><small>Distância</small></div>
+        <div class="sm"><b id="smTime">—</b><small>Tempo est.</small></div>
       </div>
       <a class="maps-btn" id="mapsBtn" target="_blank" rel="noopener">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -40,7 +40,7 @@
 </div>
 
 <div class="footer" id="footer">
-  <button class="foot-btn" id="startBtn">Ir para o carregamento <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  <button class="foot-btn" id="startBtn">Iniciar entregas <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
 </div>
 
 <div class="sheet-wrap" id="okWrap">
@@ -60,15 +60,34 @@
   const INBOX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
   const TRUCK=(window.GAO&&GAO.truck)||'';
 
-  const stops=[
-    {type:'hub', kind:'Partida', name:'GAO Lavanderia', addr:'Saída do centro de distribuição'},
-    {type:'e', kind:'Entrega', name:'Materno Infantil', addr:'Av. T-9, 1200 · Setor Bueno'},
-    {type:'e', kind:'Entrega', name:'Hospital Albert Einstein', addr:'Av. Brasil, 850 · Centro'},
-    {phase:'Entregas concluídas. Agora começam as coletas.'},
-    {type:'c', kind:'Coleta', name:'Hospital São Marcos', addr:'Rua 84, 420 · Setor Sul'},
-    {type:'c', kind:'Coleta', name:'SJ Hotel', addr:'Av. Anhanguera, 77 · Centro'},
-    {type:'hub', kind:'Retorno', name:'GAO Lavanderia', addr:'Devolução no centro de distribuição'},
-  ];
+  /* ---- dados reais: a rota nasce do que foi CARREGADO (gao_cargo), não de uma lista fixa ---- */
+  const ADDR={
+    'Materno Infantil':'Av. T-9, 1200 · Setor Bueno',
+    'Hospital Albert Einstein':'Av. Brasil, 850 · Centro',
+    'Hospital São Marcos':'Rua 84, 420 · Setor Sul',
+    'SJ Hotel':'Av. Anhanguera, 77 · Centro'
+  };
+  const addrOf=n=>ADDR[n]||'Endereço cadastrado do cliente';
+  function ld(k){ try{ return (window.GAO&&GAO.load&&GAO.load(k))||null; }catch(e){ return null; } }
+  const ex=ld('gao_active_extra');
+  const isExtra=!!(ex&&ex.clientes&&ex.clientes.length);
+  const baseNames=isExtra ? ex.clientes.map(c=>c.cliente) : ['Materno Infantil','Hospital Albert Einstein'];
+  const cargo=ld('gao_cargo')||[];
+  const loaded=baseNames.filter((n,i)=>cargo[i]&&cargo[i].confirmed&&!cargo[i].reported);
+  const notLoaded=baseNames.length-loaded.length;
+  if(!loaded.length){ window.location.replace('carregar.html'); }   // sem carregamento confirmado não há rota
+  // coletas fixas só existem na rota cadastrada; na rota extra elas entram quando registradas durante as entregas
+  const coletaNames=isExtra ? [] : ['Hospital São Marcos','SJ Hotel'];
+  document.getElementById('navSub').textContent='Rota otimizada · '+((ex&&ex.name)||'Rota Hospitalar')+(notLoaded>0?' · '+loaded.length+' de '+baseNames.length+' clientes carregados':'');
+  const stops=[{type:'hub', kind:'Partida', name:'GAO Lavanderia', addr:'Saída do centro de distribuição'}]
+    .concat(loaded.map(n=>({type:'e', kind:'Entrega', name:n, addr:addrOf(n)})))
+    .concat(coletaNames.length?[{phase:'Entregas concluídas. Agora começam as coletas.'}]:[])
+    .concat(coletaNames.map(n=>({type:'c', kind:'Coleta', name:n, addr:addrOf(n)})))
+    .concat([{type:'hub', kind:'Retorno', name:'GAO Lavanderia', addr:'Devolução no centro de distribuição'}]);
+  const nStops=loaded.length+coletaNames.length;
+  document.getElementById('smStops').textContent=nStops;
+  document.getElementById('smDist').textContent=Math.round(nStops*4.5)+' km';
+  (function(){ const mins=Math.round(nStops*17.5), h=Math.floor(mins/60), m=mins%60; document.getElementById('smTime').textContent=h?(h+'h'+String(m).padStart(2,'0')):(m+' min'); })();
   const timeline=document.getElementById('timeline');
   timeline.innerHTML=stops.map(s=>{
     if(s.phase) return `<div class="tl-phase">${TRUCK} ${s.phase}</div>`;
@@ -96,11 +115,11 @@
   }, 1800);
 
   /* As mensagens de "a caminho" saem automaticamente pelo Z-API (número da GAO) ao iniciar as entregas — sem etapa manual aqui. */
-  function goCarregar(){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='carregar';GAO.setTrip(t);} window.location.href='carregar.html'; }
+  function goEntrega(){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='entrega';GAO.setTrip(t);} window.location.href='entrega.html'; }
 
-  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html';});
+  document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='carregar.html';});
   const okWrap=document.getElementById('okWrap');
-  document.getElementById('startBtn').addEventListener('click',goCarregar);
+  document.getElementById('startBtn').addEventListener('click',goEntrega);
   document.getElementById('okBtn').addEventListener('click',()=>okWrap.classList.remove('open'));
   okWrap.addEventListener('click',e=>{if(e.target===okWrap)okWrap.classList.remove('open');});
 </script>

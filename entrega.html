@@ -205,11 +205,19 @@
     {name:"Materno Infantil", id:"#0987", n:7},
     {name:"Hospital Albert Einstein", id:"#7643", n:4},
   ];
-  const data=(function(){
+  const data0=(function(){
     try{ var ex=window.GAO&&GAO.load&&GAO.load('gao_active_extra');
       if(ex&&ex.clientes&&ex.clientes.length) return ex.clientes.map(function(c,i){ return {name:c.cliente, id:c.comanda?('#'+c.comanda):('#'+(1000+i)), n:c.gaiolas}; });
     }catch(e){}
     return DATA_DEMO;
+  })();
+  /* só entrega o que foi carregado: clientes não carregados ficam fora e a quantidade é a carregada */
+  const data=(function(){
+    try{ var cg=(window.GAO&&GAO.load&&GAO.load('gao_cargo'))||[], out=[];
+      data0.forEach(function(o,i){ var s=cg[i]; if(s&&s.confirmed&&!s.reported){ var n=(s.loadedQty!=null?s.loadedQty:o.n); if(n>0){ var cgs=(s.cages||[]).filter(function(c){return c.status!=='removida';}).slice(0,n); var prob=cgs.filter(function(c){return c.status==='problema';}).length; out.push(Object.assign({},o,{n:n,prob:prob})); } } });
+      if(out.length) return out;
+    }catch(e){}
+    return data0;
   })();
   let orders=[], activeIdx=0, busy=false;
   const ordersEl=document.getElementById('orders');
@@ -220,7 +228,7 @@
   function build(){
     orders=data.map((o,i)=>({...o, listOpen:i===0, delivered:false, deliveredQty:null, reason:null, reasonText:'', recebeu:'', nome:'', photos:[], coletaQty:0, _col:false,
       failed:false, failReason:null, failSel:null, failText:'', _failcol:false, leitura:[],
-      cages:Array.from({length:o.n},()=>({status:'pendente'}))}));
+      cages:Array.from({length:o.n},(_,j)=>({status:j<(o.prob||0)?'problema':'pendente'}))}));   /* problema de leitura do carregamento já vem marcado com X */
     activeIdx=0;
     ordersEl.innerHTML=orders.map((o,i)=>orderHTML(o,i)).join('');
     orders.forEach((o,i)=>{
@@ -252,9 +260,9 @@
         <div class="list-head" data-listhead="${i}"><span class="lh-l" data-lhl="${i}">Gaiolas desta entrega</span><span class="lh-chev">${CHEV}</span></div>
         <div class="cages-wrap"><div class="cages-inner"><div class="cages">${rows}</div></div></div>
         <button class="btn read" data-scan="${i}">Ler QR Code ${BARCODE}</button>
-        <button class="link-report" data-report="${i}">Reportar um problema</button>
         <button class="btn primary" data-confirmopen="${i}" hidden>Confirmar entrega ${CHKW}</button>
         <button class="btn-revise" data-revise="${i}" hidden>Revisar entrega</button>
+        <button class="link-report" data-report="${i}">Reportar um problema</button>
         <button class="link-report" data-colcard="${i}" hidden>Adicionar coleta</button>
         <div class="reported-note" data-analise="${i}" hidden>
           <span class="rn-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg> <b data-analbl="${i}">Não entregue</b></span>
@@ -278,11 +286,13 @@
       else { chip.className='chip '+(conf?'load':'pend'); chip.innerHTML=conf?`${CHKW} Entregue`:'Pendente'; }
       el.querySelector(`[data-scan="${i}"]`).hidden=done||failed;
       const _arr=el.querySelector(`[data-arrive="${i}"]`); if(_arr) _arr.hidden=conf||failed;
-      el.querySelector(`[data-report="${i}"]`).hidden=done||failed;
+      /* todas as gaiolas vieram com problema de leitura: não há o que ler → "Reportar um problema" ocupa o lugar de "Adicionar coleta" até confirmar a entrega */
+      const allProb=o.cages.length>0&&o.cages.every(c=>c.status==='problema');
+      el.querySelector(`[data-report="${i}"]`).hidden = allProb ? (conf||failed) : (done||failed);
       el.querySelector(`[data-confirmopen="${i}"]`).hidden=!(done&&!conf)||failed;
       el.querySelector(`[data-revise="${i}"]`).hidden=!conf||failed;
       const cc=el.querySelector(`[data-colcard="${i}"]`);
-      if(cc){ cc.hidden=!done||failed; cc.textContent=o.coletaQty>0?('Coleta · '+o.coletaQty+' '+(o.coletaQty>1?'gaiolas':'gaiola')):'Adicionar coleta'; }
+      if(cc){ cc.hidden=!done||failed||(allProb&&!conf); cc.textContent=o.coletaQty>0?('Coleta · '+o.coletaQty+' '+(o.coletaQty>1?'gaiolas':'gaiola')):'Adicionar coleta'; }
       const an=el.querySelector(`[data-analise="${i}"]`); if(an)an.hidden=!failed;
       if(failed){ const lbl=el.querySelector(`[data-analbl="${i}"]`); if(lbl) lbl.textContent=o.failReason||'Não entregue'; }
       o.cages.forEach((c,j)=>{
@@ -382,6 +392,7 @@
   function isNoDeliver(v){ return v && READ_REASONS.indexOf(v)<0; }
   function openReport(i){
     reportIdx=i; reportSelect.value=''; reportOther.value=''; reportOther.hidden=true;
+    { const _g=reportSelect.querySelector('optgroup'), _ap=orders[i].cages.every(c=>c.status==='problema'); if(_g){ _g.hidden=_ap; _g.disabled=_ap; } }   // leitura já reportada no carregamento: só motivos de não entrega
     rpMax=pend(orders[i]).length; rpQty=0;
     document.getElementById('reportForm').hidden=false; document.getElementById('reportSuccess').hidden=true;
     document.getElementById('reportNotified').hidden=true;

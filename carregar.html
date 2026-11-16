@@ -26,7 +26,7 @@
 </div>
 
 <div class="footer">
-  <button class="go-btn" id="goBtn" disabled>Iniciar viagem <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  <button class="go-btn" id="goBtn" disabled><span id="goLbl">Calcular rota</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
 </div>
 
 <div class="sheet-wrap" id="sheetWrap">
@@ -238,8 +238,11 @@
         else{st.className='cstatus';st.innerHTML='';}
       });
     });
-    const allConf=orders.every(o=>o.confirmed || o.reported);
-    goBtn.disabled=!allConf; goBtn.classList.toggle('ready',allConf);
+    /* basta 1 cliente carregado para seguir; a rota é calculada só com os carregados */
+    const nConf=orders.filter(o=>o.confirmed).length, nTot=orders.filter(o=>!o.reported).length;
+    const ready=nConf>=1;
+    goBtn.disabled=!ready; goBtn.classList.toggle('ready',ready);
+    document.getElementById('goLbl').textContent = 'Calcular rota';
     saveCargo();
   }
 
@@ -431,7 +434,7 @@
     },1500);
   });
 
-  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='entrega';GAO.setTrip(t);} window.location.href='entrega.html'; } });
+  goBtn.addEventListener('click',()=>{ if(!goBtn.disabled){ if(window.GAO&&GAO.setTrip){var t=(GAO.getTrip&&GAO.getTrip())||{route:0};t.step='rota';GAO.setTrip(t);} window.location.href='rota.html'; } });
   document.getElementById('backBtn').addEventListener('click',()=>{window.location.href='index.html';});
   build();
 </script>
