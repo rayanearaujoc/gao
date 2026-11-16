@@ -198,7 +198,7 @@
     });
     routesEl.innerHTML=order.map(i=>{
       const r=RR[i];
-      const tag=r.extra?'<span class="rt-status">Rota extra</span>':'';
+      const tag='';   // o próprio nome já é "Rota extra"
       const isDone = isDoneI(i);
       const active = t && t.route===i;
       const stats=`<div class="route-stats">
@@ -281,7 +281,7 @@
     if(exCart.length===0) return;
     const total=exCart.reduce((s,c)=>s+c.gaiolas,0);
     const extras=loadExtras();
-    extras.push({ name:exCart[0].origem, extra:true, comandas:exCart.length, entregas:exCart.length, coletas:exCart.length, gaiolas:total,
+    extras.push({ name:'Rota extra', extra:true, comandas:exCart.length, entregas:exCart.length, coletas:exCart.length, gaiolas:total,
       clientes:exCart.map(c=>({cliente:c.cliente, gaiolas:c.gaiolas, comanda:c.comanda})) });
     saveExtras(extras);
     exCart=[];
