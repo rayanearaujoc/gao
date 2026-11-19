@@ -298,3 +298,24 @@ input.txt:focus,textarea.f-area:focus,.sup-select:focus,.sup-area:focus{border-c
 #viewHome .content{padding-bottom:var(--space-6)!important}
 .gk-appfoot{margin-top:auto;margin-bottom:0;padding:var(--space-4) var(--space-4) 96px}
 @media(min-width:700px){.gk-appfoot{padding-bottom:var(--space-6)}}
+
+/* saudação em duas linhas: mãozinha + "Olá," e embaixo o primeiro nome */
+.hello-t{white-space:normal;align-items:center;line-height:26px}
+.hello-t .gk-wave{width:30px;height:36px;margin-right:var(--space-3);flex:none}
+.hello-tx{display:flex;flex-direction:column;font-size:20px;line-height:26px;font-weight:600}
+@media(min-width:700px){.hello-tx{font-size:18px;line-height:24px}.hello-t .gk-wave{width:26px;height:32px}}
+
+/* celular: menu e data na mesma linha; embaixo "Olá, Ronaldo" numa linha só */
+@media(max-width:699px){
+  .hello-head{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;align-items:center;row-gap:var(--space-4)}
+  .hello-head>.gk-menu-btn{grid-row:1;grid-column:1}
+  .hello-head>.gk-datechip{grid-row:1;grid-column:2;justify-self:end}
+  .hello-head>div:not(.gk-datechip){grid-row:2;grid-column:1 / -1;margin:0}
+  .hello-tx{flex-direction:row;gap:6px;font-size:22px;line-height:28px;white-space:nowrap}
+  .hello-t .gk-wave{width:24px;height:30px;margin-right:var(--space-3)}
+}
+
+/* ícone do menu maior */
+.gk-menu-btn svg{width:24px;height:24px;stroke-width:1.9}
+.gk-menu-btn{width:44px;height:44px;color:var(--fg)}
+@media(min-width:700px){.gk-menu-btn{width:40px;height:40px}.gk-menu-btn svg{width:20px;height:20px}}
