@@ -99,15 +99,6 @@ input.txt:focus,textarea.f-area:focus,.sup-select:focus,.sup-area:focus{border-c
 .gk-page-head>.gk-menu-btn+div{margin-right:auto}
 .gk-login-note{font-size:12px;line-height:16px;color:var(--muted);background:var(--row);border-radius:var(--radius-md);padding:var(--space-3)}
 
-/* ---- login no celular: foto em cima (slide) e painel branco com cantos arredondados sobrepondo ---- */
-@media(max-width:899px){
-  .gk-login{display:block;min-height:100dvh}
-  .gk-login-side{display:block;height:230px;padding:0}
-  .gk-login-main{margin-top:calc(var(--space-6) * -1);margin-left:0;border-radius:var(--space-6) var(--space-6) 0 0;box-shadow:0 -12px 40px rgba(16,24,40,.22);min-height:calc(100dvh - 206px)}
-  .gk-login-dots{bottom:calc(var(--space-6) + var(--space-3))}
-  .gk-login-box{padding-top:var(--space-6)}
-}
-.gk-login-main{justify-content:flex-start}.gk-login-foot{margin-top:auto}
 
 /* ---- histórico de viagens ---- */
 .fil-bar{margin:0 0 var(--space-4)}
