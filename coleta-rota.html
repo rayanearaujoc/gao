@@ -6,15 +6,17 @@
 <title>GAO · Rota de coleta</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/rota.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-rota" data-page="home" data-flow-step="coleta">
 
 <div class="app">
   <div class="nav">
     <button class="back" id="backBtn" aria-label="Voltar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div><h1>Sua rota de coleta</h1><p>Rota otimizada · Coleta do enxoval usado</p></div>
+    <div><h1>Sua rota de coleta</h1><p>Rota otimizada, Coleta do enxoval usado</p></div>
   </div>
 
   <section class="view active" id="viewLoading">
@@ -52,10 +54,10 @@
 
   // endereços padrão dos clientes (protótipo)
   const ADDR={
-    'Hospital Albert Einstein':'Av. Brasil, 850 · Centro',
-    'Materno Infantil':'Av. T-9, 1200 · Setor Bueno',
-    'Hospital São Marcos':'Rua 84, 420 · Setor Sul',
-    'SJ Hotel':'Av. Anhanguera, 77 · Centro',
+    'Hospital Albert Einstein':'Av. Brasil, 850, Centro',
+    'Materno Infantil':'Av. T-9, 1200, Setor Bueno',
+    'Hospital São Marcos':'Rua 84, 420, Setor Sul',
+    'SJ Hotel':'Av. Anhanguera, 77, Centro',
   };
   // a coleta parte do ÚLTIMO cliente de entrega (o motorista já está lá), não da GAO
   // (derivado do carregamento real: o último cliente carregado/entregue)

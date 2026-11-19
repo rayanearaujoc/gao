@@ -23,6 +23,11 @@
     {label:'Suporte', icon:'headphones', href:'#', key:'suporte'}
   ];
   var USER = {name:'Ronaldo Araújo', short:'Olá, Ronaldo', role:'Motorista', initials:'RA'};
+  try{ var _pf=JSON.parse(localStorage.getItem('gao_profile')||'null'); if(_pf&&_pf.name){ USER.name=_pf.name;
+    var _p=_pf.name.trim().split(/\s+/); USER.initials=((_p[0]||'')[0]+(_p.length>1?_p[_p.length-1][0]:'')).toUpperCase(); USER.short='Olá, '+_p[0]; } }catch(e){}
+  /* hambúrguer em escadinha (mesmo do gestor): no celular abre o menu, no desktop recolhe/expande */
+  var BURGER='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h6"/></svg>';
+  var BURGER_BTN='<button class="gk-menu-btn" data-gao-menu type="button" aria-label="Abrir menu">'+BURGER+'</button>';
 
   /* ---- ícones estruturais inline (independem do lucide) ---- */
   var CHV_SEC   = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
@@ -41,8 +46,8 @@
   function remove(k){ try{ localStorage.removeItem(k); }catch(e){} }
 
   // ----- stepper / mapa de orientação do fluxo (read-only) -----
-  var FLOW_KEYS   = ['checkin','rota','carregamento','entregas','coleta','checkout','resumo'];
-  var FLOW_LABELS = ['Check-in','Rota','Carregamento','Entregas','Coleta','Check-out','Resumo'];
+  var FLOW_KEYS   = ['checkin','carregamento','rota','entregas','coleta','checkout','resumo'];
+  var FLOW_LABELS = ['Check-in','Carregamento','Rota','Entregas','Coleta','Check-out','Resumo'];
   var FLOW_HREF = {checkin:'index.html',rota:'rota.html',carregamento:'carregar.html',entregas:'entrega.html',coleta:'coleta-rota.html',checkout:'checkout.html',resumo:'resumo.html'};
   function flowHTML(activeKey){
     var cur = FLOW_KEYS.indexOf(activeKey); if(cur<0) cur=0;
@@ -145,7 +150,7 @@
       var path=info.path, segs='';
       for(var i=0;i<path.length;i++){ segs += (i>0?'<span class="gbc-sep">›</span>':'') + '<span class="gbc-seg">'+path[i]+'</span>'; }
       var bc=document.createElement('header'); bc.className='gao-topbar gao-topbar-bc';
-      bc.innerHTML='<div class="gao-top-inner"><div class="gao-bc"><span class="gbc-ic"><i data-lucide="'+info.icon+'"></i></span>'+segs+'</div></div>';
+      bc.innerHTML='<div class="gao-top-inner">'+BURGER_BTN+'<div class="gao-bc"><span class="gbc-ic"><i data-lucide="'+info.icon+'"></i></span>'+segs+'</div></div>';
       return bc;
     }
     // demais páginas (fluxo / resumo): título + voltar
@@ -167,7 +172,7 @@
       : (tb ? '<button class="gao-top-back" id="gaoTopBack" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Voltar</button>' : '');
     var title = tt ? '<div class="gao-top-title"><b>'+tt+'</b>'+(ts?'<small>'+ts+'</small>':'')+'</div>' : '';
     var hasLeft = !!(tt||tb);
-    var left = hasLeft ? '<div class="gao-top-left">'+back+title+'</div>' : '';
+    var left = hasLeft ? '<div class="gao-top-left">'+((tb||navProxy)?'':BURGER_BTN)+back+title+'</div>' : '';
     var bar = document.createElement('header'); bar.className='gao-topbar'+(hasLeft?' has-left':'')+((tb||navProxy)?' has-back':''); bar.innerHTML='<div class="gao-top-inner">'+left+'</div>';
     return bar;
   }
@@ -287,7 +292,17 @@
 
     // abrir/fechar drawer no mobile
     scrim.addEventListener('click', closeMenu);
-    document.querySelectorAll('[data-gao-menu]').forEach(function(b){ b.addEventListener('click', openMenu); });
+    // hambúrguer no começo do cabeçalho da página (antes do voltar)
+    document.querySelectorAll('.gk-page-head,.gk-subhead,.nav').forEach(function(h){
+      if(h.querySelector('.gk-menu-btn')) return;
+      var w=document.createElement('div'); w.innerHTML=BURGER_BTN; var bt=w.firstChild; if(h.querySelector('.back')) bt.classList.add('gk-menu-desk'); h.insertBefore(bt, h.firstChild);
+    });
+
+    // rodapé institucional no fim do conteúdo
+    var ct=document.querySelector('.app')||document.querySelector('.content');
+    if(ct&&!document.querySelector('.gk-appfoot')){ var ft=document.createElement('footer'); ft.className='gk-appfoot'; ft.textContent='© '+new Date().getFullYear()+' GAO Sistemas. Todos os direitos reservados.'; ct.appendChild(ft); }
+    function toggleSide(){ var c=document.body.classList.toggle('gao-col'); save('gao_side_collapsed', c); setTgIcon(); if(pop) pop.classList.remove('show'); }
+    document.querySelectorAll('[data-gao-menu]').forEach(function(b){ b.addEventListener('click', function(){ if(window.matchMedia('(min-width:900px)').matches) toggleSide(); else openMenu(); }); });
     var xb = document.getElementById('gaoX'); if(xb) xb.addEventListener('click', closeMenu);
 
     // recolher/expandir (desktop)
@@ -396,6 +411,9 @@
 
   window.GAO = { open:openMenu, close:closeMenu, icons:icons, renderFlow:renderFlow, flowHTML:flowHTML, getTrip:getTrip, setTrip:setTrip, clearTrip:clearTrip, save:save, load:load, remove:remove, shrink:shrink, startCamera:startCamera, truck:TRUCK_SVG };
 
-  if(document.readyState !== 'loading') build();
-  else document.addEventListener('DOMContentLoaded', build);
+  // sem animação de layout na montagem (evita o conteúdo/menu "deslizando" a cada troca de página)
+  document.documentElement.classList.add('gao-boot');
+  function unboot(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.documentElement.classList.remove('gao-boot'); }); }); }
+  if(document.readyState !== 'loading'){ build(); unboot(); }
+  else document.addEventListener('DOMContentLoaded', function(){ build(); unboot(); });
 })();

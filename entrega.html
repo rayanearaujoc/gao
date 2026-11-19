@@ -6,9 +6,11 @@
 <title>GAO · Entregas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/carregar.css">
 <link rel="stylesheet" href="static/css/entrega.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-entrega" data-page="home" data-flow-step="entregas">
 
@@ -292,7 +294,7 @@
       el.querySelector(`[data-confirmopen="${i}"]`).hidden=!(done&&!conf)||failed;
       el.querySelector(`[data-revise="${i}"]`).hidden=!conf||failed;
       const cc=el.querySelector(`[data-colcard="${i}"]`);
-      if(cc){ cc.hidden=!done||failed||(allProb&&!conf); cc.textContent=o.coletaQty>0?('Coleta · '+o.coletaQty+' '+(o.coletaQty>1?'gaiolas':'gaiola')):'Adicionar coleta'; }
+      if(cc){ cc.hidden=!done||failed||(allProb&&!conf); cc.textContent=o.coletaQty>0?('Coleta, '+o.coletaQty+' '+(o.coletaQty>1?'gaiolas':'gaiola')):'Adicionar coleta'; }
       const an=el.querySelector(`[data-analise="${i}"]`); if(an)an.hidden=!failed;
       if(failed){ const lbl=el.querySelector(`[data-analbl="${i}"]`); if(lbl) lbl.textContent=o.failReason||'Não entregue'; }
       o.cages.forEach((c,j)=>{
@@ -328,8 +330,8 @@
   };
   function showFeedback(state,d={}){
     clearTimeout(fbTimer); let title='',sub='';
-    if(state==='ok'){title=d.client;sub=`Gaiola ${d.num} · entregar a este cliente`;}
-    else if(state==='wrong'){title='Gaiola de outra comanda';sub=`${d.id} · ${d.name}`;}
+    if(state==='ok'){title=d.client;sub=`Gaiola ${d.num}, entregar a este cliente`;}
+    else if(state==='wrong'){title='Gaiola de outra comanda';sub=`${d.id}, ${d.name}`;}
     else if(state==='invalid'){title='Código não reconhecido';sub='Não pertence a nenhuma entrega';}
     else if(state==='fail'){title='Não foi possível ler';sub='Aproxime a etiqueta ou digite o código';}
     else if(state==='dup'){title='Gaiola já lida';sub='Passe para a próxima etiqueta';}
@@ -345,7 +347,7 @@
     if(geoBlocked())return;
     activeIdx=i; const o=orders[i];
     if(!o.listOpen){o.listOpen=true;syncAll();}
-    sheetSub.textContent=`${o.name} · ${o.id}`;
+    sheetSub.textContent=`${o.name}, ${o.id}`;
     if(camHint)camHint.textContent='Aponte para o QR Code';
     feedback.classList.remove('show');
     syncScan(); sheetWrap.classList.add('open');
@@ -465,7 +467,7 @@
     confirmSelect.value=o.reason||''; confirmOther.value=o.reasonText||'';
     recebeuSelect.value=o.recebeu||''; recebeuNome.value=o.nome||''; nomeBlock.hidden=!recebeuSelect.value;
     photos=[...(o.photos||[])];
-    document.getElementById('confirmSub').textContent=`${o.name} · ${o.id}`;
+    document.getElementById('confirmSub').textContent=`${o.name}, ${o.id}`;
     document.getElementById('confirmForm').hidden=false; document.getElementById('confirmSuccess').hidden=true;
     renderPhotos(); renderConfirm(); renderColetaStep(); confirmWrap.classList.add('open');
     setTimeout(sizeCanvas,60);
@@ -528,7 +530,7 @@
       else { entry.foto=f||null; persist(); }
     }catch(e){} })();
     document.getElementById('confirmForm').hidden=true; document.getElementById('confirmSuccess').hidden=false;
-    document.getElementById('succLine').textContent = diff>0?`${loaded} de ${total} gaiolas entregues · ${o.nome}`:`${total} gaiolas entregues a ${o.nome}`;
+    document.getElementById('succLine').textContent = diff>0?`${loaded} de ${total} gaiolas entregues, ${o.nome}`:`${total} gaiolas entregues a ${o.nome}`;
     if(navigator.vibrate)navigator.vibrate([40,60,120]);
     setTimeout(()=>{
       confirmWrap.classList.remove('open');
@@ -586,7 +588,7 @@
   }
   function openColetaCard(i){
     coletaIdx=i; const o=orders[i]; colQty2=o.coletaQty||0;
-    document.getElementById('coletaSub').textContent=`${o.name} · ${o.id}`;
+    document.getElementById('coletaSub').textContent=`${o.name}, ${o.id}`;
     coletaDelete.hidden=!(o.coletaQty>0);
     coletaBtn.textContent=o.coletaQty>0?'Salvar coleta':'Adicionar coleta';
     renderColeta2(); coletaWrap.classList.add('open');

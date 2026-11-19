@@ -6,8 +6,10 @@
 <title>GAO · Resumo da viagem</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/resumo.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-resumo" data-page="home">
 
@@ -32,7 +34,7 @@
       <div class="co">
         <div class="co-row"><span class="k">Início da viagem</span><span class="v">22 de outubro às 06:00 hrs</span></div>
         <div class="co-row"><span class="k">Motorista</span><span class="v">Ronaldo Araújo</span></div>
-        <div class="co-row"><span class="k">Veículo</span><span class="v">GAO-2847 · Iveco Daily</span></div>
+        <div class="co-row"><span class="k">Veículo</span><span class="v">GAO-2847, Iveco Daily</span></div>
         <div class="co-row"><span class="k">Rota</span><span class="v">Rota Hospitalar</span></div>
       </div>
     </div>
@@ -138,7 +140,7 @@
     if(o.failed){
       var noun = kind==='coleta' ? 'Coleta' : 'Entrega';
       var vb = kind==='coleta' ? 'coletada' : 'entregue';
-      var cnt = o.total ? ' · '+o.total+' não '+vb+(o.total>1?'s':'') : '';
+      var cnt = o.total ? ', '+o.total+' não '+vb+(o.total>1?'s':'') : '';
       return '<div class="stop is-fail">'
         + '<div class="stop-top"><b class="stop-name">'+o.name+'</b><div class="row-chk fail">'+ALERT+'</div></div>'
         + '<div class="stop-det">'

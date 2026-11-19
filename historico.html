@@ -6,23 +6,18 @@
 <title>GAO · Histórico de viagens</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/home.css">
 <link rel="stylesheet" href="static/css/historico.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-historico" data-page="historico" data-top-title="Histórico de viagens" data-top-sub="Suas rotas e o seu aproveitamento">
 
 <div class="app">
-  <div class="topbar">
-    <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
-  </div>
-
   <div class="content">
+    <div class="gk-page-head"><button class="back" id="backBtn" type="button" aria-label="Voltar" onclick="location.href='index.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div><h1 class="gk-h1">Histórico de viagens</h1></div></div>
     <div class="fil-bar">
-      <div class="h-head">
-        <h2>Histórico de viagens</h2>
-        <p>Suas rotas e o seu aproveitamento</p>
-      </div>
       <div class="ph-controls">
         <button class="fil-clear" id="clearBtn" hidden>Limpar</button>
         <div class="fil-pill"><span class="fp-k">Período:</span><select id="periodSel">
@@ -43,7 +38,7 @@
 
     <div id="summary"></div>
     <div id="tableArea"></div>
-    <button class="proto-toggle" id="protoToggle" type="button">Protótipo · ver estado vazio</button>
+    <button class="proto-toggle" id="protoToggle" type="button">Protótipo: ver estado vazio</button>
   </div>
 </div>
 
@@ -134,7 +129,7 @@
     // mobile: lista enxuta (a tabela acima vira confusa no celular)
     var list=rows.map(function(t){
       var nao=(t.status==='nao');
-      var sub=nao ? fmt(t.d) : fmt(t.d)+' · '+t.ent+' entregas · '+t.col+' coletas';
+      var sub=nao ? fmt(t.d) : fmt(t.d)+'<span class="gk-sep"></span>'+t.ent+' entregas<span class="gk-sep"></span>'+t.col+' coletas';
       var chev='<svg class="tr-chev'+(nao?' off':'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
       return '<div class="trip-row'+(nao?'':' clickable')+'"'+(nao?'':' data-open="1"')+'>'
         + '<div class="tr-main"><div class="tr-rota">'+t.route+'</div><div class="tr-sub">'+sub+'</div></div>'
@@ -184,7 +179,7 @@
   var protoBtn=document.getElementById('protoToggle');
   if(protoBtn) protoBtn.addEventListener('click',function(){
     PROTO_EMPTY=!PROTO_EMPTY;
-    this.textContent = PROTO_EMPTY ? 'Protótipo · ver com viagens' : 'Protótipo · ver estado vazio';
+    this.textContent = PROTO_EMPTY ? 'Protótipo: ver com viagens' : 'Protótipo: ver estado vazio';
     apply();
   });
   deInput.value='2026-10-01'; ateInput.value='2026-10-26';

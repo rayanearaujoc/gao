@@ -6,8 +6,10 @@
 <title>GAO · Rota do dia</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/rota.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-rota" data-page="home" data-flow-step="rota">
 
@@ -62,10 +64,10 @@
 
   /* ---- dados reais: a rota nasce do que foi CARREGADO (gao_cargo), não de uma lista fixa ---- */
   const ADDR={
-    'Materno Infantil':'Av. T-9, 1200 · Setor Bueno',
-    'Hospital Albert Einstein':'Av. Brasil, 850 · Centro',
-    'Hospital São Marcos':'Rua 84, 420 · Setor Sul',
-    'SJ Hotel':'Av. Anhanguera, 77 · Centro'
+    'Materno Infantil':'Av. T-9, 1200, Setor Bueno',
+    'Hospital Albert Einstein':'Av. Brasil, 850, Centro',
+    'Hospital São Marcos':'Rua 84, 420, Setor Sul',
+    'SJ Hotel':'Av. Anhanguera, 77, Centro'
   };
   const addrOf=n=>ADDR[n]||'Endereço cadastrado do cliente';
   function ld(k){ try{ return (window.GAO&&GAO.load&&GAO.load(k))||null; }catch(e){ return null; } }
@@ -78,7 +80,7 @@
   if(!loaded.length){ window.location.replace('carregar.html'); }   // sem carregamento confirmado não há rota
   // coletas fixas só existem na rota cadastrada; na rota extra elas entram quando registradas durante as entregas
   const coletaNames=isExtra ? [] : ['Hospital São Marcos','SJ Hotel'];
-  document.getElementById('navSub').textContent='Rota otimizada · '+((ex&&ex.name)||'Rota Hospitalar')+(notLoaded>0?' · '+loaded.length+' de '+baseNames.length+' clientes carregados':'');
+  document.getElementById('navSub').textContent='Rota otimizada, '+((ex&&ex.name)||'Rota Hospitalar')+(notLoaded>0?', '+loaded.length+' de '+baseNames.length+' clientes carregados':'');
   const stops=[{type:'hub', kind:'Partida', name:'GAO Lavanderia', addr:'Saída do centro de distribuição'}]
     .concat(loaded.map(n=>({type:'e', kind:'Entrega', name:n, addr:addrOf(n)})))
     .concat(coletaNames.length?[{phase:'Entregas concluídas. Agora começam as coletas.'}]:[])

@@ -4,128 +4,88 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>GAO · Meu perfil</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
-<link rel="stylesheet" href="static/css/home.css">
-<link rel="stylesheet" href="static/css/perfil.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
-<body class="p-perfil" data-page="perfil" data-crumb="Meu perfil" data-crumb-icon="circle-user-round">
-
+<body data-page="perfil" data-crumb="Meu perfil" data-crumb-icon="circle-user-round">
 <div class="app">
-  <div class="topbar">
-    <button class="menu-btn" data-gao-menu><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Menu</button>
-  </div>
-
   <div class="content">
-    <div class="h-head">
-      <h2>Meu perfil</h2>
-      <p>Seus dados e a segurança da sua conta</p>
-    </div>
+    <div class="gk-page-head"><div><h1 class="gk-h1">Meu perfil</h1></div></div>
 
-    <div class="pf-grid">
-      <!-- Dados -->
-      <div class="pf-card">
-        <div class="pf-id">
-          <div class="pf-av">RA</div>
-          <div class="pf-id-tx"><b>Ronaldo Araújo</b><small>Motorista</small></div>
+    <div class="gk-table-wrap">
+      <div class="gk-tabs" id="pfTabs"><button class="gk-tab is-active" data-t="dados">Dados do perfil</button><button class="gk-tab" data-t="seg">Segurança</button></div>
+      <section class="gk-tabpanel" data-p="dados">
+        <form class="gk-form" id="pfForm" novalidate>
+          <div class="gk-field"><label class="gk-label" for="pfNome">Nome<span class="gk-req">*</span></label><input class="gk-input" id="pfNome" value="Ronaldo Araújo" autocomplete="name"><span class="gk-error" hidden>Preencha o nome.</span></div>
+          <div class="gk-field"><label class="gk-label" for="pfCargo">Cargo</label><input class="gk-input" id="pfCargo" value="Motorista" disabled></div>
+          <div class="gk-field"><label class="gk-label" for="pfMail">E-mail<span class="gk-req">*</span></label><input class="gk-input" id="pfMail" type="email" value="ronaldo.araujo@gao.com.br" autocapitalize="none"><span class="gk-error" hidden>Digite um e-mail válido.</span><span class="gk-help">Usado nos comunicados da sua conta.</span></div>
+        </form>
+        <div style="display:flex;justify-content:flex-end;margin-top:var(--space-5);padding-top:var(--space-4);border-top:1px solid var(--line)"><button class="gk-btn gk-btn-primary" id="pfSave" type="button">Salvar alterações</button></div>
+      </section>
+      <section class="gk-tabpanel" data-p="seg" hidden>
+        <div class="gk-status-row">
+          <div><h3 class="gk-h3">Senha</h3><div class="gk-caption">Última alteração há 3 meses.</div></div>
+          <button class="gk-btn gk-btn-secondary" id="pwBtn" type="button"><i data-lucide="lock" class="gk-ic"></i>Trocar senha</button>
         </div>
-        <div class="pf-body">
-          <label class="pf-label" for="pfNome">Nome completo</label>
-          <div class="pf-field">
-            <span class="pf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></span>
-            <input type="text" id="pfNome" value="Ronaldo Araújo">
-          </div>
-          <label class="pf-label" for="pfEmail">E-mail</label>
-          <div class="pf-field">
-            <span class="pf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
-            <input type="email" id="pfEmail" value="ronaldo.araujo@gao.com.br">
-          </div>
-          <p class="pf-help">Este e-mail será usado nos comunicados da sua conta.</p>
-          <div class="pf-msg" id="dadosMsg"><span class="pf-msg-ic"></span><span class="pf-msg-tx"></span></div>
-        </div>
-        <div class="pf-foot">
-          <button class="pf-btn pri" id="saveDados" type="button">Salvar alterações</button>
-        </div>
-      </div>
-
-      <!-- Segurança -->
-      <div class="pf-card">
-        <div class="pf-card-head">
-          <div class="pf-head-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <div><b>Segurança</b><span>Atualize sua senha de acesso.</span></div>
-        </div>
-        <div class="pf-body">
-          <label class="pf-label" for="curPass">Senha atual</label>
-          <div class="pf-field">
-            <span class="pf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <input type="password" id="curPass" placeholder="Digite sua senha atual" autocomplete="current-password">
-            <button class="pf-eye" type="button" aria-label="Mostrar senha"></button>
-          </div>
-          <label class="pf-label" for="newPass">Nova senha</label>
-          <div class="pf-field">
-            <span class="pf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <input type="password" id="newPass" placeholder="Crie uma nova senha" autocomplete="new-password">
-            <button class="pf-eye" type="button" aria-label="Mostrar senha"></button>
-          </div>
-          <label class="pf-label" for="confPass">Confirmar nova senha</label>
-          <div class="pf-field">
-            <span class="pf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <input type="password" id="confPass" placeholder="Repita a nova senha" autocomplete="new-password">
-            <button class="pf-eye" type="button" aria-label="Mostrar senha"></button>
-          </div>
-          <div class="pf-msg" id="pfMsg"><span class="pf-msg-ic"></span><span class="pf-msg-tx"></span></div>
-        </div>
-        <button class="pf-btn ghost" id="savePass" type="button">Alterar senha</button>
-      </div>
+      </section>
     </div>
   </div>
 </div>
 
+  <div class="gk-overlay" id="ovPw"><div class="gk-scrim" data-close="ovPw"></div>
+    <div class="gk-modal is-form" role="dialog" aria-labelledby="pwTitle">
+      <div class="gk-modal-head"><div class="gk-modal-title"><span class="gk-title-ic"><i data-lucide="lock" class="gk-ic"></i></span><h2 class="gk-h2" id="pwTitle">Trocar senha</h2></div><button class="gk-btn gk-btn-secondary gk-btn-icon gk-btn-sm" data-close="ovPw" aria-label="Fechar"><i data-lucide="x" class="gk-ic"></i></button></div>
+      <div class="gk-modal-body" style="border-top:1px solid var(--line)"><form class="gk-form" id="pwForm" novalidate>
+        <div class="gk-field"><label class="gk-label" for="pwAtual">Senha atual<span class="gk-req">*</span></label><div class="gk-input-wrap"><input class="gk-input has-eye" id="pwAtual" type="password" autocomplete="current-password" style="padding-left:var(--space-3)"><button class="gk-eye" type="button" data-eye="pwAtual" aria-label="Mostrar senha"><i data-lucide="eye" class="gk-ic"></i></button></div><span class="gk-error" hidden>Digite a senha atual.</span></div>
+        <div class="gk-field"><label class="gk-label" for="pwNova">Nova senha<span class="gk-req">*</span></label><div class="gk-input-wrap"><input class="gk-input has-eye" id="pwNova" type="password" autocomplete="new-password" style="padding-left:var(--space-3)"><button class="gk-eye" type="button" data-eye="pwNova" aria-label="Mostrar senha"><i data-lucide="eye" class="gk-ic"></i></button></div><span class="gk-error" hidden>A senha não atende aos requisitos.</span>
+          <ul class="gk-pwrules" id="pwRules"><li data-r="len">Pelo menos 8 caracteres</li><li data-r="upper">Uma letra maiúscula</li><li data-r="lower">Uma letra minúscula</li><li data-r="num">Um número</li></ul></div>
+        <div class="gk-field"><label class="gk-label" for="pwConf">Confirmar nova senha<span class="gk-req">*</span></label><div class="gk-input-wrap"><input class="gk-input has-eye" id="pwConf" type="password" autocomplete="new-password" style="padding-left:var(--space-3)"><button class="gk-eye" type="button" data-eye="pwConf" aria-label="Mostrar senha"><i data-lucide="eye" class="gk-ic"></i></button></div><span class="gk-error" hidden>As senhas não são iguais.</span></div>
+      </form></div>
+      <div class="gk-modal-foot"><button class="gk-btn gk-btn-ghost" data-close="ovPw">Cancelar</button><button class="gk-btn gk-btn-primary" id="pwOk">Salvar senha</button></div>
+    </div>
+  </div>
+
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.60.0/dist/umd/lucide.min.js"></script>
 <script src="static/js/shell.js"></script>
+<script src="static/js/kit-ui.js"></script>
+<script src="static/js/kit-icons.js"></script>
 <script>
 (function(){
-  var EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M2 2l20 20"/></svg>';
-  var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-  var AL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>';
-
-  function msg(el,kind,txt){ el.className='pf-msg show '+kind; el.querySelector('.pf-msg-ic').innerHTML=(kind==='ok'?OK:AL); el.querySelector('.pf-msg-tx').textContent=txt; }
-  function field(input){ return input.closest('.pf-field'); }
-
-  // mostrar / ocultar senha
-  document.querySelectorAll('.pf-eye').forEach(function(btn){
-    btn.innerHTML=EYE_OFF;
-    btn.addEventListener('click',function(){
-      var inp=btn.parentElement.querySelector('input'), show=inp.type==='password';
-      inp.type=show?'text':'password';
-      btn.innerHTML=show?EYE:EYE_OFF;
-      btn.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');
-    });
+  var $=function(id){ return document.getElementById(id); };
+  var nova=$('pwNova'), rules=$('pwRules');
+  function rs(v){ return {len:v.length>=8, upper:/[A-Z]/.test(v), lower:/[a-z]/.test(v), num:/[0-9]/.test(v)}; }
+  function err(inp,bad){ var f=inp.closest('.gk-field'); f.classList.toggle('is-error',bad); f.querySelector('.gk-error').hidden=!bad; }
+  document.querySelectorAll('[data-eye]').forEach(function(b){ b.addEventListener('click',function(){
+    var i=$(b.getAttribute('data-eye')), show=i.type==='password'; i.type=show?'text':'password';
+    b.innerHTML='<i data-lucide="'+(show?'eye-off':'eye')+'" class="gk-ic"></i>'; GK.icons(); }); });
+  var KEY='gao_profile';
+  try{ var sv=JSON.parse(localStorage.getItem(KEY)||'null'); if(sv){ $('pfNome').value=sv.name||$('pfNome').value; $('pfMail').value=sv.mail||$('pfMail').value; } }catch(e){}
+  $('pfSave').addEventListener('click',function(){
+    var n=!$('pfNome').value.trim(), m=!/^\S+@\S+\.\S+$/.test($('pfMail').value.trim());
+    err($('pfNome'),n); err($('pfMail'),m); if(n||m) return;
+    try{ localStorage.setItem(KEY,JSON.stringify({name:$('pfNome').value.trim(),mail:$('pfMail').value.trim()})); }catch(e){}
+    GK.toast('Perfil atualizado'); });
+  document.querySelectorAll('#pfTabs .gk-tab').forEach(function(t){ t.addEventListener('click',function(){
+    document.querySelectorAll('#pfTabs .gk-tab').forEach(function(x){ x.classList.toggle('is-active',x===t); });
+    document.querySelectorAll('[data-p]').forEach(function(q){ q.hidden=q.getAttribute('data-p')!==t.getAttribute('data-t'); }); }); });
+  nova.addEventListener('focus',function(){ rules.classList.add('is-open'); });
+  nova.addEventListener('blur',function(){ if(!nova.value) rules.classList.remove('is-open'); });
+  nova.addEventListener('input',function(){ var r=rs(nova.value); Object.keys(r).forEach(function(k){ rules.querySelector('[data-r="'+k+'"]').classList.toggle('ok',r[k]); }); });
+  $('pwBtn').addEventListener('click',function(){
+    $('pwForm').reset(); rules.classList.remove('is-open'); rules.querySelectorAll('li').forEach(function(l){ l.classList.remove('ok'); });
+    document.querySelectorAll('#pwForm .gk-field').forEach(function(f){ f.classList.remove('is-error'); f.querySelector('.gk-error').hidden=true; });
+    GK.open('ovPw'); setTimeout(function(){ $('pwAtual').focus(); },50); });
+  $('pwOk').addEventListener('click',function(){
+    var r=rs(nova.value), okNova=r.len&&r.upper&&r.lower&&r.num;
+    var a=!$('pwAtual').value, n=!okNova, c=$('pwConf').value!==nova.value||!$('pwConf').value;
+    err($('pwAtual'),a); err(nova,n); err($('pwConf'),c);
+    if(a||n||c) return;
+    GK.close('ovPw'); GK.toast('Senha alterada');
   });
-
-  // dados
-  var pfEmail=document.getElementById('pfEmail'), pfNome=document.getElementById('pfNome'), dadosMsg=document.getElementById('dadosMsg');
-  [pfEmail,pfNome].forEach(function(i){ i.addEventListener('input',function(){ field(i).classList.remove('err'); dadosMsg.classList.remove('show'); }); });
-  document.getElementById('saveDados').addEventListener('click',function(){
-    field(pfEmail).classList.remove('err'); field(pfNome).classList.remove('err');
-    if(!pfNome.value.trim()){ field(pfNome).classList.add('err'); msg(dadosMsg,'err','Informe o seu nome.'); pfNome.focus(); return; }
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pfEmail.value.trim())){ field(pfEmail).classList.add('err'); msg(dadosMsg,'err','Informe um e-mail válido.'); pfEmail.focus(); return; }
-    msg(dadosMsg,'ok','Dados salvos com sucesso.');
-  });
-
-  // senha
-  var cur=document.getElementById('curPass'), nw=document.getElementById('newPass'), cf=document.getElementById('confPass'), pfMsg=document.getElementById('pfMsg');
-  [cur,nw,cf].forEach(function(i){ i.addEventListener('input',function(){ field(i).classList.remove('err'); pfMsg.classList.remove('show'); }); });
-  document.getElementById('savePass').addEventListener('click',function(){
-    [cur,nw,cf].forEach(function(i){ field(i).classList.remove('err'); });
-    if(!cur.value){ field(cur).classList.add('err'); msg(pfMsg,'err','Digite sua senha atual.'); cur.focus(); return; }
-    if(nw.value.length<8){ field(nw).classList.add('err'); msg(pfMsg,'err','A nova senha precisa ter pelo menos 8 caracteres.'); nw.focus(); return; }
-    if(nw.value!==cf.value){ field(cf).classList.add('err'); msg(pfMsg,'err','A confirmação não confere com a nova senha.'); cf.focus(); return; }
-    cur.value=''; nw.value=''; cf.value='';
-    msg(pfMsg,'ok','Senha alterada com sucesso.');
-  });
+  GK.popovers(); GK.icons();
 })();
 </script>
 </body>

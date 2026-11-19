@@ -6,8 +6,10 @@
 <title>GAO · Carregar gaiolas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <script>try{if(JSON.parse(localStorage.getItem('gao_theme')||'null')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+<link rel="stylesheet" href="static/css/kit.css">
 <link rel="stylesheet" href="static/css/app.css">
 <link rel="stylesheet" href="static/css/carregar.css">
+<link rel="stylesheet" href="static/css/gk-app.css">
 </head>
 <body class="p-carregar" data-page="home" data-flow-step="carregamento">
 
@@ -267,7 +269,7 @@
   function showFeedback(state,d={}){
     clearTimeout(fbTimer); let title='',sub='';
     if(state==='ok'){title=`Gaiola ${d.num} lida`;}
-    else if(state==='wrong'){title='Gaiola de outra comanda';sub=`${d.id} · ${d.name}`;}
+    else if(state==='wrong'){title='Gaiola de outra comanda';sub=`${d.id}, ${d.name}`;}
     else if(state==='invalid'){title='Código não reconhecido';sub='Não pertence a nenhuma comanda';}
     else if(state==='fail'){title='Não foi possível ler';sub='Aproxime a etiqueta ou digite o código';}
     else if(state==='dup'){title='Gaiola já lida';sub='Passe para a próxima etiqueta';}
@@ -282,7 +284,7 @@
   function openScan(i){
     activeIdx=i; const o=orders[i];
     if(!o.listOpen){o.listOpen=true;syncAll();}
-    sheetSub.textContent=`${o.name} · ${o.id}`;
+    sheetSub.textContent=`${o.name}, ${o.id}`;
     if(camHint)camHint.textContent='Aponte para o QR Code';
     feedback.classList.remove('show');
     syncScan(); sheetWrap.classList.add('open');
@@ -378,7 +380,7 @@
     if(o.loadedQty===null || o.loadedQty>tot) o.loadedQty=tot;
     confirmSelect.value=o.reason||''; confirmOther.value=o.reasonText||'';
     photos=[...(o.photos||[])];
-    document.getElementById('confirmSub').textContent=`${o.name} · ${o.id}`;
+    document.getElementById('confirmSub').textContent=`${o.name}, ${o.id}`;
     document.getElementById('confirmForm').hidden=false; document.getElementById('confirmSuccess').hidden=true;
     renderPhotos(); renderConfirm(); confirmWrap.classList.add('open');
   }

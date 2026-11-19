@@ -1,0 +1,300 @@
+/* ============================================================
+   GAO — gk-app.css  (camada do GAO Kit no app do motorista)
+   Leva os componentes do app para as medidas do kit do gestor
+   (mesmos tokens, fonte menor, raios e botões). Carregar por
+   último. Mobile first. Não muda comportamento, só aparência.
+   ============================================================ */
+body{font-size:13px;line-height:20px}
+.content{padding-top:var(--space-5)}
+
+/* ---- botões de ação (largura cheia): 44px, raio do kit, peso 500 ---- */
+.foot-btn,.route-btn,.cta,.sup-send,.sd-close,.sim,.av-go,.lg-btn,.go-btn,.ex-val,.p-rota .sheet>button,.btn,.pf-btn,.manual button,.avisar-sheet .av-go{
+  min-height:var(--ctl-lg);height:auto;padding-top:0;padding-bottom:0;padding-left:var(--space-4);padding-right:var(--space-4);
+  border-radius:var(--radius-md);font-size:13px;line-height:20px;font-weight:500;letter-spacing:0}
+.foot-btn,.route-btn,.cta,.sup-send,.sd-close,.sim,.av-go,.lg-btn,.go-btn,.p-rota .sheet>button{display:flex;align-items:center;justify-content:center;gap:var(--space-2)}
+.foot-btn svg,.route-btn svg,.cta svg,.sim svg,.go-btn svg{width:16px;height:16px}
+.sim,.btn.read,.manual button{background:var(--primary)}
+.route-btn.ghost,.route-btn.muted{background:var(--card);color:var(--fg);border:1px solid var(--line-strong)}
+.route-btn.ghost:hover,.route-btn.muted:hover{background:var(--row)}
+.foot-btn:disabled,.foot-btn.off,.cta:disabled,.sup-send:disabled{background:var(--row);color:var(--muted);border:1px solid var(--line)}
+.fab{height:var(--ctl-lg);padding:0 var(--space-5) 0 var(--space-4);font-size:13px;font-weight:500;border-radius:var(--radius-full);gap:var(--space-2)}
+.fab svg{width:16px;height:16px}
+.footer{padding-top:var(--space-3);padding-bottom:max(var(--space-3),env(safe-area-inset-bottom,0px))}
+
+/* ---- campos ---- */
+input.txt,.field .box,.sup-select,.manual input{min-height:var(--ctl-md);height:auto;padding:0 var(--space-3);border:1px solid var(--line-strong);border-radius:var(--radius-md);font-size:13px;line-height:20px;background:var(--card);color:var(--fg);display:flex;align-items:center}
+input.txt,.manual input{display:block;height:var(--ctl-md)}
+.sup-select{display:block;height:var(--ctl-md);padding-right:38px}
+textarea.f-area,.sup-area{border:1px solid var(--line-strong);border-radius:var(--radius-md);padding:var(--space-3);font-size:13px;line-height:20px}
+input.txt:focus,textarea.f-area:focus,.sup-select:focus,.sup-area:focus{border-color:var(--line-strong);box-shadow:none}
+.in-label,.field label,.sup-label,.lbl-strong{font-size:12px;line-height:16px;font-weight:500}
+.in-label{margin-bottom:var(--space-2)}
+.field label{margin-bottom:var(--space-2)}
+.field-gap{margin-top:var(--space-5)}
+.seg{gap:var(--space-2)}
+.seg button,.sup-opt,.veh-item{border:1px solid var(--line-strong);border-radius:var(--radius-md);font-size:13px;line-height:20px;font-weight:500;padding:0 var(--space-3);min-height:var(--ctl-lg)}
+.sup-opt,.veh-item{padding-top:var(--space-2);padding-bottom:var(--space-2)}
+.seg button.sel,.sup-opt.sel,.veh-item.sel{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-ink)}
+
+/* ---- cartões ---- */
+.route,.vehicle,.sec,.hist-card,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+.route,.sec,.vehicle{padding:var(--space-4);margin-bottom:var(--space-4)}
+.sec{padding:var(--space-5)}
+.sec-head{margin-bottom:var(--space-4);gap:var(--space-3)}
+.sec-head h4,.route-top h4,.vehicle-top h4{font-size:13px;line-height:20px;font-weight:600;letter-spacing:0}
+.sec-head p,.route-top .cm,.vehicle-top .mo{font-size:12px;line-height:16px;color:var(--muted)}
+.sec-num{width:22px;height:22px;font-size:11px;background:var(--primary)}
+.route-ic,.vehicle-ic,.veh-ic,.re-ic{border-radius:var(--radius-md);background:var(--primary-soft);color:var(--primary)}
+.route-ic{width:36px;height:36px}
+.route-stats{border-radius:var(--radius-md)}
+.rstat b{font-size:15px}
+.rstat small{font-size:11px}
+.pslot-empty,.photo-big{border:1px dashed var(--line-strong);border-radius:var(--radius-md);background:var(--row);padding:var(--space-5)}
+.pslot-empty .pt,.photo-big .pt{font-size:13px;font-weight:500;color:var(--fg)}
+.pslot-empty .ps,.photo-big .ps{font-size:12px}
+.sub-label{font-size:13px;font-weight:600}
+
+/* ---- cabeçalho de página ---- */
+.nav{background:none;border-bottom:0;padding-bottom:var(--space-2);align-items:center}
+.nav h1{font-size:16px;line-height:24px;font-weight:600;letter-spacing:0}
+.nav p{font-size:12px;line-height:16px}
+.back{width:32px;height:32px;border-radius:var(--radius-md);border:1px solid var(--line-strong);background:var(--card)}
+.gao-flow{background:none;border-bottom:0}
+.page-intro h2{font-size:16px;font-weight:600}
+.page-intro p{font-size:12px;line-height:16px}
+
+/* ---- modais (sheets) ---- */
+.sheet{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.sheet h2{font-size:15px;line-height:24px;font-weight:600}
+.sheet .sub,.sup-sub{font-size:12px;line-height:16px}
+.sheet-x,.sup-x{border-radius:var(--radius-md);border:1px solid var(--line-strong)}
+.sup-ico,.sheet-top .ico{border-radius:var(--radius-md);background:var(--primary-soft);color:var(--primary)}
+.sup-prio{border-radius:var(--radius-sm);padding:2px var(--space-2)}
+@media(min-width:640px){.sheet{border-radius:var(--radius-lg)}}
+
+/* ---- selos de status (kit: 20px, raio pequeno) ---- */
+.rt-status{border-radius:var(--radius-sm);padding:0 var(--space-2);height:20px;font-size:11px;font-weight:500;background:var(--primary)}
+
+/* ---- menu: hambúrguer em escadinha no começo do cabeçalho (celular e desktop) ---- */
+.gk-menu-btn{display:inline-flex;margin-left:-8px;margin-right:0}
+.nav .gk-menu-btn{margin-right:-4px}
+.gao-top{border-bottom:1px solid var(--line)}
+.gao-nav{font-size:13px}
+.gao-nav.active{background:var(--primary-soft);color:var(--primary-ink)}
+.gao-pop{border-radius:var(--radius-lg);box-shadow:var(--shadow-pop)}
+.gao-pop-item{font-size:13px;font-weight:500;border-radius:var(--radius-md)}
+.gao-pc{border-radius:var(--radius-md)}
+.gao-sh{font-weight:600}
+@media(min-width:900px){.gao-tg{display:none!important}}
+
+/* ---- início: cabeçalho com mãozinha e data no estilo do kit ---- */
+.hello-head{align-items:center;margin-bottom:var(--space-5)}
+.hello-t{display:flex;align-items:center}
+.hello-t .gk-wave{width:22px;height:26px}
+.gk-datechip{height:var(--ctl-sm);padding:0 var(--space-3);font-size:12px}
+.gk-datechip svg{width:14px;height:14px}
+.section-row h3{font-size:13px;line-height:20px;font-weight:600}
+.section-row{margin-bottom:var(--space-3)}
+.route{margin-bottom:var(--space-4)}
+.gk-page-head>.gk-menu-btn+div{margin-right:auto}
+.gk-login-note{font-size:12px;line-height:16px;color:var(--muted);background:var(--row);border-radius:var(--radius-md);padding:var(--space-3)}
+
+/* ---- login no celular: foto em cima (slide) e painel branco com cantos arredondados sobrepondo ---- */
+@media(max-width:899px){
+  .gk-login{display:block;min-height:100dvh}
+  .gk-login-side{display:block;height:230px;padding:0}
+  .gk-login-main{margin-top:calc(var(--space-6) * -1);margin-left:0;border-radius:var(--space-6) var(--space-6) 0 0;box-shadow:0 -12px 40px rgba(16,24,40,.22);min-height:calc(100dvh - 206px)}
+  .gk-login-dots{bottom:calc(var(--space-6) + var(--space-3))}
+  .gk-login-box{padding-top:var(--space-6)}
+}
+.gk-login-main{justify-content:flex-start}.gk-login-foot{margin-top:auto}
+
+/* ---- histórico de viagens ---- */
+.fil-bar{margin:0 0 var(--space-4)}
+.fil-pill{height:var(--ctl-md);padding:0 var(--space-3);border:1px solid var(--line-strong);border-radius:var(--radius-md);font-size:13px;gap:var(--space-2)}
+.fil-pill:focus-within{border-color:var(--line-strong)}
+.fil-pill select,.fil-pill input{font-size:13px;font-weight:500}
+.fil-clear{font-size:12px;font-weight:500;color:var(--primary)}
+@media(max-width:620px){.fil-bar{gap:var(--space-2)}.ph-controls{gap:var(--space-2)}.fil-pill{width:100%;padding:0 var(--space-3)}.fil-clear{border:1px solid var(--line-strong);border-radius:var(--radius-md);padding:0;height:var(--ctl-md);line-height:var(--ctl-md)}}
+.sum-grid{gap:var(--space-4);margin-bottom:var(--space-4)}
+.sc{border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:var(--space-4)}
+.sc-ic{top:var(--space-3);right:var(--space-3);border-radius:var(--radius-md);background:var(--primary-soft);color:var(--primary)}
+.sc small{font-size:12px;font-weight:500;letter-spacing:0;text-transform:none}
+.sc b{font-size:20px;font-weight:600}
+.sc.aprov{border-color:transparent}
+.sc.aprov b{font-size:24px}
+.sc.aprov .sc-ic{background:rgba(255,255,255,.16);color:#fff}
+.sc.aprov .sub{font-size:12px}
+.tbl-wrap{border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+.htbl thead th{background:color-mix(in srgb,var(--read) 76%,#000);color:rgba(255,255,255,.9);font-weight:500;border-bottom:0}
+.act-eye{border-radius:var(--radius-md);color:var(--muted)}
+.act-eye:hover{background:var(--row);color:var(--fg)}
+.hpill{height:20px;padding:0 var(--space-2);border-radius:var(--radius-sm);font-size:11px;font-weight:500}
+.hpill.bad{color:var(--bad-ink)}
+.trip-list,.empty{border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+.trip-row{padding:var(--space-3) var(--space-4)}
+.tr-rota{font-size:13px;font-weight:600}
+.tr-sub{font-size:12px}
+.empty h4{font-size:14px}
+.empty p{font-size:12px}
+
+/* ---- rótulos sem caixa alta ---- */
+.tl-kind,.st small{text-transform:none;letter-spacing:0;font-size:12px;font-weight:500}
+.st{border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+
+/* ---- áreas de toque maiores (mobile first) ---- */
+.foot-btn,.route-btn,.cta,.sup-send,.sd-close,.sim,.av-go,.lg-btn,.go-btn,.ex-val,.p-rota .sheet>button,.btn,.pf-btn,.manual button,.avisar-sheet .av-go,.gk-btn{
+  min-height:52px;padding-left:var(--space-6);padding-right:var(--space-6);font-size:14px}
+.gk-btn{padding-top:0;padding-bottom:0}
+.btn.ghost,.link-btn,.report,.rep-link{min-height:44px}
+.back{width:40px;height:40px;min-width:40px;border-radius:var(--radius-md)}
+.gao-top-back{height:40px;min-width:0}
+.gao-top-back svg{flex:none}
+.gk-menu-btn{width:40px;height:40px}
+.gk-btn-sm{min-height:40px}
+.hello-t{white-space:nowrap;font-size:20px}
+.hello-head{gap:var(--space-2)}
+.gk-datechip{flex:none}
+
+/* ---- transições entre páginas: só o conteúdo anima; menu, etapas e rodapé ficam fixos ---- */
+.content{animation:none}
+.footer{view-transition-name:gao-footer}
+.gao-flow{view-transition-name:gao-flow}
+::view-transition-group(gao-footer),::view-transition-group(gao-flow),::view-transition-group(gao-side){animation-duration:.2s}
+::view-transition-old(root){animation:gkVtOut .1s ease both}
+::view-transition-new(root){animation:gkVtIn .22s cubic-bezier(.2,.7,.2,1) both}
+.gk-page-head>.back{margin-right:var(--space-3)}
+.gk-page-head>.back+div{margin-right:auto;margin-left:0}
+
+/* ---- cards de rota: números mais leves, sem caixa cinza; 3 por linha no desktop ---- */
+@media(min-width:700px){#viewHome #routes{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}}
+.route-stats{border:0;border-radius:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:var(--space-4) 0}
+.rstat{background:none;padding:var(--space-3) var(--space-2);text-align:left}
+.rstat + .rstat{border-left:0;padding-left:var(--space-4)}
+.rstat b{display:inline;font-size:16px;font-weight:600;font-variant-numeric:normal;letter-spacing:0;margin-right:4px}
+.rstat small{display:inline;font-size:12px;color:var(--muted);text-transform:lowercase}
+.route-stats{display:flex;justify-content:space-between}
+.route-stats .rstat{flex:1;display:block;white-space:nowrap}
+
+/* ---- botões menos gigantes no celular ---- */
+.foot-btn,.route-btn,.cta,.sup-send,.sd-close,.sim,.av-go,.lg-btn,.go-btn,.ex-val,.p-rota .sheet>button,.btn,.pf-btn,.manual button,.avisar-sheet .av-go,.gk-btn{
+  min-height:46px;padding-left:var(--space-5);padding-right:var(--space-5);font-size:14px}
+.route-btn{padding-top:0;padding-bottom:0}
+
+/* ---- "Suas rotas de hoje" e textos dos cards maiores ---- */
+.section-row h3{font-size:16px;font-weight:600}
+.section-row span{font-size:13px}
+.route-top h4{font-size:15px}
+.route-top .cm{font-size:13px}
+.rstat b{font-size:17px}
+.rstat small{font-size:13px}
+
+/* ---- animações de entrada (modais, sheets, menus) ---- */
+@keyframes gkFadeIn{from{opacity:0}}
+@keyframes gkSheetUp{from{transform:translateY(100%)}}
+@keyframes gkPopIn{from{opacity:0;transform:translateY(10px) scale(.97)}}
+@keyframes gkDrop{from{opacity:0;transform:translateY(6px)}}
+.sheet-wrap.open{animation:gkFadeIn .2s ease both}
+.sheet-wrap.open .sheet{animation:gkSheetUp .36s cubic-bezier(.32,.72,0,1) both}
+@media(min-width:640px){.sheet-wrap.open .sheet{animation:gkPopIn .24s cubic-bezier(.2,.7,.2,1) both}}
+.gao-pop.show{animation:gkDrop .16s ease both}
+.gao-scrim{transition:opacity .28s ease}
+.route,.gk-card,.sc,.st{transition:box-shadow .2s ease,transform .2s ease}
+@media(prefers-reduced-motion:reduce){.sheet-wrap.open,.sheet-wrap.open .sheet,.gao-pop.show{animation:none!important}}
+
+/* ---- cards de rota: número em cima, rótulo embaixo, mais respiro ---- */
+.route-stats{margin:var(--space-5) 0}
+.route-stats .rstat{display:flex;flex-direction:column;align-items:center;gap:var(--space-1);padding:var(--space-4) var(--space-2);text-align:center}
+.rstat + .rstat{padding-left:var(--space-2)}
+.rstat b{display:block;margin:0;font-size:18px;line-height:24px}
+.rstat small{display:block;font-size:12px;line-height:16px}
+
+/* ---- números mais nítidos nos cards de rota + botões menores no desktop ---- */
+.rstat b{font-weight:700;color:var(--fg)}
+.rstat small{font-weight:500;color:var(--muted)}
+.route-stats{border-color:var(--line-strong)}
+@media(min-width:700px){
+  .foot-btn,.route-btn,.cta,.sup-send,.sd-close,.sim,.av-go,.lg-btn,.go-btn,.ex-val,.p-rota .sheet>button,.btn,.pf-btn,.manual button,.avisar-sheet .av-go,.gk-btn{
+    min-height:var(--ctl-md);padding-left:var(--space-4);padding-right:var(--space-4);font-size:13px}
+  .route-stats{margin:var(--space-4) 0}
+  .route-stats .rstat{padding:var(--space-3) var(--space-2)}
+  .rstat b{font-size:17px}
+}
+
+/* ---- desktop: fontes menores (os aumentos ficam só no celular) ---- */
+@media(min-width:700px){
+  .section-row h3{font-size:14px}
+  .section-row span{font-size:12px}
+  .route-top h4{font-size:13px}
+  .route-top .cm{font-size:12px}
+  .route-top{gap:var(--space-3);margin-bottom:var(--space-3)}
+  .rstat b{font-size:15px;line-height:20px}
+  .rstat small{font-size:11px;line-height:14px}
+  .route-stats .rstat{padding:var(--space-2)}
+  .hello-t{font-size:18px}
+  .hello-t .gk-wave{width:18px;height:22px}
+  .route-ic{width:36px;height:36px}
+  .route-btn{font-size:12.5px}
+}
+
+/* ---- números dos cards de rota menores (mobile e desktop) ---- */
+.rstat b{font-size:14px;line-height:20px;font-weight:600}
+.rstat small{font-size:12px}
+@media(min-width:700px){.rstat b{font-size:13px;line-height:18px}.rstat small{font-size:11px}}
+
+/* ---- estado sem rota (folguista): mais respiro ---- */
+.route.route-empty,.route-empty{padding:var(--space-10,56px) var(--space-8) var(--space-10,56px)}
+.re-ic{margin-bottom:var(--space-5)}
+.route-empty h4{margin-bottom:var(--space-2);font-size:15px}
+.route-empty p{font-size:13px;line-height:20px;max-width:320px}
+@media(min-width:700px){.route-empty{padding:72px var(--space-8)}.route-empty h4{font-size:14px}.route-empty p{font-size:12px}}
+.tr-sub{white-space:normal;line-height:18px}.tr-sub .gk-sep{margin:0 var(--space-2)}
+
+/* ---- "Iniciar rota extra": bem maior e fácil de tocar no celular ---- */
+@media(max-width:699px){
+  .fab{left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
+    justify-content:center;min-height:60px;padding:0 var(--space-6);border-radius:var(--radius-lg);font-size:15px;font-weight:600;gap:var(--space-3);box-shadow:var(--shadow-pop)}
+  .fab svg{width:20px;height:20px}
+  #viewHome .content{padding-bottom:112px}
+}
+
+/* ---- bloco de números: fundo cinza clarinho, cantos arredondados, mais respiro ---- */
+.route-stats{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--row);border:0;border-radius:var(--radius-lg);margin:var(--space-4) 0;padding:var(--space-2) 0;overflow:hidden}
+.route-stats .rstat{background:none;padding:var(--space-4) var(--space-2);gap:var(--space-1)}
+.rstat + .rstat{border-left:1px solid var(--line);padding-left:var(--space-2)}
+.rstat b{font-size:16px;line-height:22px;font-weight:600}
+.rstat small{font-size:12px}
+@media(min-width:700px){.route-stats .rstat{padding:var(--space-3) var(--space-2)}.rstat b{font-size:14px;line-height:20px}.rstat small{font-size:11px}}
+
+/* ---- "Iniciar rota extra": continua sendo FAB (pílula no canto), só maior no celular ---- */
+@media(max-width:699px){
+  .fab{left:auto;right:max(16px,env(safe-area-inset-right,0px));min-height:60px;padding:0 var(--space-6) 0 var(--space-5);border-radius:999px;font-size:15px;gap:var(--space-3);box-shadow:var(--shadow-pop)}
+}
+
+/* ---- rodapé GAO Sistemas ---- */
+.gk-appfoot{margin-top:var(--space-8);padding:var(--space-4) 0;text-align:center;font-size:12px;line-height:16px;color:var(--muted)}
+
+/* ---- botão voltar: igual ao do gestor (pequeno, ícone fino) e centralizado com o título ---- */
+.back{width:var(--ctl-sm);height:var(--ctl-sm);min-width:var(--ctl-sm);border:1px solid var(--line-strong);border-radius:var(--radius-md)}
+.back svg{width:14px;height:14px}
+.gk-page-head,.nav{align-items:center}
+.gk-page-head>.back{align-self:center;margin-right:var(--space-3)}
+.gk-page-head>.back+div{margin-right:auto}
+.gk-page-head .gk-h1{margin:0;line-height:28px}
+.gk-page-head>.back{margin-right:0}.gk-page-head>.back+div{margin-left:0}
+
+/* hambúrguer (recolher menu) nas telas com voltar: só no desktop */
+@media(max-width:899px){.gk-menu-desk{display:none!important}}
+
+/* rotas: quantas couberem (até 3), conforme a largura */
+@media(min-width:700px){#viewHome #routes{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}}
+
+.gao-boot,.gao-boot *,.gao-boot *::before,.gao-boot *::after{transition:none!important}
+
+/* ---- rodapé GAO Sistemas: sempre no pé da página ---- */
+.app{display:flex;flex-direction:column;min-height:100dvh}
+.app>.content{flex:1 0 auto;width:100%;box-sizing:border-box}
+.app>.content{padding-bottom:var(--space-6)!important}
+#viewHome .content{padding-bottom:var(--space-6)!important}
+.gk-appfoot{margin-top:auto;margin-bottom:0;padding:var(--space-4) var(--space-4) 96px}
+@media(min-width:700px){.gk-appfoot{padding-bottom:var(--space-6)}}
